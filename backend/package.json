@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.8",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.11"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "mysql2": "^3.16.1"
+  }
+}
