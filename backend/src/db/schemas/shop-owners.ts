@@ -8,7 +8,7 @@ import {
   decimal,
   json,
 } from "drizzle-orm/mysql-core";
-import { users } from "./users";
+import { users } from "./users"; 
 
 export const shopOwners = mysqlTable("shop_owners", {
   id: bigint("id", { mode: "number", unsigned: true })

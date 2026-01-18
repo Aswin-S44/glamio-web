@@ -9,6 +9,6 @@ export default defineConfig({
   out: "./src/db/migrations",
   dialect: "mysql",
   dbCredentials: {
-    url: process.env.DB_URL,
+    url: process.env.DB_URL || "mysql://root:root1234@localhost:3306/glamio",
   },
 });

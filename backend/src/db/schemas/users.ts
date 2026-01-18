@@ -15,8 +15,7 @@ export const users = mysqlTable("users", {
 
   username: varchar("username", { length: 256 }).notNull(),
   email: varchar("email", { length: 256 }).notNull().unique(),
-  password: varchar("password", { length: 256 }).notNull(),
-  phone: varchar("phone", { length: 15 }).notNull().unique(),
+  phone: varchar("phone", { length: 15 }).unique(),
 
   isActive: boolean("is_active").notNull().default(false),
   emailVerified: boolean("email_verified").notNull().default(false),

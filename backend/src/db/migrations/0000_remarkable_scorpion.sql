@@ -124,12 +124,18 @@ CREATE TABLE `slots` (
 	CONSTRAINT `slots_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
+CREATE TABLE `user_types` (
+	`id` bigint unsigned AUTO_INCREMENT NOT NULL,
+	`name` varchar(256) NOT NULL,
+	CONSTRAINT `user_types_id` PRIMARY KEY(`id`),
+	CONSTRAINT `uq_user_types_name` UNIQUE(`name`)
+);
+--> statement-breakpoint
 CREATE TABLE `users` (
 	`id` bigint unsigned AUTO_INCREMENT NOT NULL,
 	`username` varchar(256) NOT NULL,
 	`email` varchar(256) NOT NULL,
-	`password` varchar(256) NOT NULL,
-	`phone` varchar(15) NOT NULL,
+	`phone` varchar(15),
 	`is_active` boolean NOT NULL DEFAULT false,
 	`email_verified` boolean NOT NULL DEFAULT false,
 	`fcm_token` varchar(256),
