@@ -1,0 +1,72 @@
+import React, { useState } from "react";
+import "./Header.css";
+
+function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <>
+      <header className="header">
+        <div className="container">
+          <div className="logo">
+            GLAM<span>OUR</span>
+          </div>
+
+          <nav className="desktop-nav">
+            <a href="#home">Home</a>
+            <a href="#services">Services</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#about">About</a>
+            <button className="book-btn">Book Now</button>
+          </nav>
+
+          <div
+            className={`hamburger ${isOpen ? "active" : ""}`}
+            onClick={toggleMenu}
+          >
+            <span className="bar"></span>
+            <span className="bar"></span>
+            <span className="bar"></span>
+          </div>
+        </div>
+      </header>
+
+      <div
+        className={`sidebar-overlay ${isOpen ? "show" : ""}`}
+        onClick={toggleMenu}
+      ></div>
+
+      <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <div className="logo">
+            GLAM<span>OUR</span>
+          </div>
+        </div>
+        <nav className="sidebar-nav">
+          <a href="#home" onClick={toggleMenu}>
+            Home
+          </a>
+          <a href="#services" onClick={toggleMenu}>
+            Services
+          </a>
+          <a href="#gallery" onClick={toggleMenu}>
+            Gallery
+          </a>
+          <a href="#about" onClick={toggleMenu}>
+            About
+          </a>
+          <a href="#contact" onClick={toggleMenu}>
+            Contact
+          </a>
+          <button className="sidebar-book-btn">Book Appointment</button>
+        </nav>
+      </aside>
+    </>
+  );
+}
+
+export default Header;

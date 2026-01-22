@@ -4,6 +4,7 @@ import { auth } from "../config/firebase";
 import { googleSignInApi } from "../services/auth.service";
 
 const GoogleSignIn = () => {
+  console.log("11111111111");
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -22,7 +23,11 @@ const GoogleSignIn = () => {
     }
   };
 
-  return <button onClick={handleGoogleSignIn}>Sign in with Google</button>;
+  return (
+    <div className="screens" style={{ marginTop: "200px" }}>
+      <button onClick={handleGoogleSignIn}>Sign in with Google</button>;
+    </div>
+  );
 };
 
 export default GoogleSignIn;

@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;600&display=swap');
+
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: url('https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=2074&auto=format&fit=crop') center center/cover no-repeat;
+  padding: 0 10%;
+  overflow: hidden;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.2) 100%);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  color: #fff;
+  animation: fadeInUp 1s ease-out;
+}
+
+.hero-subtitle {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: clamp(12px, 2vw, 14px);
+  color: #d4a373;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 7vw, 85px);
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.hero-title span {
+  font-style: italic;
+  font-weight: 400;
+  color: #faedcd;
+}
+
+.hero-description {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.6;
+  margin-bottom: 35px;
+  opacity: 0.9;
+  font-weight: 300;
+  max-width: 550px;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.primary-btn, .secondary-btn {
+  padding: 14px 30px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  white-space: nowrap;
+}
+
+.primary-btn {
+  background: #d4a373;
+  color: #fff;
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.primary-btn:hover { background: #fff; color: #1a1a1a; transform: translateY(-3px); }
+.secondary-btn:hover { border-color: #fff; background: rgba(255,255,255,0.2); }
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.mouse {
+  width: 22px;
+  height: 38px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 15px;
+  position: relative;
+}
+
+.mouse::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 6px;
+  background: #fff;
+  border-radius: 2px;
+  animation: scrollAnim 2s infinite;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scrollAnim {
+  0% { opacity: 1; top: 8px; }
+  100% { opacity: 0; top: 20px; }
+}
+
+/* Tablet & Mobile Responsiveness */
+@media (max-width: 992px) {
+  .hero-banner {
+    padding: 0 5%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-banner {
+    justify-content: center;
+    text-align: center;
+    background-position: 35% center; /* Adjusts image focal point for mobile */
+  }
+
+  .hero-overlay {
+    background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 100%);
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-btns {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .primary-btn, .secondary-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .scroll-indicator {
+    display: none; /* Hide scroll icon on small screens to save space */
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 36px;
+    margin-bottom: 15px;
+  }
+  
+  .hero-description {
+    font-size: 14px;
+    margin-bottom: 25px;
+  }
+
+  .hero-banner {
+    height: 100svh; /* Uses "Small Viewport Height" for better mobile browser support */
+  }
+}
