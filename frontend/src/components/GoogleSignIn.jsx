@@ -3,8 +3,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { googleSignInApi } from "../services/auth.service";
 
-const GoogleSignIn = () => {
-  console.log("11111111111");
+function GoogleSignIn() {
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -28,6 +27,6 @@ const GoogleSignIn = () => {
       <button onClick={handleGoogleSignIn}>Sign in with Google</button>;
     </div>
   );
-};
+}
 
 export default GoogleSignIn;

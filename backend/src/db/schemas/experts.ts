@@ -30,4 +30,4 @@ export const experts = mysqlTable("experts", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
- 
+  

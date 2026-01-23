@@ -9,6 +9,8 @@ export async function getUserTypeId(userType: string) {
     .where(eq(userTypes.name, userType))
     .limit(1);
 
+  console.log("type--------------", type ? type : "no type");
+
   if (!type) {
     throw new Error("CUSTOMER user type not found");
   }

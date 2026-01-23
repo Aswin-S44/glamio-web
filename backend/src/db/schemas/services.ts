@@ -1,6 +1,7 @@
 import {
   bigint,
   int,
+  longtext,
   mysqlTable,
   timestamp,
   varchar,
@@ -14,14 +15,12 @@ export const services = mysqlTable("services", {
     .autoincrement()
     .primaryKey(),
   name: varchar("name", { length: 256 }).notNull(),
-  imageUrl: varchar("image_url", { length: 256 }).notNull().unique(),
+  imageUrl: longtext("image_url").notNull(),
   rate: int("rate").notNull().default(0),
   shopId: int("shop_id")
     .notNull()
     .references(() => shopOwners.id),
-  categoryId: int("category_id")
-    .notNull()
-    .references(() => category.id),
+  categoryId: int("category_id").references(() => category.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import expertRouter from "./routes/expert/routes";
+import shopRouter from "./routes/shops/routes";
 import customerRouter from "./routes/customer/router";
 import authRouter from "./routes/auth/routes";
 
@@ -17,7 +17,7 @@ app.use(cors());
 
 // Routes
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/expert", expertRouter);
+app.use("/api/v1/shop", shopRouter);
 app.use("/api/v1/customer", customerRouter);
 
 app.get("/", (req: Request, res: Response) => {

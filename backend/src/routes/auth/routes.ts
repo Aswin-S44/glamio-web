@@ -6,6 +6,7 @@ import authMiddleware from "../../middlewares/auth";
 const router = express.Router();
 
 router.get("/me", authMiddleware, (req, res) => {
+  console.log("==========");
   res.json({
     user: req.user,
   });

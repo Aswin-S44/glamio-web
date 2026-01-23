@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import "./Dashboard.css";
 import AddService from "../AddService/AddService";
+import SlotScreen from "../../SlotScreen/SlotScreen";
 
 function Dashboard() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -133,16 +134,8 @@ function Dashboard() {
         );
       case "slots":
         return (
-          <div className="view-container animate-fade-in">
-            <div className="slots-grid">
-              {["09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM"].map((time) => (
-                <div key={time} className="slot-pill">
-                  <span>{time}</span>
-                  <button className="btn-remove">x</button>
-                </div>
-              ))}
-              <button className="btn-add-slot">+ Add Slot</button>
-            </div>
+          <div>
+            <SlotScreen />
           </div>
         );
       case "services":

@@ -1,10 +1,4 @@
-import {
-  bigint,
-  int,
-  mysqlTable,
-  timestamp,
-  varchar,
-} from "drizzle-orm/mysql-core";
+import { bigint, int, mysqlTable, timestamp } from "drizzle-orm/mysql-core";
 
 import { shopOwners } from "./shop-owners";
 import { category } from "./category";
