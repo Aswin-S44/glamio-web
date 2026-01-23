@@ -9,6 +9,11 @@
     display: flex;
     align-items: center;
     z-index: 1000;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .container {
@@ -20,6 +25,10 @@
     align-items: center;
 }
 
+.container.header-container {
+    max-width: 100%;
+}
+
 .logo {
     font-size: 24px;
     font-weight: 800;
@@ -28,7 +37,7 @@
 }
 
 .logo span {
-    color: var(--primary);
+    color: #d4a373;
     font-weight: 300;
 }
 
@@ -44,6 +53,7 @@
     font-weight: 500;
     font-size: 18px;
     transition: var(--transition);
+    font-family: 'Playfair Display', serif;
 }
 
 .desktop-nav a:hover {
@@ -59,11 +69,23 @@
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
+    font-family: 'Playfair Display', serif;
 }
 
 .book-btn:hover {
-    background: var(--primary);
+    background: #d4a373;
     transform: translateY(-2px);
+}
+
+.book-btn.sign-in {
+    background: #d4a373;
+    transform: translateY(-2px);
+}
+
+.book-btn.sign-in:hover {
+    transition: var(--transition);
+    background: var(--dark);
+    color: white;
 }
 
 .hamburger {
@@ -146,6 +168,23 @@
     border-radius: 8px;
     font-weight: 600;
 }
+
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+}
+
+.header.hide {
+    transform: translateY(-100%);
+}
+
+.header.show {
+    transform: translateY(0);
+}
+
 
 @media (max-width: 768px) {
     .desktop-nav {

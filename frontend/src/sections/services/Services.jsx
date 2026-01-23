@@ -1,5 +1,6 @@
 import React from "react";
 import "./Services.css";
+import imgNew from "../../components/Media/Images/NailArtistry.jpg";
 
 const servicesData = [
   {
@@ -36,7 +37,7 @@ const servicesData = [
       "Luxury manicures, gel extensions, and creative nail art using high-end organic polishes.",
     price: "Starts from $30",
     image:
-      "https://images.unsplash.com/photo-1604654894610-df4906821603?q=80&w=1974&auto=format&fit=crop",
+      imgNew,
   },
 ];
 
