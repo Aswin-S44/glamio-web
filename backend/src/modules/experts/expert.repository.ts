@@ -5,7 +5,7 @@ import { eq, and } from "drizzle-orm";
 export const createExpertDB = (data: any) => {
   return db.insert(experts).values(data);
 };
-
+ 
 export const getExpertsByShopId = (shopId: number) => {
   return db.select().from(experts).where(eq(experts.shopId, shopId));
 };

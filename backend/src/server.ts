@@ -8,6 +8,7 @@ import serviceRouter from "./modules/services/service.routes";
 import expertRouter from "./modules/experts/expert.routes";
 import offerRouter from "./modules/offers/offer.routes";
 import slotRouter from "./modules/slots/slot.routes";
+import appointmentRouter from "./modules/appointments/appointment.routes";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/expert", expertRouter);
 app.use("/api/v1/offers", offerRouter);
 app.use("/api/v1/slots", slotRouter);
+app.use("/api/v1/appointments", appointmentRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("API is working");
