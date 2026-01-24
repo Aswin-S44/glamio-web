@@ -2,19 +2,40 @@ import React from 'react'
 import './SignIn.css'
 import GoogleImg from '../../../components/Media/Images/google.png';
 import AppleImg from '../../../components/Media/Images/apple.png'
-import signInImg from '../../../components/Media/Images/signInImg.jpg'
+import signInImg from '../../../components/Media/Images/signInImg.webp'
 import { useNavigate } from 'react-router-dom';
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
+import { auth } from "../../../config/firebase";
+import { googleSignInApi } from "../../../services/auth.service";
+import GoogleSignIn from '../../../components/GoogleSignIn';
+
 
 function SignIn() {
 
-const navigate = useNavigate();
+    const navigate = useNavigate();
+
+    const handleGoogleSignIn = async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+            const idToken = await result.user.getIdToken();
+            const data = await googleSignInApi(idToken);
+            localStorage.setItem("token", data.token);
+
+            console.log("User:", data.user);
+        } catch (error) {
+            console.error("Google sign-in failed", error);
+        }
+    };
+
 
     return (
         <div className='signIn'>
             <div className='container'>
                 <div className='row d-flex align-items-center justify-content-center'>
                     <div className='col-md-6'>
-                        <img src={signInImg} style={{ width: '100%', height: '100%' }} className='signInImg'/>
+                        <img src={signInImg} style={{ width: '100%', height: '100%' }} className='signInImg' />
                     </div>
                     <div className='col-md-6'>
                         <form class="form">
@@ -35,30 +56,24 @@ const navigate = useNavigate();
                             <div class="flex-row">
                                 <div>
                                     <input type="radio" />
-                                    <label style={{paddingLeft:"10px"}}>Remember me </label>
+                                    <label style={{ paddingLeft: "10px" }}>Remember me </label>
                                 </div>
                                 <span class="span">Forgot password?</span>
                             </div>
                             <button class="button-submit">Sign In</button>
-                            <p class="p">Don't have an account? <span class="span" onClick={()=> navigate("/signup")}>Sign Up</span>
-
+                            <p class="p">Don't have an account? <span class="span" onClick={() => navigate("/signup")}>Sign Up</span>
                             </p><p class="p line">Or With</p>
-
                             <div class="flex-row">
-                                <button class="btn google">
+                                <button onClick={(e) => { e.preventDefault(); handleGoogleSignIn() }} class="btn google">
                                     <img src={GoogleImg} style={{ width: "auto%", height: "30px" }} />
-
                                     Google
-
                                 </button><button class="btn apple">
                                     <img src={AppleImg} style={{ width: "auto%", height: "30px" }} />
                                     Apple
-
                                 </button></div></form>
                     </div>
                 </div>
             </div>
-
         </div>
     )
 }
