@@ -22,6 +22,7 @@ import {
 import "./Dashboard.css";
 import AddService from "../AddService/AddService";
 import SlotScreen from "../../SlotScreen/SlotScreen";
+import ServicesScreen from "../../ServicesScreen/ServicesScreen";
 
 function Dashboard() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -47,8 +48,6 @@ function Dashboard() {
     setServiceView("list");
     setIsMobileOpen(false);
   };
-
- 
 
   const renderContent = () => {
     switch (activeTab) {
@@ -142,27 +141,7 @@ function Dashboard() {
         return serviceView === "list" ? (
           <div className="view-container animate-fade-in">
             <div className="content-card">
-              <div className="table-header">
-                <h3>Active Services</h3>
-                <button
-                  className="add-btn-main"
-                  onClick={() => setServiceView("add")}
-                >
-                  <Plus size={18} /> Add Service
-                </button>
-              </div>
-              <div className="services-grid">
-                <div className="service-item-card">
-                  <div className="s-img"></div>
-                  <div className="s-info">
-                    <h4>Hair Coloring</h4>
-                    <p>$80.00 • 60 Mins</p>
-                  </div>
-                  <button className="s-delete">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
+              <ServicesScreen />
             </div>
           </div>
         ) : (
