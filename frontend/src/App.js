@@ -8,25 +8,24 @@ import SelectSlotScreen from "./screens/customer/SelectSlotScreen/SelectSlotScre
 import BookingSummaryScreen from "./screens/customer/BookingSummaryScreen/BookingSummaryScreen";
 import Footer from "./components/Footer/Footer";
 import Dashboard from "./screens/experts/Dashboard/Dashboard";
-import GoogleSignIn from "./components/GoogleSignIn";
-import { AuthProvider } from "./context/AuthContext";
+import SignIn from "./screens/login/signIn/SignIn";
+import SignUp from "./screens/login/signUp/SignUp";
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<HomeScreen />} />
-          <Route path="/signin" element={<GoogleSignIn />} />
-          <Route path="/parlour" element={<ParlorDetailsScreen />} />
-          <Route path="/parlour/service" element={<SelectSlotScreen />} />
-          <Route path="/summary" element={<BookingSummaryScreen />} />
-          <Route path="/shop/dashboard" element={<Dashboard />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
-    </AuthProvider>
+    <BrowserRouter>
+     
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/parlour" element={<ParlorDetailsScreen />} />
+        <Route path="/parlour/service" element={<SelectSlotScreen />} />
+        <Route path="/summary" element={<BookingSummaryScreen />} />
+        <Route path="/shop/dashboard" element={<Dashboard />} />
+      </Routes>
+    
+    </BrowserRouter>
   );
 }
 
