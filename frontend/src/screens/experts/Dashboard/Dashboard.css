@@ -25,6 +25,8 @@
   
   .collapsed .side-menu { width: var(--sidebar-c); }
   
+
+
   .menu-header {
     height: 80px;
     display: flex;

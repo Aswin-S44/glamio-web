@@ -1,7 +1,8 @@
-import express, { Request, Response } from "express";
-import googleSignIn from "../../controllers/customers/login";
-import createUser from "../../controllers/auth/createUser";
-import authMiddleware from "../../middlewares/auth";
+import express from "express";
+
+import authMiddleware from "../../middlewares/auth.middleware";
+import { googleSignIn } from "./auth.controller";
+import { createUser } from "../users/user.repository";
 
 const router = express.Router();
 

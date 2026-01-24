@@ -82,14 +82,13 @@ CREATE TABLE `offers` (
 CREATE TABLE `services` (
 	`id` bigint unsigned AUTO_INCREMENT NOT NULL,
 	`name` varchar(256) NOT NULL,
-	`image_url` varchar(256) NOT NULL,
+	`image_url` longtext NOT NULL,
 	`rate` int NOT NULL DEFAULT 0,
 	`shop_id` int NOT NULL,
-	`category_id` int NOT NULL,
+	`category_id` int,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
-	CONSTRAINT `services_id` PRIMARY KEY(`id`),
-	CONSTRAINT `services_image_url_unique` UNIQUE(`image_url`)
+	CONSTRAINT `services_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
 CREATE TABLE `shop_owners` (

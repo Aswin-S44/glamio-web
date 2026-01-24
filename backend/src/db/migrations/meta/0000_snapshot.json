@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "809f4927-8a6a-47e8-a9c0-f2d5d4c5a059",
+  "id": "7ed46f46-4c25-4a05-b105-d07b70ef7993",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "appointment_status": {
@@ -707,7 +707,7 @@
         },
         "image_url": {
           "name": "image_url",
-          "type": "varchar(256)",
+          "type": "longtext",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -731,7 +731,7 @@
           "name": "category_id",
           "type": "int",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at": {
@@ -789,14 +789,7 @@
           ]
         }
       },
-      "uniqueConstraints": {
-        "services_image_url_unique": {
-          "name": "services_image_url_unique",
-          "columns": [
-            "image_url"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "checkConstraint": {}
     },
     "shop_owners": {

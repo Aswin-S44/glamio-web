@@ -1,0 +1,512 @@
+:root {
+    --primary: #d4a373;
+    --secondary: #faedcd;
+    --dark: #1a1a1a;
+    --light: #ffffff;
+    --gray-bg: #fdfaf7;
+    --transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+    --shadow-sm: 0 4px 20px rgba(0,0,0,0.03);
+    --shadow-lg: 0 20px 40px rgba(212, 163, 115, 0.15);
+  }
+  
+  .sv-page {
+    min-height: 100vh;
+    background-color: var(--gray-bg);
+    color: var(--dark);
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .sv-header {
+    background: var(--light);
+    padding: 1.5rem 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(212, 163, 115, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  
+  .sv-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .sv-back-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid var(--secondary);
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    cursor: pointer;
+  }
+  
+  .sv-header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  
+  .sv-header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #888;
+  }
+  
+  .sv-add-btn {
+    background: var(--dark);
+    color: var(--light);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .sv-add-btn:hover {
+    background: var(--primary);
+    transform: translateY(-2px);
+  }
+  
+  .sv-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 6%;
+  }
+  
+  .sv-filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    gap: 2rem;
+  }
+  
+  .sv-search {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .sv-search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+  }
+  
+  .sv-search input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 15px;
+    border: 1px solid var(--secondary);
+    background: var(--light);
+    outline: none;
+    font-size: 0.95rem;
+  }
+  
+  .sv-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--secondary);
+    padding: 0.4rem;
+    border-radius: 15px;
+  }
+  
+  .sv-tab-item {
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    border: none;
+    background: none;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .sv-tab-item.active {
+    background: var(--light);
+    color: var(--dark);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .sv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem;
+  }
+  
+  .sv-card {
+    background: var(--light);
+    border-radius: 25px;
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border: 1px solid transparent;
+  }
+  
+  .sv-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .sv-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  
+  .sv-icon-box {
+    width: 55px;
+    height: 55px;
+    background: var(--secondary);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+  }
+  
+  .sv-price-badge {
+    background: var(--dark);
+    color: var(--light);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  
+  .sv-category-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .sv-card-body h3 {
+    margin: 0.5rem 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+  }
+  
+  .sv-card-body p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  
+  .sv-card-foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--secondary);
+  }
+  
+  .sv-duration {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #888;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  
+  .sv-actions {
+    display: flex;
+    gap: 0.8rem;
+  }
+  
+  .sv-act-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+  }
+  
+  .sv-act-btn.edit { background: #f0f7ff; color: #0070f3; }
+  .sv-act-btn.delete { background: #fff0f0; color: #ff0000; }
+  
+  .sv-add-placeholder {
+    border: 2px dashed var(--secondary);
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--primary);
+  }
+  
+  .sv-add-placeholder:hover {
+    background: var(--secondary);
+    border-style: solid;
+  }
+  
+  .sv-plus-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .sv-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.4);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1.5rem;
+  }
+  
+  .sv-modal {
+    background: var(--light);
+    width: 100%;
+    max-width: 550px;
+    border-radius: 30px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .sv-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+  }
+  
+  .sv-close { background: none; border: none; cursor: pointer; color: #ccc; }
+  
+  .sv-input-group { margin-bottom: 1.5rem; }
+  .sv-input-group label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.85rem; }
+  .sv-input-group input, .sv-input-group select, .sv-input-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--secondary);
+    border-radius: 15px;
+    outline: none;
+    background: var(--gray-bg);
+  }
+  
+  .sv-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  
+  .sv-modal-footer {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .sv-btn-full {
+    flex: 2;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 1.2rem;
+    border-radius: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  .sv-btn-ghost {
+    flex: 1;
+    background: #eee;
+    border: none;
+    padding: 1.2rem;
+    border-radius: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .sv-header { padding: 1rem 5%; }
+    .sv-filter-bar { flex-direction: column; align-items: stretch; }
+    .sv-grid { grid-template-columns: 1fr; }
+  }
+
+  :root {
+    --primary: #d4a373;
+    --secondary: #faedcd;
+    --dark: #1a1a1a;
+    --light: #ffffff;
+    --gray-bg: #fdfaf7;
+    --transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+    --shadow-lux: 0 20px 40px rgba(212, 163, 115, 0.15);
+  }
+  
+  .sv-page {
+    min-height: 100vh;
+    background: var(--gray-bg);
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .sv-header {
+    background: var(--light);
+    padding: 1.5rem 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--secondary);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  
+  .sv-nav-brand { display: flex; align-items: center; gap: 1.2rem; }
+  .sv-back-circle {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid var(--secondary); background: none;
+    color: var(--primary); cursor: pointer;
+  }
+  
+  .sv-header h1 { margin: 0; font-size: 1.5rem; font-weight: 800; }
+  .sv-header p { margin: 0; font-size: 0.8rem; color: #888; }
+  
+  .sv-add-btn {
+    background: var(--dark); color: var(--light);
+    border: none; padding: 0.8rem 1.4rem; border-radius: 12px;
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; cursor: pointer; transition: var(--transition);
+  }
+  
+  .sv-add-btn:hover { background: var(--primary); transform: translateY(-2px); }
+  
+  .sv-content { max-width: 1400px; margin: 0 auto; padding: 2rem 6%; }
+  
+  .sv-filter-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 2.5rem; gap: 2rem;
+  }
+  
+  .sv-search { position: relative; flex: 1; max-width: 400px; }
+  .sv-search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+  .sv-search input {
+    width: 100%; padding: 0.9rem 1rem 0.9rem 3rem;
+    border-radius: 15px; border: 1px solid var(--secondary);
+    background: var(--light); outline: none;
+  }
+  
+  .sv-tabs { display: flex; gap: 5px; background: var(--secondary); padding: 5px; border-radius: 15px; }
+  .sv-tab-item {
+    padding: 0.6rem 1.2rem; border-radius: 10px; border: none;
+    background: none; font-weight: 700; color: var(--primary); cursor: pointer;
+  }
+  .sv-tab-item.active { background: var(--light); color: var(--dark); }
+  
+  .sv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+  
+  .sv-card {
+    background: var(--light); border-radius: 25px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03); transition: var(--transition);
+    border: 1px solid transparent; display: flex; flex-direction: column;
+  }
+  
+  .sv-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: var(--shadow-lux); }
+  
+  .sv-card-img-wrapper { height: 200px; position: relative; background: var(--secondary); overflow: hidden; }
+  .sv-main-img { width: 100%; height: 100%; object-fit: cover; }
+  .sv-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--primary); }
+  .sv-price-tag {
+    position: absolute; bottom: 15px; right: 15px;
+    background: var(--dark); color: white; padding: 8px 15px;
+    border-radius: 12px; font-weight: 800;
+  }
+  
+  .sv-card-body { padding: 1.5rem; flex: 1; }
+  .sv-category-label { font-size: 0.7rem; text-transform: uppercase; color: var(--primary); font-weight: 800; letter-spacing: 1px; }
+  .sv-card-body h3 { margin: 8px 0; font-size: 1.3rem; }
+  .sv-card-body p { color: #666; font-size: 0.85rem; line-height: 1.5; }
+  
+  .sv-card-foot { padding: 1rem 1.5rem; border-top: 1px solid #f9f9f9; display: flex; justify-content: space-between; align-items: center; }
+  .sv-meta { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #888; font-weight: 600; }
+  .sv-actions { display: flex; gap: 8px; }
+  .sv-circle-btn {
+    width: 35px; height: 35px; border-radius: 50%; border: none;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+  }
+  .sv-circle-btn.edit { background: #f0f7ff; color: #0070f3; }
+  .sv-circle-btn.delete { background: #fff1f2; color: #e11d48; }
+  
+  .sv-add-placeholder {
+    border: 2px dashed var(--secondary); border-radius: 25px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 350px; cursor: pointer; color: var(--primary);
+  }
+  .sv-plus-ring { width: 60px; height: 60px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+  
+  .sv-modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000;
+  }
+  
+  .sv-modal-pane {
+    background: var(--light); width: 95%; max-width: 500px;
+    border-radius: 30px; padding: 2rem; box-shadow: var(--shadow-lux);
+  }
+  
+  .sv-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+  .sv-close-btn { background: none; border: none; cursor: pointer; color: #ccc; }
+  
+  .sv-upload-section { margin-bottom: 1.5rem; text-align: center; }
+  .sv-upload-section label { display: block; text-align: left; font-weight: 700; margin-bottom: 10px; font-size: 0.85rem; }
+  .sv-upload-trigger {
+    width: 100%; height: 120px; border: 2px dashed var(--secondary);
+    border-radius: 15px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; color: var(--primary); cursor: pointer;
+  }
+  .sv-preview-container { width: 100%; height: 120px; border-radius: 15px; position: relative; overflow: hidden; }
+  .sv-img-preview { width: 100%; height: 100%; object-fit: cover; }
+  .sv-img-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: white; opacity: 0; transition: 0.3s; }
+  .sv-preview-container:hover .sv-img-overlay { opacity: 1; }
+  
+  .sv-input-group { margin-bottom: 1.2rem; }
+  .sv-input-group label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.85rem; }
+  .sv-input-group input, .sv-input-group textarea {
+    width: 100%; padding: 0.9rem; border: 1px solid var(--secondary);
+    border-radius: 12px; background: var(--gray-bg); outline: none; font-family: inherit;
+  }
+  
+  .sv-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  
+  .sv-modal-footer { display: flex; gap: 1rem; margin-top: 1.5rem; }
+  .sv-btn-save { flex: 2; background: var(--primary); color: white; border: none; padding: 1rem; border-radius: 12px; font-weight: 700; cursor: pointer; }
+  .sv-btn-cancel { flex: 1; background: #eee; border: none; padding: 1rem; border-radius: 12px; font-weight: 700; cursor: pointer; }
+  
+  @media (max-width: 768px) {
+    .sv-filter-bar { flex-direction: column; align-items: stretch; gap: 1rem; }
+    .sv-tabs { overflow-x: auto; white-space: nowrap; }
+  }

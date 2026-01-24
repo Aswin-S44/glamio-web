@@ -14,7 +14,7 @@ import SignUp from "./screens/login/signUp/SignUp";
 function App() {
   return (
     <BrowserRouter>
-      <Header />
+     
       <Routes>
         <Route path="/" element={<HomeScreen />} />
         <Route path="/signin" element={<SignIn />} />
@@ -22,9 +22,9 @@ function App() {
         <Route path="/parlour" element={<ParlorDetailsScreen />} />
         <Route path="/parlour/service" element={<SelectSlotScreen />} />
         <Route path="/summary" element={<BookingSummaryScreen />} />
-        <Route path="/expert/dashboard" element={<Dashboard />} />
+        <Route path="/shop/dashboard" element={<Dashboard />} />
       </Routes>
-      <Footer />
+    
     </BrowserRouter>
   );
 }

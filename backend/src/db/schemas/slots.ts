@@ -24,7 +24,8 @@ export const slots = mysqlTable("slots", {
   bookedCount: int("booked_count").notNull().default(0),
   isAvailable: boolean("is_available").notNull().default(true),
   isRecurring: boolean("is_recurring").notNull().default(false),
-  contactPhone: varchar("contact_phone", { length: 15 }),
+  // contactPhone: varchar("contact_phone", { length: 15 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
+ 

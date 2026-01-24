@@ -92,6 +92,9 @@
   height: 50px;
   width: 100%;
   cursor: pointer;
+  display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .signIn .p {
