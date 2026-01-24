@@ -8,7 +8,7 @@ import {
   decimal,
   json,
 } from "drizzle-orm/mysql-core";
-import { users } from "./users"; 
+import { users } from "./users";
 
 export const shopOwners = mysqlTable("shop_owners", {
   id: bigint("id", { mode: "number", unsigned: true })
@@ -27,4 +27,5 @@ export const shopOwners = mysqlTable("shop_owners", {
   parlourName: varchar("parlour_name", { length: 256 }).notNull(),
   placeId: varchar("place_id", { length: 100 }),
   totalRating: int("total_rating").notNull().default(0),
+  isProfileCompleted: boolean("is_profile_completed").default(false),
 });

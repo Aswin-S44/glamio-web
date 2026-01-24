@@ -8,6 +8,13 @@
       "when": 1769091781556,
       "tag": "0000_noisy_magik",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1769264102069,
+      "tag": "0001_gigantic_warlock",
+      "breakpoints": true
     }
   ]
 }
