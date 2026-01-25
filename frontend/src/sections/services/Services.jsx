@@ -40,7 +40,7 @@ const servicesData = [
       imgNew,
   },
 ];
-
+ 
 function Services() {
   return (
     <section className="services" id="services">

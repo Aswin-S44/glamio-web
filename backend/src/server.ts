@@ -9,6 +9,8 @@ import expertRouter from "./modules/experts/expert.routes";
 import offerRouter from "./modules/offers/offer.routes";
 import slotRouter from "./modules/slots/slot.routes";
 import appointmentRouter from "./modules/appointments/appointment.routes";
+import shopsRouter from "./modules/shops/shop.routes";
+import customerRouter from "./modules/customers/customer.routes";
 
 dotenv.config();
 
@@ -28,6 +30,8 @@ app.use("/api/v1/expert", expertRouter);
 app.use("/api/v1/offers", offerRouter);
 app.use("/api/v1/slots", slotRouter);
 app.use("/api/v1/appointments", appointmentRouter);
+app.use("/api/v1/shops", shopsRouter);
+app.use("/api/v1/customer", customerRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("API is working");

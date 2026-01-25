@@ -38,3 +38,18 @@ export class SlotRepository {
     return db.select().from(slots).where(eq(slots.shopId, shopId));
   }
 }
+
+export const findSlotByIdAndShop = (id: number, shopId: number) => {
+  return db
+    .select({ id: slots.id })
+    .from(slots)
+    .where(and(eq(slots.id, id), eq(slots.shopId, shopId)));
+};
+
+export const updateSlotDB = (id: number, data: any) => {
+  return db.update(slots).set(data).where(eq(slots.id, id));
+};
+
+export const deleteSlotDB = (id: number) => {
+  return db.delete(slots).where(eq(slots.id, id));
+};

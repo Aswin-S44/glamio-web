@@ -1,9 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ParlorDetailsScreen.css";
+import { useParams } from "react-router-dom";
+import { getReviews } from "../../../services/google.services";
 
 const ParlorDetailsScreen = () => {
   const [activeTab, setActiveTab] = useState("services");
   const [selectedImg, setSelectedImg] = useState(null);
+  const { id } = useParams();
+
+  const [parlour, setParlour] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    const fetchParlour = async () => {
+      setLoading(true);
+      const res = await fetch(
+        `http://localhost:5000/api/v1/customer/shop/${id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setLoading(false);
+      if (!res.ok) {
+        throw new Error("Failed to fetch parlour details");
+      }
+
+      const data = await res.json();
+      if (data) {
+        setParlour(data);
+      }
+    };
+    fetchParlour();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        let res = await getReviews(parlour?.shop?.placeId);
+        console.log("reviewa------------", res);
+      } catch (error) {
+        console.log("Error fetching reviews : ", error);
+      }
+    };
+    fetchReviews();
+  }, [parlour]);
 
   const parlorData = {
     name: "Glow & Grace Studio",
@@ -57,127 +101,142 @@ const ParlorDetailsScreen = () => {
   return (
     <div className="screens">
       <div className="details-container">
-        <nav className="breadcrumbs">
-          <a href="/">Home</a> <span>/</span>
-          <a href="/parlors">Parlors</a> <span>/</span>
-          <span className="current">{parlorData.name}</span>
-        </nav>
+        <>
+          {loading ? (
+            <>Loading....</>
+          ) : (
+            <>
+              {console.log("parlour--------------", parlour)}
+              <nav className="breadcrumbs">
+                <a href="/">Home</a> <span>/</span>
+                <a href="/parlors">Parlors</a> <span>/</span>
+                <span className="current">{parlorData.name}</span>
+              </nav>
 
-        <section className="hero-section">
-          <div className="gallery-grid">
-            <div
-              className="main-image"
-              onClick={() => setSelectedImg(parlorData.images[0])}
-            >
-              <img src={parlorData.images[0]} alt="Parlor Main" />
-            </div>
-            <div className="side-images">
-              {parlorData.images.slice(1).map((img, idx) => (
-                <div
-                  key={idx}
-                  className="thumb"
-                  onClick={() => setSelectedImg(img)}
-                >
-                  <img src={img} alt={`Thumb ${idx}`} />
+              <section className="hero-section">
+                <div className="gallery-grid">
+                  <div
+                    className="main-image"
+                    onClick={() => setSelectedImg(parlorData.images[0])}
+                  >
+                    <img src={parlorData.images[0]} alt="Parlor Main" />
+                  </div>
+                  <div className="side-images">
+                    {parlorData.images.slice(1).map((img, idx) => (
+                      <div
+                        key={idx}
+                        className="thumb"
+                        onClick={() => setSelectedImg(img)}
+                      >
+                        <img src={img} alt={`Thumb ${idx}`} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="info-card">
-            <h1>{parlorData.name}</h1>
-            <div className="rating">
-              <span className="stars">★★★★★</span>
-              <span className="count">({parlorData.reviewsCount} Reviews)</span>
-            </div>
-            <p className="description">{parlorData.description}</p>
-            <button className="btn-primary main-book">
-              Book Appointment Now
-            </button>
-          </div>
-        </section>
+                <div className="info-card">
+                  <h1>{parlour?.shop?.parlourName}</h1>
+                  <div className="rating">
+                    <span className="stars">★★★★★</span>
+                    <span className="count">
+                      ({parlorData.reviewsCount} Reviews)
+                    </span>
+                  </div>
+                  <p className="description">{parlour?.shop?.about}</p>
+                  <button className="btn-primary main-book">
+                    Book Appointment Now
+                  </button>
+                </div>
+              </section>
 
-        <div className="tabs-container">
-          <div className="tab-header">
-            <button
-              className={activeTab === "services" ? "active" : ""}
-              onClick={() => setActiveTab("services")}
-            >
-              Services
-            </button>
-            <button
-              className={activeTab === "reviews" ? "active" : ""}
-              onClick={() => setActiveTab("reviews")}
-            >
-              Reviews
-            </button>
-            <button
-              className={activeTab === "offers" ? "active" : ""}
-              onClick={() => setActiveTab("offers")}
-            >
-              Offers
-            </button>
-          </div>
+              <div className="tabs-container">
+                <div className="tab-header">
+                  <button
+                    className={activeTab === "services" ? "active" : ""}
+                    onClick={() => setActiveTab("services")}
+                  >
+                    Services
+                  </button>
+                  <button
+                    className={activeTab === "reviews" ? "active" : ""}
+                    onClick={() => setActiveTab("reviews")}
+                  >
+                    Reviews
+                  </button>
+                  <button
+                    className={activeTab === "offers" ? "active" : ""}
+                    onClick={() => setActiveTab("offers")}
+                  >
+                    Offers
+                  </button>
+                </div>
 
-          <div className="tab-content">
-            {activeTab === "services" && (
-              <div className="services-list">
-                {parlorData.services.map((service) => (
-                  <div key={service.id} className="service-item">
-                    <div className="service-info">
-                      <h3>{service.name}</h3>
-                      <span>
-                        {service.duration} • {service.price}
-                      </span>
+                <div className="tab-content">
+                  {activeTab === "services" && (
+                    <div className="services-list">
+                      {parlour?.services?.length == 0 ? (
+                        <>No services available</>
+                      ) : (
+                        parlour?.services?.map((service) => (
+                          <div key={service.id} className="service-item">
+                            <div className="service-info">
+                              <h3>{service.name}</h3>
+                              <span>
+                                {service.duration} • {service.price}
+                              </span>
+                            </div>
+                            <button
+                              className="btn-outline"
+                              onClick={() => {
+                                window.location.href =
+                                  "/parlour/service?category=hair_cut";
+                              }}
+                            >
+                              Book
+                            </button>
+                          </div>
+                        ))
+                      )}
                     </div>
-                    <button
-                      className="btn-outline"
-                      onClick={() => {
-                        window.location.href =
-                          "/parlour/service?category=hair_cut";
-                      }}
-                    >
-                      Book
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                  )}
 
-            {activeTab === "reviews" && (
-              <div className="reviews-list">
-                {parlorData.reviews.map((review) => (
-                  <div key={review.id} className="review-item">
-                    <strong>{review.user}</strong>
-                    <div className="review-stars">
-                      {"★".repeat(review.rating)}
+                  {activeTab === "reviews" && (
+                    <div className="reviews-list">
+                      {parlorData.reviews.map((review) => (
+                        <div key={review.id} className="review-item">
+                          <strong>{review.user}</strong>
+                          <div className="review-stars">
+                            {"★".repeat(review.rating)}
+                          </div>
+                          <p>{review.comment}</p>
+                        </div>
+                      ))}
                     </div>
-                    <p>{review.comment}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+                  )}
 
-            {activeTab === "offers" && (
-              <div className="offers-list">
-                {parlorData.offers.map((offer) => (
-                  <div key={offer.id} className="offer-card">
-                    <h4>{offer.title}</h4>
-                    <div className="discount">{offer.discount}</div>
-                    <code>Code: {offer.code}</code>
-                  </div>
-                ))}
+                  {activeTab === "offers" && (
+                    <div className="offers-list">
+                      {parlorData.offers.map((offer) => (
+                        <div key={offer.id} className="offer-card">
+                          <h4>{offer.title}</h4>
+                          <div className="discount">{offer.discount}</div>
+                          <code>Code: {offer.code}</code>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        </div>
 
-        {selectedImg && (
-          <div className="lightbox" onClick={() => setSelectedImg(null)}>
-            <img src={selectedImg} alt="Enlarged view" />
-            <span className="close">&times;</span>
-          </div>
-        )}
+              {selectedImg && (
+                <div className="lightbox" onClick={() => setSelectedImg(null)}>
+                  <img src={selectedImg} alt="Enlarged view" />
+                  <span className="close">&times;</span>
+                </div>
+              )}
+            </>
+          )}
+        </>
       </div>
     </div>
   );

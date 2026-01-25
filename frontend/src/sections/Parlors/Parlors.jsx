@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Parlors.css";
 
 const parlorsData = [
@@ -42,6 +42,25 @@ const parlorsData = [
 
 function Parlors() {
   const [activeTab, setActiveTab] = useState("All");
+  const [shops, setShops] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchShops = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/v1/customer/shops");
+        const data = await res.json();
+        if (data && data.shops) {
+          setShops(data.shops);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchShops();
+  }, []);
 
   const filteredParlors =
     activeTab === "All"
@@ -50,6 +69,7 @@ function Parlors() {
 
   return (
     <section className="parlors-section">
+      {console.log("shops-----------", shops)}
       <div className="parlors-container">
         <div className="parlors-header">
           <span className="subtitle">Our Branches</span>
@@ -68,16 +88,25 @@ function Parlors() {
         </div>
 
         <div className="parlor-grid">
-          {filteredParlors.map((parlor) => (
-            <div key={parlor.id} className="parlor-card">
+          {shops.map((parlor, index) => (
+            <div
+              key={parlor.id}
+              className="parlor-card"
+              onClick={() =>
+                (window.location.href = `/parlour/${parlor?.shop?.id}`)
+              }
+            >
               <div className="parlor-img">
-                <img src={parlor.image} alt={parlor.name} />
-                <div className="rating">★ {parlor.rating}</div>
+                <img
+                  src={parlor?.user?.profileImage}
+                  alt={parlor?.shop?.parlourName}
+                />
+                <div className="rating">★ {parlor?.shop?.totalRating}</div>
               </div>
               <div className="parlor-details">
-                <span className="location-tag">{parlor.location}</span>
-                <h3>{parlor.name}</h3>
-                <p>{parlor.address}</p>
+                {/* <span className="location-tag">{parlor.location}</span> */}
+                <h3>{parlor?.shop?.parlourName}</h3>
+                <p>{parlor?.shop?.address}</p>
                 <button className="visit-btn">Book At This Branch</button>
               </div>
             </div>

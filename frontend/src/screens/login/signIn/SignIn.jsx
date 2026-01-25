@@ -22,9 +22,29 @@ function SignIn() {
       const data = await googleSignInApi(idToken);
       console.log("DDATA=============", data.data);
       localStorage.setItem("token", data.data.token);
-      navigate("/shop/dashboard");
+      // navigate("/shop/dashboard");
+      let user = data.data.user;
 
       console.log("User:", data.user);
+      let userType = "CUSTOMER";
+
+      let userData = {
+        email: user.email,
+        username: user.name,
+        profileImage: user.picture,
+        userType,
+      };
+
+      const res = await fetch("http://localhost:5000/api/v1/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      // const createdUser = await res.json();
+      // console.log("CRETED USER--------", createdUser);
     } catch (error) {
       console.error("Google sign-in failed", error);
     }

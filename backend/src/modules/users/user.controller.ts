@@ -3,6 +3,7 @@ import { createUserService } from "./user.service";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
+    console.log("BODY==============", req.body);
     const result = await createUserService(req.body);
 
     res.status(201).json({

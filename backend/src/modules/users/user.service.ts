@@ -1,22 +1,34 @@
 import jwt from "jsonwebtoken";
-import { usersTypes } from "../../constants/constants";
+import {
+  DEFAULT_CUSTOMER_ID,
+  DEFAULT_SHOP_ID,
+  usersTypes,
+} from "../../constants/constants";
 import { getUserTypeId } from "../../utils/getUserTypeId";
 import { createUser, findUserByEmail } from "./user.repository";
 import { CreateUserPayload } from "./user.types";
 
 export const createUserService = async (payload: CreateUserPayload) => {
-  const { email, username, profileImage } = payload;
+  const { email, username, profileImage, userType } = payload;
 
   if (!email || !username) {
     throw new Error("email and username are required");
   }
 
+  let token = null;
+
   const existingUser = await findUserByEmail(email);
   if (existingUser) {
+    console.log("existingUser------------", existingUser);
     throw new Error("User already exists with this email");
   }
 
-  const userTypeId = await getUserTypeId(usersTypes.EXPERT.name);
+  const userTypeId =
+    userType === "customer"
+      ? DEFAULT_CUSTOMER_ID
+      : userType === "shop"
+      ? DEFAULT_SHOP_ID
+      : DEFAULT_CUSTOMER_ID;
 
   await createUser({
     email,
@@ -25,7 +37,7 @@ export const createUserService = async (payload: CreateUserPayload) => {
     userTypeId,
   });
 
-  const token = jwt.sign({ email }, process.env.JWT_SECRET as string, {
+  token = jwt.sign({ email }, process.env.JWT_SECRET  as string, {
     expiresIn: "30d",
   });
 

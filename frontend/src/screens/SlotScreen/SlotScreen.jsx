@@ -104,7 +104,7 @@ function SlotScreen() {
         : "http://localhost:5000/api/v1/slots";
 
       const res = await fetch(url, {
-        method: editingSlot ? "PUT" : "POST",
+        method: editingSlot ? "PATCH" : "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`,
