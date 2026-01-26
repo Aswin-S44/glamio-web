@@ -96,7 +96,7 @@
   .sv-search {
     position: relative;
     flex: 1;
-    max-width: 400px;
+    max-width: 100% !important;
   }
   
   .sv-search-icon {
@@ -115,6 +115,10 @@
     background: var(--light);
     outline: none;
     font-size: 0.95rem;
+    box-shadow: rgba(217, 186, 109, 0.4) 0px 2px 4px 0px,
+            rgba(194, 169, 105, 0.7) 0px 2px 16px 0px;
+            color: black !important;
+
   }
   
   .sv-tabs {
@@ -263,6 +267,7 @@
     cursor: pointer;
     transition: var(--transition);
     color: var(--primary);
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
   }
   
   .sv-add-placeholder:hover {

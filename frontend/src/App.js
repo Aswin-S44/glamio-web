@@ -10,22 +10,28 @@ import Footer from "./components/Footer/Footer";
 import Dashboard from "./screens/experts/Dashboard/Dashboard";
 import SignIn from "./screens/login/signIn/SignIn";
 import SignUp from "./screens/login/signUp/SignUp";
-import MyProfileScreen from "./screens/MyProfileScreen/MyProfileScreen";
-
+import CustomerSignUp from "./screens/login/signUp/CustomerSignUp";
+import { Provider } from "react-redux";
+import store from './store/Store';
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/parlour/:id" element={<ParlorDetailsScreen />} />
-        <Route path="/parlour/service" element={<SelectSlotScreen />} />
-        <Route path="/summary" element={<BookingSummaryScreen />} />
-        <Route path="/shop/dashboard" element={<Dashboard />} />
-        <Route path="/my-profile" element={<MyProfileScreen />} />
-      </Routes>
-    </BrowserRouter>
+  return (<>
+    <Provider store={store}>
+      <BrowserRouter>
+
+        <Routes>
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/parlour" element={<ParlorDetailsScreen />} />
+          <Route path="/parlour/service" element={<SelectSlotScreen />} />
+          <Route path="/summary" element={<BookingSummaryScreen />} />
+          <Route path="/shop/dashboard" element={<Dashboard />} />
+          <Route path="/signup/type=customer" element={<CustomerSignUp />} />
+        </Routes>
+
+      </BrowserRouter>
+    </Provider>
+  </>
   );
 }
 
