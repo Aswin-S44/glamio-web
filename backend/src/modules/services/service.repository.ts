@@ -1,7 +1,7 @@
 import { db } from "../../db/setup";
 import { services } from "../../db/schemas/services";
 import { category } from "../../db/schemas/category";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 
 export const findCategoryByName = async (name: string) => {
   const [result] = await db
@@ -50,4 +50,14 @@ export const getServiceByIdDB = (id: number, shopId: number) => {
     .from(services)
     .where(and(eq(services.id, id), eq(services.shopId, shopId)))
     .limit(1);
+};
+
+export const getServicesByIds = async (serviceIds: number[]) => {
+  return db
+    .select({
+      id: services.id,
+      rate: services.rate,
+    })
+    .from(services)
+    .where(inArray(services.id, serviceIds));
 };

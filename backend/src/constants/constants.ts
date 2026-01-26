@@ -16,11 +16,30 @@ export const usersTypes = {
   },
 };
 
-export const appointmentStatuses = {
+export const appointmentStatusEnums = {
   PENDING: "pending",
   REJECTED: "rejected",
   ACCEPTED: "accepted",
   ON_HOLD: "on_hold",
+};
+
+export const appointmentStatuses = {
+  PENDING: {
+    id: 1,
+    name: "pending",
+  },
+  REJECTED: {
+    id: 2,
+    name: "rejected",
+  },
+  ACCEPTED: {
+    id: 3,
+    name: "accepted",
+  },
+  ON_HOLD: {
+    id: 4,
+    name: "on_hold",
+  },
 };
 
 export const DEFAULT_CUSTOMER_ID = 1;

@@ -5,6 +5,7 @@ import {
 } from "./appointment.service";
 
 export const getAppointmetns = async (req: Request, res: Response) => {
+  console.log("req.user!.id----------", req.user!.id);
   const appointments = await getAppointmentService(req.user!.id);
   res.json({ appointments });
 };

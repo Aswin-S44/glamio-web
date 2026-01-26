@@ -21,7 +21,7 @@ export const appointments = mysqlTable("appointments", {
   statusId: int("status_id")
     .notNull()
     .references(() => appointmentStatus.id),
-  confirmedAt: date("confirmed_at").notNull(),
+  confirmedAt: date("confirmed_at"),
   customerId: int("customer_id")
     .notNull()
     .references(() => users.id),

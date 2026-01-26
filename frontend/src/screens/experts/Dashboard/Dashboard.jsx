@@ -18,17 +18,22 @@ import {
   Tag,
   ArrowLeft,
   Upload,
+  UserPlus2,
 } from "lucide-react";
 import "./Dashboard.css";
 import AddService from "../AddService/AddService";
 import SlotScreen from "../../SlotScreen/SlotScreen";
 import ServicesScreen from "../../ServicesScreen/ServicesScreen";
+import ExpertsScreen from "../../ExpertsScreen/ExpertsScreen";
+import AddExpert from "../../AddExpert/AddExpert";
+import UserRequests from "../../UserRequests/UserRequests";
 
 function Dashboard() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [serviceView, setServiceView] = useState("list");
+  const [expertView, setExpertView] = useState("list");
 
   const menuItems = [
     { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
@@ -41,6 +46,7 @@ function Dashboard() {
     { id: "slots", label: "Time Slots", icon: <Clock size={20} /> },
     { id: "services", label: "Services", icon: <Sparkles size={20} /> },
     { id: "offers", label: "Offers", icon: <Tag size={20} /> },
+    { id: "experts", label: "Experts", icon: <UserPlus2 size={20} /> },
   ];
 
   const handleTabChange = (id) => {
@@ -48,6 +54,65 @@ function Dashboard() {
     setServiceView("list");
     setIsMobileOpen(false);
   };
+
+  const sampleExperts = [
+    {
+      id: 1,
+      shopId: 101,
+      name: "Sophia Reynolds",
+      about:
+        "Senior hair stylist with over 10 years of experience in modern cuts, creative coloring, and bridal transformations.",
+      address: "Street 12, Downtown Beauty Hub",
+      image:
+        "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?q=80&w=800&auto=format&fit=crop",
+      specialist: ["Hair Styling", "Global Coloring", "Keratin"],
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 2,
+      shopId: 101,
+      name: "Marcus Chen",
+      about:
+        "Specializing in skincare treatments and therapeutic facials designed to rejuvenate and refresh your natural glow.",
+      address: "Suite 4, The Grand Plaza",
+      image:
+        "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?q=80&w=800&auto=format&fit=crop",
+      specialist: ["Facials", "Chemical Peels", "Skin Consultation"],
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 3,
+      shopId: 101,
+      name: "Elena Rodriguez",
+      about:
+        "Award-winning makeup artist known for high-fashion editorial looks and elegant evening glam for special occasions.",
+      address: "Studio 15, North Wing Arcade",
+      image:
+        "https://images.unsplash.com/photo-1583391262775-946328325a77?q=80&w=800&auto=format&fit=crop",
+      specialist: ["Bridal Makeup", "Party Glow", "HD Makeup"],
+      isActive: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 4,
+      shopId: 101,
+      name: "Amara J",
+      about:
+        "Expert in nail art and extensions, focusing on precision, hygiene, and the latest trends in the nail industry.",
+      address: "Shop 5, East Riverside",
+      image:
+        "https://images.unsplash.com/photo-1594465919760-441fe5908ab0?q=80&w=800&auto=format&fit=crop",
+      specialist: ["Gel Nails", "Manicure", "Nail Extension"],
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
 
   const renderContent = () => {
     switch (activeTab) {
@@ -107,28 +172,8 @@ function Dashboard() {
         );
       case "requests":
         return (
-          <div className="view-container animate-fade-in">
-            <div className="requests-list">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="request-item">
-                  <div className="req-user">
-                    <div className="avatar-small">U{i}</div>
-                    <div>
-                      <h4>User Request #{i}</h4>
-                      <p>Requested for Bridal Makeup</p>
-                    </div>
-                  </div>
-                  <div className="req-actions">
-                    <button className="btn-approve">
-                      <Check size={18} />
-                    </button>
-                    <button className="btn-reject">
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div>
+            <UserRequests />
           </div>
         );
       case "slots":
@@ -146,6 +191,17 @@ function Dashboard() {
           </div>
         ) : (
           <AddService />
+        );
+
+      case "experts":
+        return expertView === "list" ? (
+          <div className="view-container animate-fade-in">
+            <div className="content-card">
+              <ExpertsScreen expertsData={sampleExperts} />
+            </div>
+          </div>
+        ) : (
+          <AddExpert />
         );
       default:
         return (
@@ -166,7 +222,7 @@ function Dashboard() {
         <div className="menu-header">
           <div className="brand">
             <Scissors className="brand-logo" />
-            <span className="brand-name">GlowBar</span>
+            <span className="brand-name">Glamio</span>
           </div>
           <button
             className="collapse-toggle"

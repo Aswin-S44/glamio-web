@@ -106,7 +106,6 @@ const ParlorDetailsScreen = () => {
             <>Loading....</>
           ) : (
             <>
-              {console.log("parlour--------------", parlour)}
               <nav className="breadcrumbs">
                 <a href="/">Home</a> <span>/</span>
                 <a href="/parlors">Parlors</a> <span>/</span>
@@ -182,14 +181,13 @@ const ParlorDetailsScreen = () => {
                             <div className="service-info">
                               <h3>{service.name}</h3>
                               <span>
-                                {service.duration} • {service.price}
+                                {service.duration} • {service.rate}
                               </span>
                             </div>
                             <button
                               className="btn-outline"
                               onClick={() => {
-                                window.location.href =
-                                  "/parlour/service?category=hair_cut";
+                                window.location.href = `/parlour/service?category=${service.categoryId}&service=${service.id}&shop=${service?.shopId}`;
                               }}
                             >
                               Book

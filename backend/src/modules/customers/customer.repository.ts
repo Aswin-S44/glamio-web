@@ -4,6 +4,8 @@ import { users } from "../../db/schemas/users";
 import { db } from "../../db/setup";
 import { services } from "../../db/schemas/services";
 import { offers } from "../../db/schemas/offers";
+import { experts } from "../../db/schemas/experts";
+import { appointments } from "../../db/schemas/appointments";
 
 export const getAllShopsDB = async () => {
   const result = await db
@@ -40,4 +42,17 @@ export const getShopByIdDB = async (id: number) => {
     services: rows.map((r) => r.service).filter(Boolean),
     offers: rows.map((r) => r.offer).filter(Boolean),
   };
+};
+
+export const getAllExpertsByShopIdDB = async (shopId: number) => {
+  const result = await db
+    .select()
+    .from(experts)
+    .where(eq(experts.shopId, shopId));
+
+  return result ?? [];
+};
+
+export const createBookingDB = (data: any) => {
+  return db.insert(appointments).values(data);
 };
