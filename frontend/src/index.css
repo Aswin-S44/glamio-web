@@ -42,3 +42,41 @@ body {
 h1, h2, h3, h4, h5, h6 {
       font-family: 'Playfair Display', serif;
 }
+
+.btn {
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Playfair Display', serif;
+    background: #d4a373;
+}
+
+.btn:hover {
+    background: #faedcd;
+    color: #1a1a1a;
+    border: #1a1a1a solid 1px;
+
+}
+
+.btn-dash {
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Playfair Display', serif;
+    background: #000000;
+}
+
+.btn-dash:hover {
+    background: #faedcd;
+    color: #1a1a1a;
+    border: #1a1a1a solid 1px;
+
+}

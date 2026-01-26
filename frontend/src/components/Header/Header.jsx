@@ -45,7 +45,7 @@ function Header() {
             <button className="book-btn">Book Now</button>
             <button
               className="book-btn sign-in"
-              onClick={() => navigate("/signin")}
+              onClick={() => navigate("/signup")}
             >
               Sign In
             </button>

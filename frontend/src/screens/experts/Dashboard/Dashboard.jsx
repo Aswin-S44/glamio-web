@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   LayoutDashboard,
   UserPlus,
@@ -17,18 +19,21 @@ import {
   Sparkles,
   Tag,
   ArrowLeft,
-  Upload,
+  Upload, LogOut
 } from "lucide-react";
 import "./Dashboard.css";
 import AddService from "../AddService/AddService";
 import SlotScreen from "../../SlotScreen/SlotScreen";
 import ServicesScreen from "../../ServicesScreen/ServicesScreen";
+import AppointmentScreen from "../../AppointmentScreen/AppointmentScreen";
+import OfferScreen from "../../OfferScreen/OfferScreen";
 
 function Dashboard() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [serviceView, setServiceView] = useState("list");
+  const navigate = useNavigate()
 
   const menuItems = [
     { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
@@ -41,6 +46,7 @@ function Dashboard() {
     { id: "slots", label: "Time Slots", icon: <Clock size={20} /> },
     { id: "services", label: "Services", icon: <Sparkles size={20} /> },
     { id: "offers", label: "Offers", icon: <Tag size={20} /> },
+
   ];
 
   const handleTabChange = (id) => {
@@ -80,7 +86,7 @@ function Dashboard() {
             <div className="data-table-wrapper">
               <div className="table-header">
                 <h3>Recent Appointments</h3>
-                <button className="text-link">View All</button>
+                <button className="text-link btn-dash">View All</button>
               </div>
               <table>
                 <thead>
@@ -137,6 +143,12 @@ function Dashboard() {
             <SlotScreen />
           </div>
         );
+        case "appointments":
+        return (
+          <div>
+            <AppointmentScreen />
+          </div>
+        );
       case "services":
         return serviceView === "list" ? (
           <div className="view-container animate-fade-in">
@@ -150,7 +162,7 @@ function Dashboard() {
       default:
         return (
           <div className="view-container">
-            <h2>Coming Soon</h2>
+            <OfferScreen />
           </div>
         );
     }
@@ -192,6 +204,17 @@ function Dashboard() {
               {activeTab === item.id && <div className="active-indicator" />}
             </button>
           ))}
+
+          <button
+
+            className={`menu-item `}
+            onClick={() => navigate("/")}
+          >
+            <div className="icon-box"><LogOut size={20} /></div>
+            <span className="item-label">Logout</span>
+
+          </button>
+
         </nav>
       </aside>
 

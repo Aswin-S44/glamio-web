@@ -234,11 +234,11 @@ function SlotScreen() {
     return (
       <div className="custom-calendar">
         <div className="calendar-nav">
-          <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+          <button style={{ borderRadius: "10px" }} onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
             <ChevronLeft size={18} />
           </button>
           <h3>{format(currentMonth, "MMMM yyyy")}</h3>
-          <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+          <button style={{ borderRadius: "10px" }} onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
             <ChevronRight size={18} />
           </button>
         </div>
@@ -257,9 +257,8 @@ function SlotScreen() {
             return (
               <div
                 key={idx}
-                className={`calendar-day ${
-                  !isCurrentMonth ? "prev-month" : ""
-                } ${isSelected ? "selected-day" : ""}`}
+                className={`calendar-day ${!isCurrentMonth ? "prev-month" : ""
+                  } ${isSelected ? "selected-day" : ""}`}
                 onClick={() => setSelectedDate(day)}
               >
                 <span>{format(day, "d")}</span>
@@ -276,139 +275,141 @@ function SlotScreen() {
 
   return (
     <div className="slot-wrapper">
-      <header className="slot-navbar">
+      {/* <header className="slot-navbar">
         <button className="nav-icon-btn">
           <ChevronLeft size={22} />
         </button>
         <h1 className="nav-title">Booking Schedule</h1>
         <div className="nav-spacer"></div>
-      </header>
+      </header> */}
 
       <main className="slot-main-container">
         <div className="slot-grid-layout">
-          <aside className="slot-sidebar">
-            <div className="glass-card calendar-wrapper">
-              {renderCalendar()}
-            </div>
+          <div className="row">
 
-            <div className="control-stack">
-              <div
-                className={`mode-card ${
-                  holidays[dateKey] ? "holiday-active" : ""
-                }`}
-              >
-                <div className="mode-info">
-                  <div className="mode-icon">
-                    <Umbrella size={20} />
-                  </div>
-                  <div>
-                    <h4>Holiday Mode</h4>
-                    <p>{holidays[dateKey] ? "Closed" : "Open"}</p>
-                  </div>
+
+            <div className="col-md-5">
+              <aside className="slot-sidebar">
+                <div className="glass-card calendar-wrapper">
+                  {renderCalendar()}
                 </div>
-                <label className="ios-switch">
-                  <input
-                    type="checkbox"
-                    checked={!!holidays[dateKey]}
-                    onChange={handleToggleHoliday}
-                  />
-                  <span className="ios-slider"></span>
-                </label>
-              </div>
 
-              <button
-                className="mode-card repeat-trigger"
-                onClick={() => setRepeatModalOpen(true)}
-              >
-                <div className="mode-info">
-                  <div className="mode-icon">
-                    <RefreshCw size={20} />
-                  </div>
-                  <div>
-                    <h4>Daily Sync</h4>
-                    <p>Repeat Schedule</p>
-                  </div>
-                </div>
-              </button>
-            </div>
-          </aside>
-
-          <section className="slot-content-area">
-            <div className="content-header">
-              <div className="date-display">
-                <h2>{format(selectedDate, "MMMM d, yyyy")}</h2>
-                <p>{currentDaySlots.length} Slots Available</p>
-              </div>
-              {!holidays[dateKey] && (
-                <button className="prime-add-btn" onClick={() => openModal()}>
-                  <Plus size={18} /> New Slot
-                </button>
-              )}
-            </div>
-
-            {loading ? (
-              <div className="loading-container">
-                <div className="spinner"></div>
-                <p>Updating Schedule...</p>
-              </div>
-            ) : holidays[dateKey] ? (
-              <div className="empty-state-card holiday-state">
-                <Umbrella size={48} className="floating-icon" />
-                <h3>Holiday Mode Active</h3>
-                <p>This day is marked as a holiday.</p>
-              </div>
-            ) : currentDaySlots.length > 0 ? (
-              <div className="slots-masonry">
-                {currentDaySlots.map((slot) => (
+                <div className="control-stack">
                   <div
-                    key={slot.id}
-                    className={`modern-slot-card ${
-                      !slot.isAvailable ? "is-booked" : ""
-                    }`}
+                    className={`mode-card ${holidays[dateKey] ? "holiday-active" : ""
+                      }`}
                   >
-                    <div className="slot-time-info">
-                      <Clock size={16} />
-                      <span>
-                        {slot.startTime} - {slot.endTime}
-                      </span>
-                    </div>
-                    <div className="slot-footer">
-                      <span
-                        className={`status-pill ${
-                          slot.isAvailable ? "pill-avail" : "pill-booked"
-                        }`}
-                      >
-                        {slot.isAvailable ? "Available" : "Booked"}
-                      </span>
-                      <div className="slot-actions">
-                        <button
-                          className="action-btn edit"
-                          onClick={() => openModal(slot)}
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        <button
-                          className="action-btn delete"
-                          onClick={() => handleDeleteSlot(slot.id)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                    <div className="mode-info">
+                      <div className="mode-icon">
+                        <Umbrella size={20} />
+                      </div>
+                      <div>
+                        <h4>Holiday Mode</h4>
+                        <p>{holidays[dateKey] ? "Closed" : "Open"}</p>
                       </div>
                     </div>
+                    <label className="ios-switch">
+                      <input
+                        type="checkbox"
+                        checked={!!holidays[dateKey]}
+                        onChange={handleToggleHoliday}
+                      />
+                      <span className="ios-slider"></span>
+                    </label>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state-card">
-                <Clock size={48} className="floating-icon" />
-                <h3>Empty Schedule</h3>
-                <p>No slots created for this date.</p>
-                <button className="ghost-btn" onClick={() => openModal()}>
-                  Add Slot
-                </button>
-              </div>
-            )}
-          </section>
+
+                  <button
+                    className="mode-card repeat-trigger"
+                    onClick={() => setRepeatModalOpen(true)}
+                  >
+                    <div className="mode-info">
+                      <div className="mode-icon">
+                        <RefreshCw size={20} />
+                      </div>
+                      <div>
+                        <h4>Daily Sync</h4>
+                        <p>Repeat Schedule</p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </aside>
+            </div><div className="col-md-7">
+              <section className="slot-content-area">
+                <div className="content-header">
+                  <div className="date-display">
+                    <h2>{format(selectedDate, "MMMM d, yyyy")}</h2>
+                    <p>{currentDaySlots.length} Slots Available</p>
+                  </div>
+                  {!holidays[dateKey] && (
+                    <button className="prime-add-btn" onClick={() => openModal()}>
+                      <Plus size={18} /> New Slot
+                    </button>
+                  )}
+                </div>
+
+                {loading ? (
+                  <div className="loading-container">
+                    <div className="spinner"></div>
+                    <p>Updating Schedule...</p>
+                  </div>
+                ) : holidays[dateKey] ? (
+                  <div className="empty-state-card holiday-state">
+                    <Umbrella size={48} className="floating-icon" />
+                    <h3>Holiday Mode Active</h3>
+                    <p>This day is marked as a holiday.</p>
+                  </div>
+                ) : currentDaySlots.length > 0 ? (
+                  <div className="slots-masonry">
+                    {currentDaySlots.map((slot) => (
+                      <div
+                        key={slot.id}
+                        className={`modern-slot-card ${!slot.isAvailable ? "is-booked" : ""
+                          }`}
+                      >
+                        <div className="slot-time-info">
+                          <Clock size={16} />
+                          <span>
+                            {slot.startTime} - {slot.endTime}
+                          </span>
+                        </div>
+                        <div className="slot-footer">
+                          <span
+                            className={`status-pill ${slot.isAvailable ? "pill-avail" : "pill-booked"
+                              }`}
+                          >
+                            {slot.isAvailable ? "Available" : "Booked"}
+                          </span>
+                          <div className="slot-actions">
+                            <button
+                              className="action-btn edit"
+                              onClick={() => openModal(slot)}
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button
+                              className="action-btn delete"
+                              onClick={() => handleDeleteSlot(slot.id)}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-state-card">
+                    <Clock size={48} className="floating-icon" />
+                    <h3>Empty Schedule</h3>
+                    <p>No slots created for this date.</p>
+                    <button className="ghost-btn" onClick={() => openModal()}>
+                      Add Slot
+                    </button>
+                  </div>
+                )}
+              </section> </div>
+          </div>
         </div>
       </main>
 

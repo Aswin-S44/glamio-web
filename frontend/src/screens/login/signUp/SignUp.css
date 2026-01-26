@@ -252,6 +252,92 @@ footer section.foot-sec {
     animation: floatIn 0.8s ease;
 }
 
+.glass-form-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.glass-card {
+  width: 420px;
+  padding: 50px 40px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  color: #fff;
+}
+
+.glass-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.glass-subtitle {
+  font-size: 15px;
+  opacity: 0.85;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.google-hero-btn {
+  width: 100%;
+  height: 60px;
+  border-radius: 50px;
+  border: none;
+  background: #ffffff;
+  color: #111;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+
+.google-hero-btn img {
+  width: 22px;
+  height: 22px;
+}
+
+.google-hero-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(255, 255, 255, 0.35);
+}
+
+.google-hero-btn:active {
+  transform: scale(0.97);
+}
+
+.secure-text {
+  display: block;
+  margin-top: 22px;
+  font-size: 12px;
+  opacity: 0.65;
+}
+.animate-fade-up {
+  animation: fadeUp 0.9s ease forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
 /* ANIMATION */
 @keyframes floatIn {
     from {
