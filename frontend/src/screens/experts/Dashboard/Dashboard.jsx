@@ -19,9 +19,9 @@ import {
   Sparkles,
   Tag,
   ArrowLeft,
-  Upload,
   UserPlus2,
-  Upload, LogOut
+  Upload,
+  LogOut,
 } from "lucide-react";
 import "./Dashboard.css";
 import AddService from "../AddService/AddService";
@@ -40,7 +40,7 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("home");
   const [serviceView, setServiceView] = useState("list");
   const [expertView, setExpertView] = useState("list");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const menuItems = [
     { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
@@ -54,7 +54,6 @@ function Dashboard() {
     { id: "services", label: "Services", icon: <Sparkles size={20} /> },
     { id: "offers", label: "Offers", icon: <Tag size={20} /> },
     { id: "experts", label: "Experts", icon: <UserPlus2 size={20} /> },
-
   ];
 
   const handleTabChange = (id) => {
@@ -202,7 +201,7 @@ function Dashboard() {
             <OfferScreen />
           </div>
         );
-        case "notifications":
+      case "notifications":
         return (
           <div>
             <NotificationScreen />
@@ -275,16 +274,12 @@ function Dashboard() {
             </button>
           ))}
 
-          <button
-
-            className={`menu-item `}
-            onClick={() => navigate("/")}
-          >
-            <div className="icon-box"><LogOut size={20} /></div>
+          <button className={`menu-item `} onClick={() => navigate("/")}>
+            <div className="icon-box">
+              <LogOut size={20} />
+            </div>
             <span className="item-label">Logout</span>
-
           </button>
-
         </nav>
       </aside>
 
@@ -303,7 +298,10 @@ function Dashboard() {
             </div>
           </div>
           <div className="nav-right">
-            <div onClick={() => setActiveTab("notifications")} className="icon-btn" >
+            <div
+              onClick={() => setActiveTab("notifications")}
+              className="icon-btn"
+            >
               <Bell size={20} />
               <span className="dot" />
             </div>
@@ -324,8 +322,8 @@ function Dashboard() {
               {activeTab === "notifications"
                 ? "Notifications"
                 : serviceView === "add" && activeTab === "services"
-                  ? "Add New Service"
-                  : menuItems.find((i) => i.id === activeTab)?.label}
+                ? "Add New Service"
+                : menuItems.find((i) => i.id === activeTab)?.label}
             </h1>
             <p>Managing your beauty studio efficiently</p>
           </div>
