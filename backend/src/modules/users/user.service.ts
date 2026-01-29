@@ -16,7 +16,9 @@ export const createUserService = async (payload: CreateUserPayload) => {
     throw new Error("User already exists with this email");
   }
 
-  const userTypeId = await getUserTypeId(usersTypes.EXPERT.name);
+    // const userTypeId = await getUserTypeId(usersTypes.EXPERT.name);
+
+const userTypeId = 1;
 
   await createUser({
     email,
@@ -25,7 +27,7 @@ export const createUserService = async (payload: CreateUserPayload) => {
     userTypeId,
   });
 
-  const token = jwt.sign({ email }, process.env.JWT_SECRET as string, {
+  const token = jwt.sign({ email }, process.env.JWT_SECRET || "add" as string, {
     expiresIn: "30d",
   });
 

@@ -18,7 +18,7 @@ export const googleSignInService = async (
     throw new Error("Email not found in Google token");
   }
 
-  const token = jwt.sign({ uid, email }, process.env.JWT_SECRET!, {
+  const token = jwt.sign({ uid, email }, process.env.JWT_SECRET! || "add", {
     expiresIn: "30d",
   });
 

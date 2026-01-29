@@ -50,14 +50,14 @@
 
 /* ===== Glass Cards ===== */
 
-.glass-card{
+.glass-card2{
     background: radial-gradient(circle at top, #1e293b, #020617) !important;
   color: var(--text);
   font-family: "Inter", system-ui, sans-serif;
   width: 100% !important;
 }
 
-.glass-card,
+.glass-card2,
 .mode-card,
 .modern-slot-card,
 .empty-state-card,

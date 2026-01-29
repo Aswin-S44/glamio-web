@@ -16,13 +16,16 @@ export const authMiddleware = async (
   try {
     const authHeader = req.headers.authorization;
 
+console.log("authHeader", authHeader);
+
+
     if (!authHeader) {
       return res.status(401).json({ message: "Authorization token missing" });
     }
 
     const decoded = jwt.verify(
       authHeader,
-      process.env.JWT_SECRET as string
+      process.env.JWT_SECRET as string || "add"
     ) as JwtPayload;
 
     const [user] = await db

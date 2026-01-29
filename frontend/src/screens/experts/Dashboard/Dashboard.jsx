@@ -27,6 +27,7 @@ import SlotScreen from "../../SlotScreen/SlotScreen";
 import ServicesScreen from "../../ServicesScreen/ServicesScreen";
 import AppointmentScreen from "../../AppointmentScreen/AppointmentScreen";
 import OfferScreen from "../../OfferScreen/OfferScreen";
+import NotificationScreen from "../../Notifications/NotificationScreen";
 
 function Dashboard() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -143,10 +144,22 @@ function Dashboard() {
             <SlotScreen />
           </div>
         );
-        case "appointments":
+      case "appointments":
         return (
           <div>
             <AppointmentScreen />
+          </div>
+        );
+      case "offers":
+        return (
+          <div>
+            <OfferScreen />
+          </div>
+        );
+        case "notifications":
+        return (
+          <div>
+            <NotificationScreen />
           </div>
         );
       case "services":
@@ -233,7 +246,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="nav-right">
-            <div className="icon-btn">
+            <div onClick={() => setActiveTab("notifications")} className="icon-btn" >
               <Bell size={20} />
               <span className="dot" />
             </div>
@@ -245,10 +258,17 @@ function Dashboard() {
 
         <section className="page-content">
           <div className="page-header">
-            <h1>
+            {/* <h1>
               {serviceView === "add" && activeTab === "services"
                 ? "Add New Service"
                 : menuItems.find((i) => i.id === activeTab).label}
+            </h1> */}
+            <h1>
+              {activeTab === "notifications"
+                ? "Notifications"
+                : serviceView === "add" && activeTab === "services"
+                  ? "Add New Service"
+                  : menuItems.find((i) => i.id === activeTab)?.label}
             </h1>
             <p>Managing your beauty studio efficiently</p>
           </div>

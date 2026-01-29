@@ -290,7 +290,7 @@ function SlotScreen() {
 
             <div className="col-md-5">
               <aside className="slot-sidebar">
-                <div className="glass-card calendar-wrapper">
+                <div className="glass-card2 calendar-wrapper">
                   {renderCalendar()}
                 </div>
 

@@ -8,6 +8,13 @@
       "when": 1769091781556,
       "tag": "0000_noisy_magik",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1769273828432,
+      "tag": "0001_shallow_psylocke",
+      "breakpoints": true
     }
   ]
 }

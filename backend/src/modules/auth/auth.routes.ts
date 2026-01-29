@@ -2,7 +2,7 @@ import express from "express";
 
 import authMiddleware from "../../middlewares/auth.middleware";
 import { googleSignIn } from "./auth.controller";
-import { createUser } from "../users/user.repository";
+import { createUser } from "../users/user.controller";
 
 const router = express.Router();
 
