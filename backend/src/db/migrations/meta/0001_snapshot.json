@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "17618526-4e5a-4149-a6f4-55a47888cbeb",
+  "id": "25f4f62f-77d0-422f-b93e-3f4112986a82",
   "prevId": "7ed46f46-4c25-4a05-b105-d07b70ef7993",
   "tables": {
     "appointment_status": {
@@ -880,14 +880,6 @@
           "notNull": true,
           "autoincrement": false,
           "default": 0
-        },
-        "is_profile_completed": {
-          "name": "is_profile_completed",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": false
         }
       },
       "indexes": {},

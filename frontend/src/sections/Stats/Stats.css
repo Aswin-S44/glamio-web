@@ -1,0 +1,27 @@
+.stats-section {
+  position: relative;
+  background: url("../../components//Media/Images/beauty-salon-with-cosmetology-equipment-anime-style.jpg") center/cover no-repeat;
+  padding: 80px 20px;
+}
+
+.stats-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+}
+
+.stats-container {
+  position: relative;
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 30px;
+  color: #fff;
+  text-align: center;
+}
+
+.stat h3 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}

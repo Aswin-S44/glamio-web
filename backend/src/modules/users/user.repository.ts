@@ -18,6 +18,10 @@ export const createUser = async (data: {
   profileImage?: string;
   userTypeId: number;
 }) => {
+
+console.log("data", data);
+
+
   return db
     .insert(users)
     .values({

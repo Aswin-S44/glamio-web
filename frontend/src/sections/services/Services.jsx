@@ -48,7 +48,7 @@ function Services() {
         <div className="services-header">
           <span className="subtitle">Our Expertise</span>
           <h2 className="title">Luxury Services</h2>
-          <div className="divider"></div>
+          {/* <div className="divider"></div> */}
         </div>
 
         <div className="services-grid">

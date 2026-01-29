@@ -3,15 +3,14 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../config/firebase";
 import api from "../../utils/api.util";
 
-export const googleLogin = createAsyncThunk(
-    'auth/googleLogin',
+export const googleLogin = createAsyncThunk('auth/googleLogin',
     async (_, { rejectWithValue }) => {
         try {
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
 
-            const response = await api.post("/google-signin", {
+            const response = await api.post("/auth/signin/google", {
                 token: idToken,
             });
 
