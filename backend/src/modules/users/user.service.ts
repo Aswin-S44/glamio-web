@@ -7,38 +7,32 @@ import {
 import { getUserTypeId } from "../../utils/getUserTypeId";
 import { createUser, findUserByEmail } from "./user.repository";
 import { CreateUserPayload } from "./user.types";
-
 export const createUserService = async (payload: CreateUserPayload) => {
   const { email, username, profileImage, userType } = payload;
-
   if (!email || !username) {
     throw new Error("email and username are required");
   }
-
-  let token = null;
-
   const existingUser = await findUserByEmail(email);
   if (existingUser) {
-    throw new Error("User already exists with this email");
+    const token = jwt.sign({ email }, process.env.JWT_SECRET as string, {
+      expiresIn: "30d",
+    });
+    return { user: existingUser, token };
   }
-
   const userTypeId =
     userType === "customer"
       ? DEFAULT_CUSTOMER_ID
       : userType === "shop"
       ? DEFAULT_SHOP_ID
       : DEFAULT_CUSTOMER_ID;
-
-  await createUser({
+  const newUser = await createUser({
     email,
     username,
     profileImage,
     userTypeId,
   });
-
-  token = jwt.sign({ email }, process.env.JWT_SECRET as string, {
+  const token = jwt.sign({ email }, process.env.JWT_SECRET as string, {
     expiresIn: "30d",
   });
-
-  return { token };
+  return { user: newUser, token };
 };
