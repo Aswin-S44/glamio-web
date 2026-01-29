@@ -11,7 +11,7 @@ export const googleLogin = createAsyncThunk('auth/googleLogin',
             const idToken = await result.user.getIdToken();
 
             const response = await api.post("/auth/signin/google", {
-                token: idToken,
+                idToken: idToken,
             });
 
             return response.data;
