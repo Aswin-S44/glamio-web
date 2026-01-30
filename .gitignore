@@ -1,2 +1,3 @@
 backend/src/credentials/serviceAccountKey.json
 .env
+backend/src/credentials/*.json
