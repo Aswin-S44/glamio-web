@@ -1,7 +1,6 @@
 import {
   bigint,
   boolean,
-  int,
   mysqlTable,
   timestamp,
   varchar,
@@ -23,7 +22,10 @@ export const users = mysqlTable("users", {
   fcmToken: varchar("fcm_token", { length: 256 }),
   profileImage: varchar("profile_image", { length: 256 }),
 
-  userTypeId: int("user_type_id")
+  userTypeId: bigint("user_type_id", {
+    mode: "number",
+    unsigned: true,
+  })
     .notNull()
     .references(() => userTypes.id),
 

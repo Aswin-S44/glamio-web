@@ -50,7 +50,7 @@ function Footer() {
             <div className="contact-info">
               <p>123 Beauty Lane, Glow City</p>
               <p>+1 (555) 123-4567</p>
-              <p>support@glamour.com</p>
+              <p>support@glamio.com</p>
             </div>
           </div>
 
@@ -92,7 +92,7 @@ function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2024 Glamour Beauty Parlor. All rights reserved.</p>
+          <p>&copy; 2024 Glamio Beauty Parlor. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -1,1 +1,0 @@
-ALTER TABLE `slots` DROP COLUMN `contact_phone`;

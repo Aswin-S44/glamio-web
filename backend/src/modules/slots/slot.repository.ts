@@ -29,6 +29,9 @@ export class SlotRepository {
       shopId,
       bookedCount: 0,
       isAvailable: true,
+      isRecurring: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     return db.insert(slots).values(insertData);

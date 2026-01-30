@@ -34,7 +34,7 @@ function Header() {
       <header className={`header ${showHeader ? "show" : "hide"}`}>
         <div className="container header-container">
           <div className="logo"  onClick={() => navigate("/")}>
-            GLAM<span>OUR</span>
+            GLAM<span>IO</span>
           </div>
 
           <nav className="desktop-nav">

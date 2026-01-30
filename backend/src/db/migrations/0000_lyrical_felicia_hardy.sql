@@ -6,12 +6,12 @@ CREATE TABLE `appointment_status` (
 --> statement-breakpoint
 CREATE TABLE `appointments` (
 	`id` bigint unsigned AUTO_INCREMENT NOT NULL,
-	`status_id` int NOT NULL,
-	`confirmed_at` date NOT NULL,
-	`customer_id` int NOT NULL,
-	`expert_id` int NOT NULL,
-	`slot_id` int NOT NULL,
-	`shop_id` int NOT NULL,
+	`status_id` bigint unsigned NOT NULL,
+	`customer_id` bigint unsigned NOT NULL,
+	`expert_id` bigint unsigned NOT NULL,
+	`slot_id` bigint unsigned NOT NULL,
+	`shop_id` bigint unsigned NOT NULL,
+	`confirmed_at` date,
 	`rate` int NOT NULL DEFAULT 0,
 	`service_ids` json NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
@@ -42,7 +42,7 @@ CREATE TABLE `experts` (
 CREATE TABLE `holidays` (
 	`id` bigint unsigned AUTO_INCREMENT NOT NULL,
 	`date` date NOT NULL,
-	`shop_id` int NOT NULL,
+	`shop_id` bigint unsigned NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `holidays_id` PRIMARY KEY(`id`)
@@ -56,12 +56,12 @@ CREATE TABLE `notification_types` (
 --> statement-breakpoint
 CREATE TABLE `notifications` (
 	`id` bigint unsigned AUTO_INCREMENT NOT NULL,
-	`notification_type_id` int NOT NULL,
-	`from_id` int NOT NULL,
-	`to_id` int NOT NULL,
+	`notification_type_id` bigint unsigned NOT NULL,
+	`from_id` bigint unsigned NOT NULL,
+	`to_id` bigint unsigned NOT NULL,
 	`message` varchar(500) NOT NULL,
 	`is_read` boolean NOT NULL DEFAULT false,
-	`shop_id` int NOT NULL,
+	`shop_id` bigint unsigned NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `notifications_id` PRIMARY KEY(`id`)
@@ -69,11 +69,11 @@ CREATE TABLE `notifications` (
 --> statement-breakpoint
 CREATE TABLE `offers` (
 	`id` bigint unsigned AUTO_INCREMENT NOT NULL,
-	`category_id` int NOT NULL,
+	`category_id` bigint unsigned NOT NULL,
 	`offer_price` int NOT NULL,
 	`regular_price` int NOT NULL,
-	`service_id` int NOT NULL,
-	`shop_id` int NOT NULL,
+	`service_id` bigint unsigned NOT NULL,
+	`shop_id` bigint unsigned NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `offers_id` PRIMARY KEY(`id`)
@@ -84,8 +84,8 @@ CREATE TABLE `services` (
 	`name` varchar(256) NOT NULL,
 	`image_url` longtext NOT NULL,
 	`rate` int NOT NULL DEFAULT 0,
-	`shop_id` int NOT NULL,
-	`category_id` int,
+	`shop_id` bigint unsigned NOT NULL,
+	`category_id` bigint unsigned,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `services_id` PRIMARY KEY(`id`)
@@ -104,6 +104,8 @@ CREATE TABLE `shop_owners` (
 	`parlour_name` varchar(256) NOT NULL,
 	`place_id` varchar(100),
 	`total_rating` int NOT NULL DEFAULT 0,
+	`is_profile_completed` boolean DEFAULT false,
+	`shop_image` varchar(256),
 	CONSTRAINT `shop_owners_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
@@ -117,7 +119,6 @@ CREATE TABLE `slots` (
 	`booked_count` int NOT NULL DEFAULT 0,
 	`is_available` boolean NOT NULL DEFAULT true,
 	`is_recurring` boolean NOT NULL DEFAULT false,
-	`contact_phone` varchar(15),
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `slots_id` PRIMARY KEY(`id`)
@@ -139,7 +140,7 @@ CREATE TABLE `users` (
 	`email_verified` boolean NOT NULL DEFAULT false,
 	`fcm_token` varchar(256),
 	`profile_image` varchar(256),
-	`user_type_id` int NOT NULL,
+	`user_type_id` bigint unsigned NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `users_id` PRIMARY KEY(`id`),

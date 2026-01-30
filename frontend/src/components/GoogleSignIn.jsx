@@ -14,7 +14,7 @@ function GoogleSignIn() {
 
       const data = await googleSignInApi(idToken);
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.data.token);
 
       console.log("User:", data.user);
     } catch (error) {
