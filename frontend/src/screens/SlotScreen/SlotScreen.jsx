@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import {
   Calendar as CalendarIcon,
   Plus,
   Trash2,
   Edit2,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   Umbrella,
   RefreshCw,
   X,
-  CheckCircle2,
+  AlertCircle,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   format,
@@ -26,6 +28,8 @@ import {
   subMonths,
   addDays,
   isAfter,
+  isBefore,
+  startOfDay,
 } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -48,6 +52,7 @@ function SlotScreen() {
   const token = localStorage.getItem("token");
 
   const dateKey = format(selectedDate, "yyyy-MM-dd");
+  const isPastDate = isBefore(startOfDay(selectedDate), startOfDay(new Date()));
 
   useEffect(() => {
     fetchSlots();
@@ -85,6 +90,7 @@ function SlotScreen() {
   };
 
   const handleToggleHoliday = () => {
+    if (isPastDate) return;
     setHolidays((prev) => ({
       ...prev,
       [dateKey]: !prev[dateKey],
@@ -95,6 +101,25 @@ function SlotScreen() {
   };
 
   const handleSaveSlot = async () => {
+    // 1. Validation: Check if same slot already exists for this date
+    const existingSlots = slots[dateKey] || [];
+    const isDuplicate = existingSlots.some(
+      (s) =>
+        s.startTime === startTime &&
+        s.endTime === endTime &&
+        s.id !== editingSlot?.id // Don't conflict with itself while editing
+    );
+
+    if (isDuplicate) {
+      Swal.fire({
+        title: "Slot Already exists",
+        text: `A slot from ${startTime} to ${endTime} already exists for this date.`,
+        icon: "error",
+        confirmButtonColor: "#d4a373",
+      });
+      return;
+    }
+
     const newSlotData = {
       slotDate: slotDate,
       startTime: startTime.length === 5 ? `${startTime}:00` : startTime,
@@ -120,9 +145,7 @@ function SlotScreen() {
 
       if (res.ok) {
         fetchSlots();
-        toast.success(
-          editingSlot ? "Slot updated successfully" : "New slot created"
-        );
+        toast.success(editingSlot ? "Slot updated" : "New slot created");
         closeModal();
       }
     } catch (error) {
@@ -131,32 +154,48 @@ function SlotScreen() {
   };
 
   const handleDeleteSlot = async (id) => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/v1/slots/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `${token}` },
-      });
-      if (res.ok) {
-        setSlots((prev) => ({
-          ...prev,
-          [dateKey]: prev[dateKey].filter((s) => s.id !== id),
-        }));
-        toast.success("Slot deleted");
-      }
-    } catch (error) {
-      toast.error("Delete failed");
+    if (isPastDate) {
+      toast.error("Cannot delete past slots");
+      return;
     }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this slot!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d4a373",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`http://localhost:5000/api/v1/slots/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `${token}` },
+          });
+          if (res.ok) {
+            setSlots((prev) => ({
+              ...prev,
+              [dateKey]: prev[dateKey].filter((s) => s.id !== id),
+            }));
+            toast.success("Slot deleted");
+          }
+        } catch (error) {
+          toast.error("Delete failed");
+        }
+      }
+    });
   };
 
   const handleRepeatSync = async () => {
+    if (isPastDate) return;
     if (!repeatUntilDate) {
-      toast.warning("Please select an end date");
+      toast.warning("Select an end date");
       return;
     }
-
     const currentDaySlots = slots[dateKey] || [];
     if (currentDaySlots.length === 0) {
-      toast.error("No slots found on selected day to repeat");
+      toast.error("No slots to repeat");
       return;
     }
 
@@ -186,17 +225,21 @@ function SlotScreen() {
         }
         tempDate = addDays(tempDate, 1);
       }
-      toast.success("Schedule synced across dates");
+      toast.success("Schedule synced successfully");
       setRepeatModalOpen(false);
       fetchSlots();
     } catch (error) {
-      toast.error("Error during sync");
+      toast.error("Sync interrupted");
     } finally {
       setLoading(false);
     }
   };
 
   const openModal = (slot = null) => {
+    if (isPastDate && !slot) {
+      toast.warning("Cannot add slots to past dates");
+      return;
+    }
     if (slot) {
       setEditingSlot(slot);
       setSlotDate(format(parseISO(slot.slotDate), "yyyy-MM-dd"));
@@ -215,6 +258,7 @@ function SlotScreen() {
 
   const closeModal = () => {
     setModalOpen(false);
+    setRepeatModalOpen(false);
     setEditingSlot(null);
   };
 
@@ -227,19 +271,21 @@ function SlotScreen() {
     const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     return (
-      <div className="premium-calendar">
-        <div className="cal-header">
-          <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
-            <ChevronLeft size={20} />
-          </button>
+      <div className="modern-calendar">
+        <div className="cal-nav">
           <h3>{format(currentMonth, "MMMM yyyy")}</h3>
-          <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
-            <ChevronRight size={20} />
-          </button>
+          <div className="nav-btns">
+            <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+              <ChevronLeft size={18} />
+            </button>
+            <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+              <ChevronRight size={18} />
+            </button>
+          </div>
         </div>
         <div className="cal-grid">
           {weekDays.map((d) => (
-            <div key={d} className="cal-weekday">
+            <div key={d} className="cal-label">
               {d}
             </div>
           ))}
@@ -248,16 +294,18 @@ function SlotScreen() {
             const hasSlots = slots[dayKey]?.length > 0;
             const isSelected = isSameDay(day, selectedDate);
             const isToday = isSameDay(day, new Date());
+            const isPast = isBefore(startOfDay(day), startOfDay(new Date()));
+            const isOff = !isSameMonth(day, monthStart);
             return (
               <div
                 key={idx}
-                className={`cal-day ${
-                  !isSameMonth(day, monthStart) ? "off" : ""
-                } ${isSelected ? "active" : ""} ${isToday ? "today" : ""}`}
+                className={`cal-cell ${isOff ? "off" : ""} ${
+                  isSelected ? "selected" : ""
+                } ${isToday ? "today" : ""} ${isPast ? "is-past" : ""}`}
                 onClick={() => setSelectedDate(day)}
               >
-                <span className="day-num">{format(day, "d")}</span>
-                {hasSlots && <div className="day-indicator" />}
+                <span>{format(day, "d")}</span>
+                {hasSlots && <div className="dot-indicator" />}
               </div>
             );
           })}
@@ -269,95 +317,116 @@ function SlotScreen() {
   const currentDaySlots = holidays[dateKey] ? [] : slots[dateKey] || [];
 
   return (
-    <div className="beauty-slot-container">
-      <ToastContainer position="bottom-right" theme="dark" />
+    <div className="slot-mgmt-wrapper">
+      <ToastContainer position="top-center" theme="colored" />
+      <div className="sv-title-sec">
+        <h1>All Slots</h1>
+        <p>Manage and organize your parlor slots here</p>
+      </div>
+      <div className="slot-layout">
+        <aside className="slot-sidebar">
+          <div className="sidebar-card calendar-card">{renderCalendar()}</div>
 
-      <div className="main-layout">
-        <aside className="sidebar-section">
-          <div className="glass-panel calendar-card">{renderCalendar()}</div>
-
-          <div className="action-stack">
-            <div
-              className={`status-card ${holidays[dateKey] ? "holiday-on" : ""}`}
-            >
-              <div className="status-icon">
-                <Umbrella size={20} />
+          <div
+            className={`sidebar-card holiday-card ${
+              isPastDate ? "disabled-card" : ""
+            }`}
+          >
+            <div className="card-info">
+              <Umbrella
+                size={22}
+                className={holidays[dateKey] ? "icon-active" : ""}
+              />
+              <div>
+                <h4>Holiday Mode</h4>
+                <p>{holidays[dateKey] ? "Store Closed" : "Open for Booking"}</p>
               </div>
-              <div className="status-text">
-                <label>Holiday Mode</label>
-                <span>
-                  {holidays[dateKey] ? "Shop Closed" : "Open for Booking"}
-                </span>
-              </div>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={!!holidays[dateKey]}
-                  onChange={handleToggleHoliday}
-                />
-                <span className="slider"></span>
-              </label>
             </div>
-
-            <button
-              className="sync-btn"
-              onClick={() => setRepeatModalOpen(true)}
-            >
-              <RefreshCw size={18} />
-              <span>Daily Schedule Sync</span>
-            </button>
+            <label className="slot-switch">
+              <input
+                type="checkbox"
+                disabled={isPastDate}
+                checked={!!holidays[dateKey]}
+                onChange={handleToggleHoliday}
+              />
+              <span className="slot-slider"></span>
+            </label>
           </div>
+
+          <button
+            className="sync-action-btn"
+            disabled={isPastDate || currentDaySlots.length === 0}
+            onClick={() => setRepeatModalOpen(true)}
+          >
+            <RefreshCw size={18} />
+            <span>Sync Daily Schedule</span>
+          </button>
         </aside>
 
-        <main className="content-section">
-          <header className="content-top">
-            <div className="title-area">
-              <h1>{format(selectedDate, "EEEE, MMMM do")}</h1>
-              <p>{currentDaySlots.length} appointment slots configured</p>
+        <main className="slot-content">
+          <div className="content-header">
+            <div className="date-display">
+              <div className="header-row">
+                <h2>{format(selectedDate, "EEEE, MMMM do")}</h2>
+                {isPastDate && <span className="past-badge">Past Date</span>}
+              </div>
+              <p>{currentDaySlots.length} active slots</p>
             </div>
-            {!holidays[dateKey] && (
-              <button className="add-slot-btn" onClick={() => openModal()}>
-                <Plus size={18} /> Add New Slot
+            {!holidays[dateKey] && !isPastDate && (
+              <button className="primary-add-btn" onClick={() => openModal()}>
+                <Plus size={18} /> Add Slot
               </button>
             )}
-          </header>
+          </div>
 
           {loading ? (
-            <div className="loader-box">
-              <div className="beauty-spinner"></div>
+            <div className="slot-loading-state">
+              <div className="modern-spinner"></div>
             </div>
           ) : holidays[dateKey] ? (
-            <div className="empty-state">
-              <Umbrella size={60} />
-              <h2>Enjoy Your Holiday</h2>
-              <p>Booking is disabled for this date.</p>
+            <div className="slot-empty-state holiday">
+              <div className="empty-icon">
+                <Umbrella size={48} />
+              </div>
+              <h3>Closed for Holiday</h3>
+              <p>Customers cannot book appointments on this date.</p>
             </div>
           ) : currentDaySlots.length > 0 ? (
-            <div className="slot-grid">
+            <div className="slots-grid-view">
               {currentDaySlots.map((slot) => (
                 <div
                   key={slot.id}
-                  className={`slot-card ${!slot.isAvailable ? "booked" : ""}`}
+                  className={`slot-item-card ${
+                    !slot.isAvailable ? "is-booked" : ""
+                  } ${isPastDate ? "read-only" : ""}`}
                 >
-                  <div className="slot-header">
-                    <div className="time-badge">
-                      <Clock size={14} /> {slot.startTime} - {slot.endTime}
+                  <div className="item-top">
+                    <div className="item-time">
+                      <Clock size={16} />
+                      <span>
+                        {slot.startTime} - {slot.endTime}
+                      </span>
                     </div>
-                    <div className="slot-ops">
-                      <button onClick={() => openModal(slot)}>
-                        <Edit2 size={15} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteSlot(slot.id)}
-                        className="del-btn"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
+                    {!isPastDate && (
+                      <div className="item-actions">
+                        <button title="Edit" onClick={() => openModal(slot)}>
+                          <Edit2 size={16} />
+                        </button>
+                        <button
+                          title="Delete"
+                          onClick={() => handleDeleteSlot(slot.id)}
+                          className="danger"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <div className="slot-body">
+                  <div className="item-footer">
                     <span
-                      className={`pill ${slot.isAvailable ? "avail" : "taken"}`}
+                      className={`status-pill ${
+                        slot.isAvailable ? "free" : "busy"
+                      }`}
                     >
                       {slot.isAvailable ? "Available" : "Booked"}
                     </span>
@@ -366,53 +435,63 @@ function SlotScreen() {
               ))}
             </div>
           ) : (
-            <div className="empty-state">
-              <CalendarIcon size={60} />
-              <h2>No Slots Defined</h2>
-              <p>Start by adding a service slot for this day.</p>
-              <button
-                className="add-slot-btn ghost"
-                onClick={() => openModal()}
-              >
-                Create First Slot
-              </button>
+            <div className="slot-empty-state">
+              <div className="empty-icon">
+                <CalendarDays size={48} />
+              </div>
+              <h3>
+                {isPastDate
+                  ? "No slots were available"
+                  : "No slots created yet"}
+              </h3>
+              <p>
+                {isPastDate
+                  ? "You cannot modify slots for past dates."
+                  : "Setup your appointment availability for this day."}
+              </p>
+              {!isPastDate && (
+                <button className="ghost-add-btn" onClick={() => openModal()}>
+                  Create First Slot
+                </button>
+              )}
             </div>
           )}
         </main>
       </div>
 
       {(modalOpen || repeatModalOpen) && (
-        <div className="modal-overlay" onClick={closeModal} />
+        <div className="slot-modal-backdrop" onClick={closeModal} />
       )}
 
       {modalOpen && (
-        <div className="beauty-modal">
-          <div className="modal-header">
-            <h3>{editingSlot ? "Modify Slot" : "Create Slot"}</h3>
-            <button onClick={closeModal}>
+        <div className="slot-modal-box animate-pop">
+          <div className="modal-top">
+            <h4>{editingSlot ? "Edit Time Slot" : "Create New Slot"}</h4>
+            <button className="close-x" onClick={closeModal}>
               <X size={20} />
             </button>
           </div>
-          <div className="modal-body">
-            <div className="input-group">
-              <label>Service Date</label>
+          <div className="modal-mid">
+            <div className="field-group">
+              <label>Date</label>
               <input
                 type="date"
+                disabled={!!editingSlot}
                 value={slotDate}
                 onChange={(e) => setSlotDate(e.target.value)}
               />
             </div>
-            <div className="input-row">
-              <div className="input-group">
-                <label>Start Time</label>
+            <div className="field-row">
+              <div className="field-group">
+                <label>Start</label>
                 <input
                   type="time"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
                 />
               </div>
-              <div className="input-group">
-                <label>End Time</label>
+              <div className="field-group">
+                <label>End</label>
                 <input
                   type="time"
                   value={endTime}
@@ -420,42 +499,49 @@ function SlotScreen() {
                 />
               </div>
             </div>
-            <div className="toggle-row">
-              <span>Mark as Booked</span>
-              <label className="switch">
+            <div className="field-toggle-row">
+              <div className="toggle-label">
+                <AlertCircle size={16} />
+                <span>Mark as already booked</span>
+              </div>
+              <label className="slot-switch">
                 <input
                   type="checkbox"
                   checked={isBooked}
                   onChange={(e) => setIsBooked(e.target.checked)}
                 />
-                <span className="slider"></span>
+                <span className="slot-slider"></span>
               </label>
             </div>
           </div>
-          <div className="modal-footer">
-            <button className="btn-cancel" onClick={closeModal}>
+          <div className="modal-bot">
+            <button className="slot-btn-secondary" onClick={closeModal}>
               Cancel
             </button>
-            <button className="btn-save" onClick={handleSaveSlot}>
-              Confirm Slot
+            <button className="slot-btn-primary" onClick={handleSaveSlot}>
+              Save Appointment Slot
             </button>
           </div>
         </div>
       )}
 
       {repeatModalOpen && (
-        <div className="beauty-modal small">
-          <div className="modal-header">
-            <h3>Daily Schedule Sync</h3>
-            <button onClick={() => setRepeatModalOpen(false)}>
+        <div className="slot-modal-box small animate-pop">
+          <div className="modal-top">
+            <h4>Batch Schedule Sync</h4>
+            <button
+              className="close-x"
+              onClick={() => setRepeatModalOpen(false)}
+            >
               <X size={20} />
             </button>
           </div>
-          <div className="modal-body">
-            <p className="help-text">
-              Copy today's schedule to all future dates up until:
+          <div className="modal-mid">
+            <p className="hint">
+              This will copy today's slots to all future dates until the
+              selected date.
             </p>
-            <div className="input-group">
+            <div className="field-group">
               <label>Repeat Until Date</label>
               <input
                 type="date"
@@ -465,9 +551,12 @@ function SlotScreen() {
               />
             </div>
           </div>
-          <div className="modal-footer">
-            <button className="btn-save full" onClick={handleRepeatSync}>
-              Process Batch Sync
+          <div className="modal-bot">
+            <button
+              className="slot-btn-primary full"
+              onClick={handleRepeatSync}
+            >
+              Start Batch Sync
             </button>
           </div>
         </div>
