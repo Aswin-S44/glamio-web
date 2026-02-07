@@ -1,54 +1,31 @@
 import React from "react";
-import { Search, Home, ArrowLeft } from "lucide-react";
+import { SearchX, RefreshCcw } from "lucide-react";
 import "./NotFound.css";
 
-function NotFound() {
-  const handleGoBack = () => {
-    window.history.back();
-  };
-
-  const handleGoHome = () => {
-    window.location.href = "/";
-  };
-
+function NotFound({ title }) {
   return (
-    <div className="lux-nf-wrapper">
-      <div className="lux-nf-card">
-        <div className="lux-nf-visual">
-          <div className="lux-nf-circle">
-            <Search
-              size={80}
-              strokeWidth={1.5}
-              className="lux-nf-search-icon"
-            />
-            <div className="lux-nf-dot"></div>
+    <div className="nf-container">
+      <div className="nf-content">
+        <div className="nf-icon-wrapper">
+          <div className="nf-icon-circle">
+            <SearchX size={48} strokeWidth={1.5} />
           </div>
-          <h1 className="lux-nf-title">404</h1>
+          <div className="nf-pulse-ring"></div>
         </div>
 
-        <div className="lux-nf-info">
-          <h2>Page Not Found</h2>
-          <p>
-            The treatment or page you are looking for doesn't exist or has been
-            moved to a new location.
-          </p>
-        </div>
+        <h2 className="nf-title">No {title} Found</h2>
+        <p className="nf-description">
+          We couldn't find any {title} matching your current search or filters.
+          Try adjusting your keywords or switching categories.
+        </p>
 
-        <div className="lux-nf-actions">
-          <button onClick={handleGoHome} className="lux-nf-btn primary">
-            <Home size={20} />
-            Back to Dashboard
-          </button>
-          <button onClick={handleGoBack} className="lux-nf-btn secondary">
-            <ArrowLeft size={20} />
-            Go Back
-          </button>
-        </div>
-      </div>
-
-      <div className="lux-nf-bg-elements">
-        <div className="bg-blob"></div>
-        <div className="bg-blob-2"></div>
+        <button
+          className="nf-reset-btn"
+          onClick={() => window.location.reload()}
+        >
+          <RefreshCcw size={18} />
+          <span>Clear All Filters</span>
+        </button>
       </div>
     </div>
   );

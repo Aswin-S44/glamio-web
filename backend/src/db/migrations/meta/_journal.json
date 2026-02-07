@@ -15,6 +15,20 @@
       "when": 1769751050071,
       "tag": "0001_public_zeigeist",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1770436922176,
+      "tag": "0002_glossy_annihilus",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1770437284360,
+      "tag": "0003_mixed_hairball",
+      "breakpoints": true
     }
   ]
 }

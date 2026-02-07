@@ -3,4 +3,6 @@ export interface CreateServicePayload {
   imageUrl: string;
   rate: number;
   category: string;
+  description?: string;
+  duration?: string;
 }

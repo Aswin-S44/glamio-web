@@ -10,12 +10,16 @@ import {
 } from "./service.repository";
 import { uploadImage } from "../../utils/upload";
 import { CreateServicePayload } from "./service.types";
+import { and, count, eq, like } from "drizzle-orm";
+import { services } from "../../db/schemas/services";
+import { category } from "../../db/schemas/category";
+import { db } from "../../db/setup";
 
 export const createServiceService = async (
   shopId: number,
   payload: CreateServicePayload
 ) => {
-  const { name, imageUrl, rate, category } = payload;
+  const { name, imageUrl, rate, category, description, duration } = payload;
 
   let categoryId: number;
 
@@ -31,17 +35,85 @@ export const createServiceService = async (
     throw new Error("Image upload failed");
   }
 
+  console.log("--------------", {
+    name,
+    imageUrl: uploadedImage,
+    rate,
+    shopId,
+    categoryId,
+    description,
+    duration,
+  });
+
   await createServiceDB({
     name,
     imageUrl: uploadedImage,
     rate,
     shopId,
     categoryId,
+    description,
+    duration,
   });
 };
 
-export const getServicesService = (shopId: number) => {
-  return getServicesByShopId(shopId);
+export const getServicesService = (
+  shopId: number,
+  limit: number,
+  offset: number,
+  search: string,
+  categoryName: string
+) => {
+  const conditions = [eq(services.shopId, shopId)];
+
+  if (search) {
+    conditions.push(like(services.name, `%${search}%`));
+  }
+
+  if (categoryName !== "All") {
+    conditions.push(eq(category.name, categoryName));
+  }
+
+  return db
+    .select({
+      id: services.id,
+      name: services.name,
+      imageUrl: services.imageUrl,
+      rate: services.rate,
+      shopId: services.shopId,
+      categoryId: services.categoryId,
+      categoryName: category.name,
+      createdAt: services.createdAt,
+      updatedAt: services.updatedAt,
+      description: services.description,
+      duration: services.duration,
+    })
+    .from(services)
+    .leftJoin(category, eq(services.categoryId, category.id))
+    .where(and(...conditions))
+    .limit(limit)
+    .offset(offset);
+};
+
+export const getServicesCountService = (
+  shopId: number,
+  search: string,
+  categoryName: string
+) => {
+  const conditions = [eq(services.shopId, shopId)];
+
+  if (search) {
+    conditions.push(like(services.name, `%${search}%`));
+  }
+
+  if (categoryName !== "All") {
+    conditions.push(eq(category.name, categoryName));
+  }
+
+  return db
+    .select({ count: count() })
+    .from(services)
+    .leftJoin(category, eq(services.categoryId, category.id))
+    .where(and(...conditions));
 };
 
 export const getServiceByIdService = async (id: number, shopId: number) => {

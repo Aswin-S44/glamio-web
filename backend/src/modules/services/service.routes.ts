@@ -16,4 +16,4 @@ router.get("/:id", authMiddleware, getServiceById);
 router.patch("/:id", authMiddleware, updateServiceById);
 router.delete("/:id", authMiddleware, deleteServiceById);
 
-export default router;
+export default router; 

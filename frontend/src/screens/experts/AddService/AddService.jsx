@@ -1,6 +1,16 @@
 import React, { useState } from "react";
 import CreatableSelect from "react-select/creatable";
 import Upload from "antd/es/upload";
+import {
+  Image as ImageIcon,
+  Plus,
+  Trash2,
+  DollarSign,
+  Tag,
+  Package,
+  X,
+  UploadCloud,
+} from "lucide-react";
 import { convertToBase64 } from "../../../utils/utils";
 import { useAuth } from "../../../context/AuthContext";
 import "./AddService.css";
@@ -15,11 +25,22 @@ const CATEGORY_OPTIONS = [
 const customSelectStyles = {
   control: (base, state) => ({
     ...base,
-    padding: "5px",
-    borderRadius: "12px",
-    border: state.isFocused ? "2px solid #d4a373" : "1px solid #e5e7eb",
+    padding: "6px",
+    borderRadius: "14px",
+    border: state.isFocused ? "2px solid var(--primary)" : "1px solid #e5e7eb",
     boxShadow: "none",
-    "&:hover": { borderColor: "#d4a373" },
+    backgroundColor: "#fff",
+    "&:hover": { borderColor: "var(--primary)" },
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? "var(--primary)"
+      : state.isFocused
+      ? "var(--secondary)"
+      : "transparent",
+    color: state.isSelected ? "#fff" : "var(--dark)",
+    cursor: "pointer",
   }),
 };
 
@@ -31,16 +52,22 @@ function AddService() {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState(null);
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleImageUpload = async ({ fileList }) => {
-    const base64Images = await Promise.all(fileList.map(convertToBase64));
-    if (base64Images.length > 0) {
-      setImage(base64Images[0]);
+    if (fileList.length > 0) {
+      const base64 = await convertToBase64(
+        fileList[0].originFileObj || fileList[0]
+      );
+      setImage(base64);
+    } else {
+      setImage(null);
     }
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const submitData = {
       name: serviceName,
@@ -50,7 +77,7 @@ function AddService() {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/v1/shop/service", {
+      const res = await fetch("http://localhost:5000/api/v1/services", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,87 +87,129 @@ function AddService() {
       });
 
       const result = await res.json();
-
-      if (!res.ok) {
+      if (!res.ok)
         throw new Error(result.message || "Failed to create service");
-      }
 
-      console.log("Service created:", result);
+      setServiceName("");
+      setPrice("");
+      setCategory(null);
+      setImage(null);
+      alert("Service added successfully!");
     } catch (error) {
-      console.error("Error submitting form:", error.message);
+      console.error("Error:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="admin-container">
-      <form className="service-card" onSubmit={onSubmit}>
-        <div className="header-section">
-          <h2>Add New Service</h2>
-          <p>Create a professional service listing for your shop</p>
-        </div>
-
-        <div className="form-body">
-          <div className="input-group">
-            <label>Category</label>
-            <CreatableSelect
-              isClearable
-              options={CATEGORY_OPTIONS}
-              styles={customSelectStyles}
-              placeholder="Search or type new category..."
-              value={category}
-              onChange={(newValue) => setCategory(newValue)}
-              required
-            />
+    <div className="add-service-wrapper">
+      <div className="service-form-container">
+        <form className="modern-form" onSubmit={onSubmit}>
+          <div className="form-header-main">
+            <div className="header-icon">
+              <Plus size={24} color="#fff" />
+            </div>
+            <div>
+              <h2>Create New Service</h2>
+              <p>Add details and pricing for your new beauty offering</p>
+            </div>
           </div>
 
-          <div className="input-group">
-            <label>Service Name</label>
-            <input
-              type="text"
-              placeholder="e.g. Luxury Bridal Facial"
-              value={serviceName}
-              onChange={(e) => setServiceName(e.target.value)}
-              required
-            />
+          <div className="form-grid">
+            <div className="full-width">
+              <label className="field-label">
+                <Tag size={16} /> Category
+              </label>
+              <CreatableSelect
+                isClearable
+                options={CATEGORY_OPTIONS}
+                styles={customSelectStyles}
+                placeholder="Select or create category..."
+                value={category}
+                onChange={(newValue) => setCategory(newValue)}
+                required
+              />
+            </div>
+
+            <div className="input-field">
+              <label className="field-label">
+                <Package size={16} /> Service Name
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Bridal Glow Facial"
+                value={serviceName}
+                onChange={(e) => setServiceName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="input-field">
+              <label className="field-label">
+                <DollarSign size={16} /> Price
+              </label>
+              <div className="price-input-wrapper">
+                <span className="currency">$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="full-width">
+              <label className="field-label">
+                <ImageIcon size={16} /> Service Display Image
+              </label>
+              <Upload
+                listType="picture-card"
+                className="service-uploader"
+                beforeUpload={() => false}
+                onChange={handleImageUpload}
+                maxCount={1}
+                showUploadList={false}
+              >
+                {image ? (
+                  <div className="image-preview-container">
+                    <img src={image} alt="Preview" className="upload-preview" />
+                    <div className="preview-overlay">
+                      <Trash2
+                        size={20}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setImage(null);
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="upload-trigger">
+                    <UploadCloud size={32} />
+                    <div className="upload-text">
+                      <span>Click or drag image</span>
+                      <small>PNG, JPG up to 5MB</small>
+                    </div>
+                  </div>
+                )}
+              </Upload>
+            </div>
           </div>
 
-          <div className="input-group">
-            <label>Price ($)</label>
-            <input
-              type="number"
-              step="0.01"
-              placeholder="0.00"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              required
-            />
+          <div className="form-actions">
+            <button type="button" className="btn-cancel">
+              Cancel
+            </button>
+            <button type="submit" className="btn-submit" disabled={loading}>
+              {loading ? "Saving..." : "Create Service"}
+            </button>
           </div>
-
-          <div className="input-group">
-            <label>Service Image</label>
-            <Upload
-              listType="picture"
-              beforeUpload={() => false}
-              onChange={handleImageUpload}
-              showUploadList={true}
-              maxCount={1}
-            >
-              <button type="button" className="btn-secondary">
-                Select Image
-              </button>
-            </Upload>
-          </div>
-        </div>
-
-        <div className="footer-section">
-          <button type="button" className="btn-secondary">
-            Cancel
-          </button>
-          <button type="submit" className="btn-primary">
-            Save Service
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
