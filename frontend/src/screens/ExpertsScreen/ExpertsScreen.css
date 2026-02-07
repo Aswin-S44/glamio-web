@@ -11,7 +11,7 @@
 .sv-screen {
   background: var(--bg);
   min-height: 100vh;
-  padding: 2rem;
+  /* padding: 2rem; */
 }
 
 .sv-header {
@@ -23,8 +23,8 @@
   gap: 1.5rem;
 }
 
-.sv-title-sec h1 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
-.sv-title-sec p { color: var(--text-muted); font-size: 0.95rem; margin-top: 2px; }
+.sv-title-sec h1 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;font-family: sans-serif; }
+.sv-title-sec p { color: var(--text-muted); font-size: 0.95rem; margin-top: 2px; font-family: sans-serif; }
 
 .sv-actions { display: flex; gap: 1rem; flex-wrap: wrap; width: 100%; max-width: 500px; justify-content: flex-end; }
 

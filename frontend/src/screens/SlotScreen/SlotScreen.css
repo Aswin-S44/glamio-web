@@ -32,7 +32,7 @@
   margin-bottom: 1.5rem;
 }
 
-.cal-nav h3 { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+.cal-nav h3 { font-size: 1.1rem; font-weight: 700; color: var(--dark); font-family: sans-serif; }
 
 .nav-btns { display: flex; gap: 0.5rem; }
 .nav-btns button {
@@ -99,8 +99,8 @@
 }
 
 .card-info { display: flex; align-items: center; gap: 1rem; }
-.card-info h4 { font-size: 1rem; margin-bottom: 2px; }
-.card-info p { font-size: 0.8rem; color: #777; }
+.card-info h4 { font-size: 1rem; margin-bottom: 2px; font-family: sans-serif;}
+.card-info p { font-size: 0.8rem; color: #777; font-family: sans-serif;}
 .icon-active { color: #ef4444; }
 
 /* Sync Button */
@@ -129,7 +129,7 @@
   margin-bottom: 2.5rem;
 }
 
-.date-display h2 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
+.date-display h2 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; font-family: sans-serif;}
 .date-display p { color: #888; margin-top: 4px; }
 
 .primary-add-btn {
