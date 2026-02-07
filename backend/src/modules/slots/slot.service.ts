@@ -1,3 +1,4 @@
+import { findShopByUserId } from "../shops/shop.repository";
 import {
   deleteSlotDB,
   findSlotByIdAndShop,
@@ -45,4 +46,19 @@ export const deleteSlotService = async (id: number, shopId: number) => {
   if (!exists.length) throw new Error("Slots not found");
 
   await deleteSlotDB(id);
+};
+
+export const getShopIdByUserId = async (userId: number) => {
+  const shop = await findShopByUserId(userId);
+
+  if (!shop) {
+    return null;
+  }
+
+  const shopId = shop.shop?.id;
+
+  if (!shopId) {
+    return null;
+  }
+  return shopId;
 };

@@ -8,7 +8,8 @@
     "build": "tsc",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "seed": "ts-node src/db/seed.ts"
+    "seed": "ts-node src/db/seed.ts",
+    "db:pull": "npx drizzle-kit pull"
   },
   "author": "",
   "license": "ISC",

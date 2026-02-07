@@ -1,7 +1,6 @@
 import {
   bigint,
   boolean,
-  int,
   mysqlTable,
   timestamp,
   varchar,
@@ -15,20 +14,30 @@ export const notifications = mysqlTable("notifications", {
   id: bigint("id", { mode: "number", unsigned: true })
     .autoincrement()
     .primaryKey(),
-  notificationTypeId: int("notification_type_id")
+
+  notificationTypeId: bigint("notification_type_id", {
+    mode: "number",
+    unsigned: true,
+  })
     .notNull()
     .references(() => notificationTypes.id),
-  fromId: int("from_id")
+
+  fromId: bigint("from_id", { mode: "number", unsigned: true })
     .notNull()
     .references(() => users.id),
-  toId: int("to_id")
+
+  toId: bigint("to_id", { mode: "number", unsigned: true })
     .notNull()
     .references(() => users.id),
+
   message: varchar("message", { length: 500 }).notNull(),
+
   isRead: boolean("is_read").notNull().default(false),
-  shopId: int("shop_id")
+
+  shopId: bigint("shop_id", { mode: "number", unsigned: true })
     .notNull()
     .references(() => shopOwners.id),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

@@ -28,4 +28,5 @@ export const shopOwners = mysqlTable("shop_owners", {
   placeId: varchar("place_id", { length: 100 }),
   totalRating: int("total_rating").notNull().default(0),
   isProfileCompleted: boolean("is_profile_completed").default(false),
+  shopImage: varchar("shop_image", { length: 256 }),
 });

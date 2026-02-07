@@ -1,2 +1,5 @@
 backend/src/credentials/serviceAccountKey.json
 .env
+backend/src/credentials/*.json
+backend/src/credentials/serviceAccountKey-bkp.json
+backend/src/credentials/*.json

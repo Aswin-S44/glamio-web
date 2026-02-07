@@ -4,7 +4,7 @@ import "./Parlors.css";
 const parlorsData = [
   {
     id: 1,
-    name: "Elite Glamour Manjeri",
+    name: "Elite",
     location: "Manjeri",
     rating: 4.9,
     address: "Court Road, Manjeri, Kerala",

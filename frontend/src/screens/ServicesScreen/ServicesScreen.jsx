@@ -1,25 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CreatableSelect from "react-select/creatable";
 import Upload from "antd/es/upload";
 import {
   Plus,
   Search,
   Scissors,
-  Sparkles,
   Trash2,
   Edit2,
   Clock,
   X,
   ChevronLeft,
-  Wind,
-  Flower2,
-  Heart,
   Camera,
-  Check,
-  Trash,
+  MoreVertical,
+  Eye,
 } from "lucide-react";
-import { format } from "date-fns";
 import "./ServicesScreen.css";
+import NotFound from "../../components/NotFound/NotFound";
 
 const CATEGORY_OPTIONS = [
   { value: "Hair", label: "Hair Cut" },
@@ -28,23 +24,15 @@ const CATEGORY_OPTIONS = [
   { value: "Makeup", label: "Makeup" },
 ];
 
-const convertToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 const customSelectStyles = {
   control: (base, state) => ({
     ...base,
-    padding: "8px",
-    borderRadius: "15px",
-    background: "#fdfaf7",
+    padding: "10px",
+    borderRadius: "16px",
+    background: "#fff",
     border: state.isFocused ? "2px solid #d4a373" : "1px solid #faedcd",
     boxShadow: "none",
+    fontSize: "14px",
     "&:hover": { borderColor: "#d4a373" },
   }),
   option: (base, state) => ({
@@ -55,7 +43,6 @@ const customSelectStyles = {
       ? "#faedcd"
       : "transparent",
     color: state.isSelected ? "#fff" : "#1a1a1a",
-    "&:active": { backgroundColor: "#d4a373" },
   }),
 };
 
@@ -65,7 +52,9 @@ function ServicesScreen() {
   const [activeTab, setActiveTab] = useState("All");
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
+  const [activeMenuId, setActiveMenuId] = useState(null);
 
   const [serviceName, setServiceName] = useState("");
   const [price, setPrice] = useState("");
@@ -75,9 +64,17 @@ function ServicesScreen() {
   const [description, setDescription] = useState("");
 
   const token = localStorage.getItem("token");
+  const menuRef = useRef(null);
 
   useEffect(() => {
     fetchServices();
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setActiveMenuId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const fetchServices = async () => {
@@ -95,6 +92,15 @@ function ServicesScreen() {
     }
   };
 
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleImageUpload = async ({ fileList }) => {
     if (fileList.length > 0) {
       const base64 = await convertToBase64(
@@ -108,7 +114,6 @@ function ServicesScreen() {
 
   const handleSaveService = async (e) => {
     e.preventDefault();
-
     const submitData = {
       name: serviceName,
       imageUrl: image,
@@ -149,6 +154,7 @@ function ServicesScreen() {
           headers: { Authorization: `${token}` },
         });
         fetchServices();
+        setActiveMenuId(null);
       } catch (error) {
         console.error(error);
       }
@@ -174,10 +180,18 @@ function ServicesScreen() {
       setDescription("");
     }
     setModalOpen(true);
+    setActiveMenuId(null);
+  };
+
+  const openViewModal = (service) => {
+    setEditingService(service);
+    setViewModalOpen(true);
+    setActiveMenuId(null);
   };
 
   const closeModal = () => {
     setModalOpen(false);
+    setViewModalOpen(false);
     setEditingService(null);
   };
 
@@ -190,124 +204,153 @@ function ServicesScreen() {
   });
 
   return (
-    <div className="sv-page">
-      <header className="sv-header">
-        <div className="sv-nav-brand">
-          <button className="sv-back-circle">
-            <ChevronLeft size={20} />
+    <div className="lux-app-container">
+      <header className="lux-header">
+        <div className="lux-header-left">
+          <button className="lux-back-btn">
+            <ChevronLeft size={24} />
           </button>
           <div>
-            <h1>Service Menu</h1>
-            <p>Define your shop's premium offerings</p>
+            <h1>Services</h1>
+            <p>{services.length} items total</p>
           </div>
         </div>
-        <button className="sv-add-btn" onClick={() => openModal()}>
-          <Plus size={20} />
-          <span>New Service</span>
+        <button className="lux-desktop-add-btn" onClick={() => openModal()}>
+          <Plus size={20} /> Add New Service
         </button>
       </header>
 
-      <main className="sv-content">
-        <div className="sv-filter-bar">
-          <div className="sv-search">
-            <Search className="sv-search-icon" size={18} />
-            <input
-              type="text"
-              placeholder="Search services..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="sv-tabs">
-            {["All", "Hair", "Skin", "Nails", "Makeup"].map((cat) => (
-              <button
-                key={cat}
-                className={`sv-tab-item ${activeTab === cat ? "active" : ""}`}
-                onClick={() => setActiveTab(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+      <div className="lux-sticky-toolbar">
+        <div className="lux-search-box">
+          <Search size={18} className="lux-search-icon" />
+          <input
+            type="text"
+            placeholder="Search treatments..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
+        <div className="lux-tabs">
+          {["All", "Hair", "Skin", "Nails", "Makeup"].map((cat) => (
+            <button
+              key={cat}
+              className={`lux-tab-item ${activeTab === cat ? "active" : ""}`}
+              onClick={() => setActiveTab(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
 
+      <main className="lux-content">
         {loading ? (
-          <div className="sv-loader">
-            <div className="sv-spinner"></div>
+          <div className="lux-loader-wrap">
+            <div className="lux-spinner"></div>
           </div>
+        ) : filteredServices.length == 0 ? (
+          <>
+            <NotFound />
+          </>
         ) : (
-          <div className="sv-grid">
-            {filteredServices.map((service) => (
-              <div key={service.id} className="sv-card">
-                <div className="sv-card-img-wrapper">
-                  {service.imageUrl ? (
-                    <img
-                      src={service.imageUrl}
-                      alt={service.name}
-                      className="sv-main-img"
-                    />
-                  ) : (
-                    <div className="sv-img-placeholder">
-                      <Scissors size={40} />
+          <div className="lux-table-view">
+            <div className="lux-table-header">
+              <div className="col-info">Service Details</div>
+              <div className="col-cat">Category</div>
+              <div className="col-time">Duration</div>
+              <div className="col-price">Price</div>
+              <div className="col-actions">Actions</div>
+            </div>
+
+            <div className="lux-table-body">
+              {filteredServices.map((service) => (
+                <div key={service.id} className="lux-table-row">
+                  <div className="col-info">
+                    <div className="lux-row-img">
+                      {service.imageUrl ? (
+                        <img src={service.imageUrl} alt="" />
+                      ) : (
+                        <Scissors size={18} />
+                      )}
                     </div>
-                  )}
-                  <div className="sv-price-tag">
-                    ${service.rate || service.price}
+                    <div className="lux-row-text">
+                      <span className="lux-row-name">{service.name}</span>
+                      <span className="lux-row-sub mobile-only">
+                        {service.category}
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="sv-card-body">
-                  <span className="sv-category-label">{service.category}</span>
-                  <h3>{service.name}</h3>
-                  <p>{service.description || "Luxury treatment experience."}</p>
-                </div>
-
-                <div className="sv-card-foot">
-                  <div className="sv-meta">
-                    <Clock size={14} />
-                    <span>{service.duration || "30"} mins</span>
+                  <div className="col-cat">
+                    <span className="lux-row-badge">{service.category}</span>
                   </div>
-                  <div className="sv-actions">
-                    <button
-                      className="sv-circle-btn edit"
-                      onClick={() => openModal(service)}
+                  <div className="col-time">
+                    <div className="lux-meta-item">
+                      <Clock size={14} /> {service.duration || "30"} min
+                    </div>
+                  </div>
+                  <div className="col-price">
+                    <span className="lux-row-price">
+                      ${service.rate || service.price}
+                    </span>
+                  </div>
+                  <div className="col-actions">
+                    <div
+                      className="lux-action-wrapper"
+                      ref={activeMenuId === service.id ? menuRef : null}
                     >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
-                      className="sv-circle-btn delete"
-                      onClick={() => handleDelete(service.id)}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                      <button
+                        className="lux-more-btn"
+                        onClick={() =>
+                          setActiveMenuId(
+                            activeMenuId === service.id ? null : service.id
+                          )
+                        }
+                      >
+                        <MoreVertical size={20} />
+                      </button>
+
+                      {activeMenuId === service.id && (
+                        <div className="lux-dropdown-menu">
+                          <button onClick={() => openViewModal(service)}>
+                            <Eye size={16} /> View Details
+                          </button>
+                          <button onClick={() => openModal(service)}>
+                            <Edit2 size={16} /> Edit Service
+                          </button>
+                          <button
+                            onClick={() => handleDelete(service.id)}
+                            className="delete-opt"
+                          >
+                            <Trash2 size={16} /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            <div className="sv-add-placeholder" onClick={() => openModal()}>
-              <div className="sv-plus-ring">
-                <Plus size={32} />
-              </div>
-              <p>Add Service</p>
+              ))}
             </div>
           </div>
         )}
       </main>
 
+      <button className="lux-fab" onClick={() => openModal()}>
+        <Plus size={28} />
+      </button>
+
       {modalOpen && (
-        <div className="sv-modal-backdrop">
-          <div className="sv-modal-pane">
-            <div className="sv-modal-header">
+        <div className="lux-modal-overlay">
+          <div className="lux-modal-sheet">
+            <div className="lux-modal-header">
+              <div className="lux-handle"></div>
               <h2>{editingService ? "Edit Service" : "New Service"}</h2>
-              <button className="sv-close-btn" onClick={closeModal}>
-                <X size={20} />
+              <button className="lux-close-x" onClick={closeModal}>
+                <X size={24} />
               </button>
             </div>
-
-            <form onSubmit={handleSaveService} className="sv-form">
-              <div className="sv-form-scroll">
-                <div className="sv-upload-section">
-                  <label>Service Cover Image</label>
+            <form onSubmit={handleSaveService} className="lux-modal-form">
+              <div className="lux-form-body">
+                <div className="lux-upload-area">
                   <Upload
                     listType="picture-card"
                     beforeUpload={() => false}
@@ -316,95 +359,140 @@ function ServicesScreen() {
                     showUploadList={false}
                   >
                     {image ? (
-                      <div className="sv-preview-container">
-                        <img
-                          src={image}
-                          alt="preview"
-                          className="sv-img-preview"
-                        />
-                        <div className="sv-img-overlay">
+                      <div className="lux-img-prev-wrap">
+                        <img src={image} alt="prev" />
+                        <div className="lux-img-mask">
                           <Camera size={20} />
                         </div>
                       </div>
                     ) : (
-                      <div className="sv-upload-trigger">
+                      <div className="lux-upload-placeholder">
                         <Camera size={24} />
-                        <span>Upload Photo</span>
+                        <span>Add Photo</span>
                       </div>
                     )}
                   </Upload>
                 </div>
-
-                <div className="sv-input-group">
-                  <label>Category</label>
+                <div className="lux-input-group">
+                  <label>Service Category</label>
                   <CreatableSelect
-                    isClearable
-                    options={CATEGORY_OPTIONS}
                     styles={customSelectStyles}
-                    placeholder="Select or type new..."
+                    options={CATEGORY_OPTIONS}
                     value={category}
-                    onChange={(val) => setCategory(val)}
-                    required
+                    onChange={setCategory}
+                    placeholder="Select category..."
                   />
                 </div>
-
-                <div className="sv-input-group">
+                <div className="lux-input-group">
                   <label>Service Name</label>
                   <input
-                    type="text"
-                    placeholder="e.g. French Balayage"
+                    className="lux-input"
                     value={serviceName}
                     onChange={(e) => setServiceName(e.target.value)}
                     required
                   />
                 </div>
-
-                <div className="sv-form-row">
-                  <div className="sv-input-group">
+                <div className="lux-input-row">
+                  <div className="lux-input-group">
                     <label>Price ($)</label>
                     <input
                       type="number"
-                      step="0.01"
-                      placeholder="0.00"
+                      className="lux-input"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                       required
                     />
                   </div>
-                  <div className="sv-input-group">
-                    <label>Duration (min)</label>
+                  <div className="lux-input-group">
+                    <label>Time (min)</label>
                     <input
                       type="number"
+                      className="lux-input"
                       value={duration}
                       onChange={(e) => setDuration(e.target.value)}
                     />
                   </div>
                 </div>
-
-                <div className="sv-input-group">
+                <div className="lux-input-group">
                   <label>Description</label>
                   <textarea
-                    placeholder="Describe the service experience..."
+                    className="lux-textarea"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    rows="3"
                   />
                 </div>
               </div>
-
-              <div className="sv-modal-footer">
+              <div className="lux-modal-footer">
                 <button
                   type="button"
-                  className="sv-btn-cancel"
+                  className="lux-btn-cancel"
                   onClick={closeModal}
                 >
                   Discard
                 </button>
-                <button type="submit" className="sv-btn-save">
+                <button type="submit" className="lux-btn-save">
                   Save Service
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {viewModalOpen && editingService && (
+        <div className="lux-modal-overlay">
+          <div className="lux-modal-sheet">
+            <div className="lux-modal-header">
+              <div className="lux-handle"></div>
+              <h2>Service Details</h2>
+              <button className="lux-close-x" onClick={closeModal}>
+                <X size={24} />
+              </button>
+            </div>
+            <div className="lux-form-body">
+              <div className="lux-view-hero">
+                {editingService.imageUrl ? (
+                  <img
+                    src={editingService.imageUrl}
+                    alt=""
+                    className="lux-view-img"
+                  />
+                ) : (
+                  <div className="lux-view-placeholder">
+                    <Scissors size={48} />
+                  </div>
+                )}
+                <div className="lux-view-main-info">
+                  <span className="lux-row-badge">
+                    {editingService.category}
+                  </span>
+                  <h3>{editingService.name}</h3>
+                  <div className="lux-view-stats">
+                    <span>
+                      <Clock size={16} /> {editingService.duration || "30"} min
+                    </span>
+                    <span className="price-tag">
+                      ${editingService.rate || editingService.price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="lux-view-desc">
+                <label>About this service</label>
+                <p>
+                  {editingService.description || "No description provided."}
+                </p>
+              </div>
+            </div>
+            <div className="lux-modal-footer">
+              <button
+                className="lux-btn-save"
+                style={{ width: "100%" }}
+                onClick={closeModal}
+              >
+                Close View
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -14,7 +14,7 @@ export const usersTypes = {
   OPERATOR: {
     name: "OPERATOR",
   },
-};
+}; 
 
 export const appointmentStatusEnums = {
   PENDING: "pending",

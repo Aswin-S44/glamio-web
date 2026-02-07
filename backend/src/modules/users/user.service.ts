@@ -7,6 +7,8 @@ import {
 import { getUserTypeId } from "../../utils/getUserTypeId";
 import { createUser, findUserByEmail } from "./user.repository";
 import { CreateUserPayload } from "./user.types";
+import { db } from "../../db/setup";
+import { shopOwners } from "../../db/schemas/shop-owners";
 export const createUserService = async (payload: CreateUserPayload) => {
   const { email, username, profileImage, userType } = payload;
   if (!email || !username) {
@@ -31,6 +33,28 @@ export const createUserService = async (payload: CreateUserPayload) => {
     profileImage,
     userTypeId,
   });
+
+  console.log("newUser------------", newUser);
+
+  if (userTypeId === DEFAULT_SHOP_ID && newUser) {
+    const shopData = {
+      userId: newUser[0].id,
+      about: "",
+      address: "",
+      latitude: "0",
+      longitude: "0",
+      googleReviewUrl: "",
+      isOnboarded: false,
+      openingHours: {},
+      parlourName: "",
+      placeId: "",
+      totalRating: 0,
+      isProfileCompleted: false,
+    };
+
+    await db.insert(shopOwners).values(shopData);
+  }
+
   const token = jwt.sign({ email }, process.env.JWT_SECRET as string, {
     expiresIn: "30d",
   });
