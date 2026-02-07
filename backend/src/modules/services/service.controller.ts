@@ -5,11 +5,13 @@ import {
   getServiceByIdService,
   updateServiceService,
   deleteServiceService,
+  getServicesCountService,
 } from "./service.service";
 import { getShopIdByUserId } from "../slots/slot.service";
 
 export const createService = async (req: Request, res: Response) => {
   try {
+    console.log("------------");
     const userId = req.user?.id;
 
     if (!userId) {
@@ -17,7 +19,7 @@ export const createService = async (req: Request, res: Response) => {
     }
 
     const shopId = await getShopIdByUserId(userId!);
-
+    console.log("shopId-----------", shopId);
     if (!shopId) {
       res.status(401).json({ message: "Shop not found" });
     }
@@ -31,18 +33,34 @@ export const createService = async (req: Request, res: Response) => {
 
 export const getServices = async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 8;
+  const search = (req.query.search as string) || "";
+  const categoryName = (req.query.category as string) || "All";
 
-  if (!userId) {
-    res.status(401).json({ message: "Unauthorized" });
-  }
+  if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
-  const shopId = await getShopIdByUserId(userId!);
+  const shopId = await getShopIdByUserId(userId);
+  if (!shopId) return res.status(404).json({ message: "Shop not found" });
 
-  if (!shopId) {
-    res.status(401).json({ message: "Shop not found" });
-  }
-  const services = await getServicesService(shopId!);
-  res.json({ services });
+  const offset = (page - 1) * limit;
+
+  const [services, totalCountResult] = await Promise.all([
+    getServicesService(shopId, limit, offset, search, categoryName),
+    getServicesCountService(shopId, search, categoryName),
+  ]);
+
+  const totalCount = totalCountResult[0].count;
+
+  res.json({
+    services,
+    pagination: {
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      limit,
+    },
+  });
 };
 
 export const getServiceById = async (req: Request, res: Response) => {

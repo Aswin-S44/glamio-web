@@ -1,6 +1,5 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
 import {
   LayoutDashboard,
   UserPlus,
@@ -22,8 +21,22 @@ import {
   UserPlus2,
   Upload,
   LogOut,
+  User,
+  Settings,
+  CreditCard,
+  ChevronDown,
 } from "lucide-react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import "./Dashboard.css";
+
 import AddService from "../AddService/AddService";
 import SlotScreen from "../../SlotScreen/SlotScreen";
 import ServicesScreen from "../../ServicesScreen/ServicesScreen";
@@ -34,13 +47,35 @@ import AppointmentScreen from "../../AppointmentScreen/AppointmentScreen";
 import OfferScreen from "../../OfferScreen/OfferScreen";
 import NotificationScreen from "../../Notifications/NotificationScreen";
 
+const chartData = [
+  { name: "Mon", revenue: 400, appointments: 24 },
+  { name: "Tue", revenue: 300, appointments: 18 },
+  { name: "Wed", revenue: 900, appointments: 45 },
+  { name: "Thu", revenue: 700, appointments: 32 },
+  { name: "Fri", revenue: 1200, appointments: 55 },
+  { name: "Sat", revenue: 1500, appointments: 70 },
+  { name: "Sun", revenue: 1100, appointments: 40 },
+];
+
 function Dashboard() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [serviceView, setServiceView] = useState("list");
   const [expertView, setExpertView] = useState("list");
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const menuItems = [
     { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
@@ -65,59 +100,12 @@ function Dashboard() {
   const sampleExperts = [
     {
       id: 1,
-      shopId: 101,
       name: "Sophia Reynolds",
-      about:
-        "Senior hair stylist with over 10 years of experience in modern cuts, creative coloring, and bridal transformations.",
-      address: "Street 12, Downtown Beauty Hub",
+      about: "Senior hair stylist with over 10 years of experience.",
       image:
         "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?q=80&w=800&auto=format&fit=crop",
-      specialist: ["Hair Styling", "Global Coloring", "Keratin"],
+      specialist: ["Hair Styling", "Global Coloring"],
       isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 2,
-      shopId: 101,
-      name: "Marcus Chen",
-      about:
-        "Specializing in skincare treatments and therapeutic facials designed to rejuvenate and refresh your natural glow.",
-      address: "Suite 4, The Grand Plaza",
-      image:
-        "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?q=80&w=800&auto=format&fit=crop",
-      specialist: ["Facials", "Chemical Peels", "Skin Consultation"],
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 3,
-      shopId: 101,
-      name: "Elena Rodriguez",
-      about:
-        "Award-winning makeup artist known for high-fashion editorial looks and elegant evening glam for special occasions.",
-      address: "Studio 15, North Wing Arcade",
-      image:
-        "https://images.unsplash.com/photo-1583391262775-946328325a77?q=80&w=800&auto=format&fit=crop",
-      specialist: ["Bridal Makeup", "Party Glow", "HD Makeup"],
-      isActive: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 4,
-      shopId: 101,
-      name: "Amara J",
-      about:
-        "Expert in nail art and extensions, focusing on precision, hygiene, and the latest trends in the nail industry.",
-      address: "Shop 5, East Riverside",
-      image:
-        "https://images.unsplash.com/photo-1594465919760-441fe5908ab0?q=80&w=800&auto=format&fit=crop",
-      specialist: ["Gel Nails", "Manicure", "Nail Extension"],
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
   ];
 
@@ -127,49 +115,118 @@ function Dashboard() {
         return (
           <div className="view-container animate-fade-in">
             <div className="stats-grid">
-              <div className="stat-card pink">
+              <div className="stat-card gold-gradient">
                 <div className="stat-info">
-                  <span>Total Earnings</span>
-                  <h2>$2,840.00</h2>
+                  <span>Total Revenue</span>
+                  <h2>$4,840.00</h2>
+                  <p className="trend">+12.5% from last month</p>
                 </div>
-                <div className="stat-icon">
-                  <Plus size={20} />
+                <div className="stat-icon-circle">
+                  <CreditCard size={24} />
                 </div>
               </div>
-              <div className="stat-card purple">
+              <div className="stat-card dark-gradient">
+                <div className="stat-info">
+                  <span>Appointments</span>
+                  <h2>284</h2>
+                  <p className="trend">+5.2% from last week</p>
+                </div>
+                <div className="stat-icon-circle">
+                  <CalendarCheck size={24} />
+                </div>
+              </div>
+              <div className="stat-card beige-gradient">
                 <div className="stat-info">
                   <span>Active Clients</span>
-                  <h2>124</h2>
+                  <h2>1,204</h2>
+                  <p className="trend">+18 new today</p>
                 </div>
-              </div>
-              <div className="stat-card dark">
-                <div className="stat-info">
-                  <span>New Messages</span>
-                  <h2>08</h2>
+                <div className="stat-icon-circle">
+                  <User size={24} />
                 </div>
               </div>
             </div>
+
+            <div className="charts-section">
+              <div className="chart-card">
+                <div className="chart-header">
+                  <h3>Revenue Analytics</h3>
+                  <select className="chart-select">
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+                  </select>
+                </div>
+                <div className="chart-wrapper">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient
+                          id="colorRev"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop
+                            offset="5%"
+                            stopColor="#d4a373"
+                            stopOpacity={0.3}
+                          />
+                          <stop
+                            offset="95%"
+                            stopColor="#d4a373"
+                            stopOpacity={0}
+                          />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        vertical={false}
+                        stroke="#f0f0f0"
+                      />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                      <YAxis axisLine={false} tickLine={false} />
+                      <Tooltip />
+                      <Area
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#d4a373"
+                        strokeWidth={3}
+                        fillOpacity={1}
+                        fill="url(#colorRev)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+
             <div className="data-table-wrapper">
               <div className="table-header">
-                <h3>Recent Appointments</h3>
-                <button className="text-link btn-dash">View All</button>
+                <h3>Upcoming Appointments</h3>
+                <button className="btn-outline">View All</button>
               </div>
               <table>
                 <thead>
                   <tr>
                     <th>Customer</th>
                     <th>Service</th>
-                    <th>Date</th>
+                    <th>Date & Time</th>
                     <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Anna Smith</td>
-                    <td>Hair Styling</td>
-                    <td>Oct 12, 2023</td>
                     <td>
-                      <span className="badge-confirmed">Confirmed</span>
+                      <div className="user-cell">
+                        <div className="avatar-xs">AS</div>
+                        <span>Anna Smith</span>
+                      </div>
+                    </td>
+                    <td>Premium Hair Styling</td>
+                    <td>Today, 02:30 PM</td>
+                    <td>
+                      <span className="badge-status success">Confirmed</span>
                     </td>
                   </tr>
                 </tbody>
@@ -178,62 +235,25 @@ function Dashboard() {
           </div>
         );
       case "requests":
-        return (
-          <div>
-            <UserRequests />
-          </div>
-        );
+        return <UserRequests />;
       case "slots":
-        return (
-          <div>
-            <SlotScreen />
-          </div>
-        );
+        return <SlotScreen />;
       case "appointments":
-        return (
-          <div>
-            <AppointmentScreen />
-          </div>
-        );
+        return <AppointmentScreen />;
       case "offers":
-        return (
-          <div>
-            <OfferScreen />
-          </div>
-        );
+        return <OfferScreen />;
       case "notifications":
-        return (
-          <div>
-            <NotificationScreen />
-          </div>
-        );
+        return <NotificationScreen />;
       case "services":
-        return serviceView === "list" ? (
-          <div className="view-container animate-fade-in">
-            <div className="content-card">
-              <ServicesScreen />
-            </div>
-          </div>
-        ) : (
-          <AddService />
-        );
-
+        return serviceView === "list" ? <ServicesScreen /> : <AddService />;
       case "experts":
         return expertView === "list" ? (
-          <div className="view-container animate-fade-in">
-            <div className="content-card">
-              <ExpertsScreen expertsData={sampleExperts} />
-            </div>
-          </div>
+          <ExpertsScreen expertsData={sampleExperts} />
         ) : (
           <AddExpert />
         );
       default:
-        return (
-          <div className="view-container">
-            <OfferScreen />
-          </div>
-        );
+        return <div className="view-container">Select a tab</div>;
     }
   };
 
@@ -246,17 +266,19 @@ function Dashboard() {
       <aside className={`side-menu ${isMobileOpen ? "mobile-open" : ""}`}>
         <div className="menu-header">
           <div className="brand">
-            <Scissors className="brand-logo" />
-            <span className="brand-name">Glamio</span>
+            <div className="logo-container">
+              <Scissors size={20} />
+            </div>
+            <span className="brand-name">GLAMIO</span>
           </div>
           <button
             className="collapse-toggle"
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
             {isCollapsed ? (
-              <ChevronRight size={18} />
+              <ChevronRight size={16} />
             ) : (
-              <ChevronLeft size={18} />
+              <ChevronLeft size={16} />
             )}
           </button>
         </div>
@@ -270,11 +292,11 @@ function Dashboard() {
             >
               <div className="icon-box">{item.icon}</div>
               <span className="item-label">{item.label}</span>
-              {activeTab === item.id && <div className="active-indicator" />}
+              {activeTab === item.id && <div className="active-glow" />}
             </button>
           ))}
-
-          <button className={`menu-item `} onClick={() => navigate("/")}>
+          <div className="menu-divider" />
+          <button className="menu-item logout" onClick={() => navigate("/")}>
             <div className="icon-box">
               <LogOut size={20} />
             </div>
@@ -294,38 +316,65 @@ function Dashboard() {
             </button>
             <div className="search-bar">
               <Search size={18} />
-              <input type="text" placeholder="Quick Search..." />
+              <input type="text" placeholder="Search clients, services..." />
             </div>
           </div>
           <div className="nav-right">
-            <div
-              onClick={() => setActiveTab("notifications")}
-              className="icon-btn"
-            >
-              <Bell size={20} />
-              <span className="dot" />
+            <div className="nav-actions">
+              <div
+                onClick={() => setActiveTab("notifications")}
+                className="icon-btn"
+              >
+                <Bell size={20} />
+                <span className="badge-dot" />
+              </div>
             </div>
-            <div className="user-profile">
-              <div className="user-avatar">AD</div>
+            <div className="profile-dropdown-container" ref={dropdownRef}>
+              <div
+                className="user-profile-trigger"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+              >
+                <div className="user-avatar">AD</div>
+                <div className="user-meta">
+                  <span className="user-name">Admin Dash</span>
+                  <ChevronDown
+                    size={14}
+                    className={isProfileOpen ? "rotate" : ""}
+                  />
+                </div>
+              </div>
+              {isProfileOpen && (
+                <div className="profile-dropdown animate-pop">
+                  <div className="dropdown-header">
+                    <p className="email">admin@glamio.com</p>
+                  </div>
+                  <button className="dropdown-item">
+                    <User size={16} /> Profile Settings
+                  </button>
+                  <button className="dropdown-item">
+                    <Settings size={16} /> Shop Settings
+                  </button>
+                  <div className="dropdown-divider" />
+                  <button
+                    className="dropdown-item text-danger"
+                    onClick={() => navigate("/")}
+                  >
+                    <LogOut size={16} /> Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>
 
         <section className="page-content">
-          <div className="page-header">
-            {/* <h1>
-              {serviceView === "add" && activeTab === "services"
-                ? "Add New Service"
-                : menuItems.find((i) => i.id === activeTab).label}
-            </h1> */}
-            <h1>
-              {activeTab === "notifications"
-                ? "Notifications"
-                : serviceView === "add" && activeTab === "services"
-                ? "Add New Service"
-                : menuItems.find((i) => i.id === activeTab)?.label}
-            </h1>
-            <p>Managing your beauty studio efficiently</p>
+          <div className="page-header-main">
+            {activeTab === "home" && (
+              <div className="title-area">
+                <h1>Dashboard Overview</h1>
+                <p>Welcome back! Here is what's happening today.</p>
+              </div>
+            )}
           </div>
           {renderContent()}
         </section>

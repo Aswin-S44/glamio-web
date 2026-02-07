@@ -1,0 +1,1 @@
+ALTER TABLE `experts` MODIFY COLUMN `image` longtext;

@@ -2,10 +2,14 @@ import { db } from "../../db/setup";
 import { experts } from "../../db/schemas/experts";
 import { eq, and } from "drizzle-orm";
 
-export const createExpertDB = (data: any) => {
-  return db.insert(experts).values(data);
+export const createExpertDB = async (data: any) => {
+  try {
+    return await db.insert(experts).values(data);
+  } catch (error: any) {
+    console.error("FULL DATABASE ERROR:", error.message);
+    throw error;
+  }
 };
- 
 export const getExpertsByShopId = (shopId: number) => {
   return db.select().from(experts).where(eq(experts.shopId, shopId));
 };

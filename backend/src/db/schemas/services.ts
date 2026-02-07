@@ -33,6 +33,9 @@ export const services = mysqlTable("services", {
     unsigned: true,
   }).references(() => category.id),
 
+  description: longtext("description"),
+
+  duration: varchar("duration", { length: 256 }).notNull().default("60"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

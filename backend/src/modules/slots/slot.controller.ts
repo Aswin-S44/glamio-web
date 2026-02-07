@@ -14,7 +14,6 @@ export const createSlot = async (
   try {
     const userId = req.user?.id;
 
-    console.log("BODY-------------", req.body);
     if (!userId) {
       res.status(401).json({ message: "Unauthorized" });
       return;
