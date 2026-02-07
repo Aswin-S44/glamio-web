@@ -10,13 +10,31 @@ import {
   Save,
   X,
   Star,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import "./MyProfileScreen.css";
+import Swal from "sweetalert2";
+import Upload from "antd/es/upload";
+import { convertToBase64 } from "../../utils/utils";
+
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+  "Daily",
+  "Weekends",
+];
 
 const MyProfileScreen = () => {
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [errors, setErrors] = useState({});
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -29,10 +47,15 @@ const MyProfileScreen = () => {
             Authorization: `${token}`,
           },
         });
-
-        if (!res.ok) throw new Error("Failed to fetch user");
-
+        if (!res.ok) throw new Error("Failed");
         const data = await res.json();
+
+        if (
+          data.shop &&
+          (!data.shop.openingHours || !Array.isArray(data.shop.openingHours))
+        ) {
+          data.shop.openingHours = [];
+        }
         setFormData(data);
       } catch (error) {
         console.error(error);
@@ -43,6 +66,20 @@ const MyProfileScreen = () => {
     fetchUser();
   }, [token]);
 
+  const validate = () => {
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.user?.email || !emailRegex.test(formData.user.email))
+      newErrors.email = "Invalid email";
+    if (!formData.shop?.parlourName?.trim()) newErrors.parlourName = "Required";
+    if (!formData.shop?.googleReviewUrl)
+      newErrors.googleReviewUrl = "Google review url required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (section, field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -50,35 +87,67 @@ const MyProfileScreen = () => {
     }));
   };
 
-  const handleSave = async () => {
-    setIsEditing(false);
-    console.log("Saving to API:", formData);
-
-    const res = await fetch("http://localhost:5000/api/v1/shops", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${token}`,
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const result = await res.json();
-
-    if (!res.ok) {
-      throw new Error(result.message || "Failed to save profile");
-    }
-
-    alert("Profile updated");
+  const addOpeningHour = () => {
+    const newHours = [
+      ...(formData.shop.openingHours || []),
+      { day: "Monday", start: "09:00", end: "18:00" },
+    ];
+    handleChange("shop", "openingHours", newHours);
   };
 
-  if (loading) {
-    return <div className="loading-container">Loading...</div>;
-  }
+  const removeOpeningHour = (index) => {
+    const newHours = formData.shop.openingHours.filter((_, i) => i !== index);
+    handleChange("shop", "openingHours", newHours);
+  };
 
-  if (!formData) {
-    return <div className="error-container">Failed to load profile.</div>;
-  }
+  const updateOpeningHour = (index, field, value) => {
+    const newHours = formData.shop.openingHours.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item
+    );
+    handleChange("shop", "openingHours", newHours);
+  };
+
+  const handleImageUpload = async (info) => {
+    const { fileList } = info;
+    if (fileList && fileList.length > 0) {
+      const fileToProcess = fileList[fileList.length - 1].originFileObj;
+
+      if (fileToProcess) {
+        try {
+          const base64 = await convertToBase64(fileToProcess);
+          handleChange("user", "profileImage", base64);
+        } catch (error) {
+          console.error("Image conversion failed", error);
+        }
+      }
+    }
+  };
+
+  const handleSave = async () => {
+    if (!validate()) return;
+    setIsEditing(false);
+    try {
+      const res = await fetch("http://localhost:5000/api/v1/shops", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error("Failed");
+      Swal.fire({
+        title: "Profile updated!",
+        icon: "success",
+        draggable: true,
+      });
+    } catch (err) {
+      alert(err.message);
+      setIsEditing(true);
+    }
+  };
+
+  if (loading) return <div className="loading-container">Loading...</div>;
 
   return (
     <div className="profile-container">
@@ -86,17 +155,26 @@ const MyProfileScreen = () => {
         <div className="profile-header-banner"></div>
         <div className="profile-header-content">
           <div className="profile-avatar-wrapper">
-            <img
-              src={
-                formData?.user?.profileImage ||
-                "https://via.placeholder.com/150"
-              }
-              alt="Profile"
-              className="profile-avatar"
-            />
-            <div className="status-indicator"></div>
+            <Upload
+              listType="picture-card"
+              className="service-uploader"
+              beforeUpload={() => false}
+              onChange={handleImageUpload}
+              maxCount={1}
+              showUploadList={false}
+              disabled={!isEditing}
+            >
+              <img
+                src={
+                  formData?.user?.profileImage ||
+                  "https://via.placeholder.com/150"
+                }
+                alt="Profile"
+                className="profile-avatar"
+              />
+              <div className="status-indicator"></div>
+            </Upload>
           </div>
-
           <div className="header-actions">
             {!isEditing ? (
               <button className="btn-edit" onClick={() => setIsEditing(true)}>
@@ -122,9 +200,7 @@ const MyProfileScreen = () => {
           <h1>{formData?.user?.username}</h1>
           <div className="rating-tag">
             <Star size={14} fill="currentColor" />
-            <span>
-              {formData?.shop?.totalRating || 0} / 5 Rating • Shop Owner
-            </span>
+            <span>{formData?.shop?.totalRating || 0} / 5 Rating</span>
           </div>
         </div>
 
@@ -136,6 +212,7 @@ const MyProfileScreen = () => {
                 <Mail size={18} />
                 {isEditing ? (
                   <input
+                    className={errors.email ? "input-error" : ""}
                     value={formData?.user?.email || ""}
                     onChange={(e) =>
                       handleChange("user", "email", e.target.value)
@@ -143,19 +220,6 @@ const MyProfileScreen = () => {
                   />
                 ) : (
                   <span>{formData?.user?.email}</span>
-                )}
-              </div>
-              <div className="info-item">
-                <Phone size={18} />
-                {isEditing ? (
-                  <input
-                    value={formData?.user?.phone || ""}
-                    onChange={(e) =>
-                      handleChange("user", "phone", e.target.value)
-                    }
-                  />
-                ) : (
-                  <span>{formData?.user?.phone || "Add Phone"}</span>
                 )}
               </div>
             </section>
@@ -168,6 +232,7 @@ const MyProfileScreen = () => {
                 <label>Parlour Name</label>
                 {isEditing ? (
                   <input
+                    className={errors.parlourName ? "input-error" : ""}
                     value={formData?.shop?.parlourName || ""}
                     onChange={(e) =>
                       handleChange("shop", "parlourName", e.target.value)
@@ -181,27 +246,65 @@ const MyProfileScreen = () => {
               </div>
 
               <div className="form-group">
-                <label>About</label>
+                <label>
+                  <Clock size={14} /> Opening Hours
+                </label>
                 {isEditing ? (
-                  <textarea
-                    rows="3"
-                    value={formData?.shop?.about || ""}
-                    onChange={(e) =>
-                      handleChange("shop", "about", e.target.value)
-                    }
-                  />
+                  <div className="hours-editor">
+                    {formData.shop.openingHours?.map((item, index) => (
+                      <div key={index} className="hour-row">
+                        <select
+                          value={item.day}
+                          onChange={(e) =>
+                            updateOpeningHour(index, "day", e.target.value)
+                          }
+                        >
+                          {DAYS.map((d) => (
+                            <option key={d} value={d}>
+                              {d}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          type="time"
+                          value={item.start}
+                          onChange={(e) =>
+                            updateOpeningHour(index, "start", e.target.value)
+                          }
+                        />
+                        <span>to</span>
+                        <input
+                          type="time"
+                          value={item.end}
+                          onChange={(e) =>
+                            updateOpeningHour(index, "end", e.target.value)
+                          }
+                        />
+                        <button
+                          className="btn-remove"
+                          onClick={() => removeOpeningHour(index)}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                    <button className="btn-add-hour" onClick={addOpeningHour}>
+                      <Plus size={14} /> Add Schedule
+                    </button>
+                  </div>
                 ) : (
-                  <p>{formData?.shop?.about || "No description provided."}</p>
+                  <div className="hours-display">
+                    {formData.shop.openingHours?.length > 0 ? (
+                      formData.shop.openingHours.map((item, i) => (
+                        <p key={i}>
+                          {item.day}: {item.start} - {item.end}
+                        </p>
+                      ))
+                    ) : (
+                      <p>No hours set</p>
+                    )}
+                  </div>
                 )}
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>
-                    <Clock size={14} /> Opening Hours
-                  </label>
-                  <span>{formData?.shop?.openingHours?.[0] || "Not set"}</span>
-                </div>
               </div>
 
               <div className="form-group">
@@ -220,16 +323,31 @@ const MyProfileScreen = () => {
                 )}
               </div>
 
-              {formData?.shop?.googleReviewUrl && (
-                <a
-                  href={formData.shop.googleReviewUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="google-link"
-                >
-                  <Globe size={16} /> View on Google Maps
-                </a>
-              )}
+              <div className="form-group">
+                <label>
+                  <Globe size={14} /> Google Review URL
+                </label>
+                {isEditing ? (
+                  <input
+                    className={errors.googleReviewUrl ? "input-error" : ""}
+                    value={formData?.shop?.googleReviewUrl || ""}
+                    onChange={(e) =>
+                      handleChange("shop", "googleReviewUrl", e.target.value)
+                    }
+                  />
+                ) : (
+                  formData?.shop?.googleReviewUrl && (
+                    <a
+                      href={formData.shop.googleReviewUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="google-link"
+                    >
+                      View on Google Maps
+                    </a>
+                  )
+                )}
+              </div>
             </section>
           </div>
         </div>

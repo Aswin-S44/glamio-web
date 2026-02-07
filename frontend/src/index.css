@@ -6,10 +6,21 @@
 
 :root {
   --primary: #d4a373;
+  --primary-hover: #dd9c5b;
   --secondary: #faedcd;
   --dark: #1a1a1a;
   --light: #ffffff;
   --transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+  --sidebar-w: 260px;
+  --sidebar-c: 88px;
+  --bg-soft: #f8f9fa;
+  --shadow: 0 4px 20px rgba(0,0,0,0.05);
+  --bg-color: #f9fafb;
+  --card-bg: #ffffff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --rose-light: #fff1f2;
 }
 
 html body {
@@ -18,7 +29,7 @@ html body {
 
 
 .screens{
-  margin-top: 38px;
+  margin-top: 108px;
 }
 
 

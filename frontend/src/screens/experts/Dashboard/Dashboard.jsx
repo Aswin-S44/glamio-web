@@ -46,6 +46,7 @@ import UserRequests from "../../UserRequests/UserRequests";
 import AppointmentScreen from "../../AppointmentScreen/AppointmentScreen";
 import OfferScreen from "../../OfferScreen/OfferScreen";
 import NotificationScreen from "../../Notifications/NotificationScreen";
+import MyProfileScreen from "../../MyProfileScreen/MyProfileScreen";
 
 const chartData = [
   { name: "Mon", revenue: 400, appointments: 24 },
@@ -252,6 +253,8 @@ function Dashboard() {
         ) : (
           <AddExpert />
         );
+      case "profile":
+        return <MyProfileScreen />;
       default:
         return <div className="view-container">Select a tab</div>;
     }
@@ -345,15 +348,13 @@ function Dashboard() {
               </div>
               {isProfileOpen && (
                 <div className="profile-dropdown animate-pop">
-                  <div className="dropdown-header">
-                    <p className="email">admin@glamio.com</p>
-                  </div>
-                  <button className="dropdown-item">
-                    <User size={16} /> Profile Settings
+                  <button
+                    className="dropdown-item"
+                    onClick={() => setActiveTab("profile")}
+                  >
+                    <User size={16} /> My Profile
                   </button>
-                  <button className="dropdown-item">
-                    <Settings size={16} /> Shop Settings
-                  </button>
+
                   <div className="dropdown-divider" />
                   <button
                     className="dropdown-item text-danger"
