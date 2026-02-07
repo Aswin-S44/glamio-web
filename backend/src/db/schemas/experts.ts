@@ -6,6 +6,7 @@ import {
   timestamp,
   varchar,
   json,
+  longtext,
 } from "drizzle-orm/mysql-core";
 import { shopOwners } from "./shop-owners";
 
@@ -19,15 +20,14 @@ export const experts = mysqlTable("experts", {
     .references(() => shopOwners.id),
 
   name: varchar("name", { length: 100 }).notNull(),
-  about: varchar("about", { length: 500 }),
+  about: longtext("about"),
   address: varchar("address", { length: 500 }),
-  image: varchar("image", { length: 256 }),
+  image: longtext("image"),
 
-  specialist: json("specialist").notNull(),
+  specialist: varchar("specialist", { length: 100 }).notNull(),
 
   isActive: boolean("is_active").notNull().default(true),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
-  

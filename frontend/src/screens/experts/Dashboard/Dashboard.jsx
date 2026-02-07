@@ -63,6 +63,7 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("home");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [serviceView, setServiceView] = useState("list");
+  const [expertView, setExpertView] = useState("list");
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -246,11 +247,11 @@ function Dashboard() {
       case "services":
         return serviceView === "list" ? <ServicesScreen /> : <AddService />;
       case "experts":
-      // return expertView === "list" ? (
-      //   <ExpertsScreen expertsData={sampleExperts} />
-      // ) : (
-      //   <AddExpert />
-      // );
+        return expertView === "list" ? (
+          <ExpertsScreen expertsData={sampleExperts} />
+        ) : (
+          <AddExpert />
+        );
       default:
         return <div className="view-container">Select a tab</div>;
     }

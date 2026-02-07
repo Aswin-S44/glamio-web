@@ -1,0 +1,1 @@
+ALTER TABLE `experts` MODIFY COLUMN `specialist` varchar(100) NOT NULL;
