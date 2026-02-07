@@ -14,6 +14,24 @@ import {
 } from "lucide-react";
 import "./OfferScreen.css";
 
+
+const SERVICE_DATA = {
+    Hair: [
+        { name: "Hair Cut", price: 1200, image: "/dummy/haircut.jpg" },
+        { name: "Hair Spa", price: 2500, image: "/dummy/hairspa.jpg" },
+    ],
+    Nails: [
+        { name: "Manicure", price: 1800, image: "/dummy/manicure.jpg" },
+        { name: "Pedicure", price: 2200, image: "/dummy/pedicure.jpg" },
+    ],
+    Skin: [
+        { name: "Facial", price: 3000, image: "/dummy/facial.jpg" },
+    ],
+};
+
+
+
+
 const dummyOffers = [
     {
         id: 1,
@@ -34,6 +52,12 @@ const dummyOffers = [
 ];
 
 function OfferScreen() {
+    const [category, setCategory] = useState("");
+    const [service, setService] = useState("");
+    const [regularPrice, setRegularPrice] = useState("");
+    const [offerPrice, setOfferPrice] = useState("");
+    const [useServiceImage, setUseServiceImage] = useState(false);
+
     const [offers, setOffers] = useState(dummyOffers);
     const [searchTerm, setSearchTerm] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
@@ -44,6 +68,24 @@ function OfferScreen() {
     const [validTill, setValidTill] = useState("");
     const [description, setDescription] = useState("");
     const [image, setImage] = useState(null);
+
+
+    const handleCategoryChange = (value) => {
+        setCategory(value);
+        setService("");
+        setRegularPrice("");
+        setImage(null);
+    };
+
+    const handleServiceChange = (value) => {
+        setService(value);
+        const selected = SERVICE_DATA[category].find(s => s.name === value);
+        if (selected) {
+            setRegularPrice(selected.price);
+            if (useServiceImage) setImage(selected.image);
+        }
+    };
+
 
     const openModal = (offer = null) => {
         if (offer) {
@@ -167,58 +209,81 @@ function OfferScreen() {
                         </div>
 
                         <form onSubmit={handleSave} className="of-form">
-                            <Upload
-                            style={{width:"100%"}}
-                                listType="picture-card"
-                                beforeUpload={() => false}
-                                showUploadList={false}
+
+                            <select value={category} onChange={(e) => handleCategoryChange(e.target.value)} required>
+                                <option value="">Select Category</option>
+                                {Object.keys(SERVICE_DATA).map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={service}
+                                onChange={(e) => handleServiceChange(e.target.value)}
+                                disabled={!category}
+                                required
                             >
-                                {image ? (
-                                    <img src={image} alt="preview" className="of-preview" />
-                                ) : (
-                                    <div className="of-upload">
-                                        <Camera size={24} />
-                                        <span>Upload Image</span>
-                                    </div>
-                                )}
-                            </Upload>
+                                <option value="">Select Service</option>
+                                {category &&
+                                    SERVICE_DATA[category].map(s => (
+                                        <option key={s.name} value={s.name}>{s.name}</option>
+                                    ))}
+                            </select>
 
                             <input
-                                placeholder="Offer Title"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                required
+                                type="number"
+                                placeholder="Regular Price"
+                                value={regularPrice}
+                                readOnly
                             />
 
                             <input
                                 type="number"
-                                placeholder="Discount %"
-                                value={discount}
-                                onChange={(e) => setDiscount(e.target.value)}
+                                placeholder="Offer Price"
+                                value={offerPrice}
+                                onChange={(e) => setOfferPrice(e.target.value)}
                                 required
                             />
 
-                            <input
-                                type="text"
-                                placeholder="Valid till (e.g. 31 Dec 2026)"
-                                value={validTill}
-                                onChange={(e) => setValidTill(e.target.value)}
-                            />
+                            <label className="of-toggle">
+                                <input style={{width:"auto"}}
+                                    type="checkbox"
+                                    checked={useServiceImage}
+                                    onChange={(e) => {
+                                        setUseServiceImage(e.target.checked);
+                                        if (e.target.checked && service) {
+                                            const img = SERVICE_DATA[category].find(s => s.name === service)?.image;
+                                            setImage(img);
+                                        }
+                                    }}
+                                />
+                                <span>Use same image as service</span>
+                            </label>
 
-                            <textarea
-                                rows="3"
-                                placeholder="Offer description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
+                            {!useServiceImage && (
+                                <Upload style={{width:"100%", marginTop:"20px", marginBottom:"20px"}}
+                                    listType="picture-card"
+                                    beforeUpload={() => false}
+                                    showUploadList={false}
+                                >
+                                    {image ? (
+                                        <img src={image} alt="preview" className="of-preview" />
+                                    ) : (
+                                        <div className="of-upload">
+                                            <Camera size={24} />
+                                            <span>Upload Offer Image</span>
+                                        </div>
+                                    )}
+                                </Upload>
+                            )}
 
                             <div className="of-modal-footer">
-                                <button type="button" onClick={closeModal}>
-                                    Cancel
-                                </button>
+                                <button type="button" onClick={closeModal}>Cancel</button>
                                 <button type="submit">Save Offer</button>
                             </div>
+
                         </form>
+
                     </div>
                 </div>
             )}

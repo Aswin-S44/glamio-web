@@ -7,6 +7,14 @@
 
 /* ================= HEADER ================= */
 
+.of-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+
 .of-header {
     display: flex;
     justify-content: space-between;
@@ -275,7 +283,8 @@
     border-color: transparent !important;
 }
 .of-form input,
-.of-form textarea {
+.of-form textarea, .of-form select {
+    width: 100%;
     padding: 22px 14px;
     border-radius: 14px;
     border: 1px solid #faedcd;
@@ -333,3 +342,61 @@
     background: #d4a373;
     color: #fff;
 }
+
+.of-form select {
+    width: 100%;
+    padding: 12px 44px 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #94a3b8 50%),
+        linear-gradient(135deg, #94a3b8 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 12px) calc(50% - 3px);
+    background-size: 6px 6px;
+    background-repeat: no-repeat;
+}
+
+
+/* Disabled */
+.of-form select:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Options */
+
+
+/* Placeholder (first option) */
+.of-form select option[value=""] {
+    color: #64748b;
+}
+
+/* Mobile fix */
+@media (max-width: 768px) {
+    .of-form select {
+        font-size: 15px;
+    }
+}
+
+
+
+
+
+/* Smooth interaction */
+.of-form select {
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.2s ease;
+}
+
+

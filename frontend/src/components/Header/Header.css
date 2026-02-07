@@ -34,6 +34,7 @@
     font-weight: 800;
     letter-spacing: 2px;
     color: var(--dark);
+    cursor: pointer;
 }
 
 .logo span {
