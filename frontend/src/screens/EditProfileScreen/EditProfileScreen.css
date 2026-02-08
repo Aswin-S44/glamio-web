@@ -1,0 +1,213 @@
+.profile-page-wrapper {
+  min-height: 100vh;
+  background-color: var(--secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.profile-container {
+  background: var(--light);
+  width: 100%;
+  max-width: 600px;
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+  position: relative; /* Contain children */
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile-header h1 {
+  color: var(--dark);
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.profile-header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.image-upload-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 35px;
+  /* Ensure the section itself doesn't capture clicks outside the circle */
+  pointer-events: none; 
+}
+
+/* Ant Design Upload Customization */
+.profile-uploader {
+  pointer-events: auto; /* Re-enable clicks only for the upload area */
+  width: 140px !important;
+  height: 140px !important;
+}
+
+.profile-uploader .ant-upload.ant-upload-select-picture-card {
+  width: 140px !important;
+  height: 140px !important;
+  border-radius: 50% !important;
+  border: 2px dashed var(--primary) !important;
+  background: #fafafa !important;
+  overflow: hidden;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Fix for the invisible input stretching */
+.profile-uploader .ant-upload input[type="file"] {
+  width: 100%;
+  height: 100%;
+}
+
+.profile-preview-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: var(--transition);
+  color: white;
+  cursor: pointer;
+}
+
+.profile-preview-wrapper:hover .preview-overlay {
+  opacity: 1;
+}
+
+.upload-trigger-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: relative;
+  z-index: 2; /* Ensure form is above any potential upload bleed */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dark);
+  font-weight: 600;
+  font-size: 0.9rem;
+  width: fit-content; /* Prevent label from stretching full width if not needed */
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.form-group input, 
+.form-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  background: #fff;
+  position: relative;
+  z-index: 3;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+}
+
+.error-msg {
+  color: #ef4444;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.char-count {
+  position: absolute;
+  right: 12px;
+  top: -24px;
+  font-size: 0.7rem;
+  color: #999;
+  font-weight: 500;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 35px;
+  padding: 16px;
+  background: var(--primary);
+  color: var(--light);
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  z-index: 3;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(212, 163, 115, 0.2);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .profile-container {
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+}

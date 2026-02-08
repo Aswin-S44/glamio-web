@@ -12,6 +12,6 @@ router.get("/me", authMiddleware, (req, res) => {
   });
 });
 router.post("/signin/google", googleSignIn);
-router.post("/signup", createUser);
+router.post("/signup", createUser); 
 
 export default router;

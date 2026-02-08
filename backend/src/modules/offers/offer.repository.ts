@@ -23,7 +23,10 @@ export class OfferRepository {
   }
 
   static create(shopId: number, data: CreateOfferDTO) {
-    return db.insert(offers).values({ ...data, shopId });
+    const { categoryId, offerPrice, regularPrice, serviceId } = data;
+    return db
+      .insert(offers)
+      .values({ categoryId, offerPrice, regularPrice, serviceId, shopId });
   }
 
   static update(shopId: number, offerId: number, data: UpdateOfferDTO) {

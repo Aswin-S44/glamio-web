@@ -9,7 +9,7 @@ export const findUserByEmail = async (email: string) => {
     .where(eq(users.email, email))
     .limit(1);
 
-  return result[0] || null;
+  return result[0] || null; 
 };
 
 export const createUser = async (data: {
