@@ -18,11 +18,26 @@ function SignUp() {
   const dispatch = useDispatch();
 
   const handleGoogleSignIn = async () => {
-   
     const res = await dispatch(googleLogin());
     // console.log(res);
     if (googleLogin.fulfilled.match(res)) {
-      navigate("/shop/dashboard");
+      console.log(
+        "RES0----------------",
+        res.payload?.user?.shopProfile?.isProfileCompleted
+      );
+
+      if (res.payload?.user?.shopProfile?.isProfileCompleted) {
+        navigate("/shop/dashboard");
+      } else if (
+        res.payload?.user?.shopProfile?.isProfileCompleted &&
+        !res.payload?.user?.shopProfile?.isOnboarded
+      ) {
+        navigate("/shop/onboard"); // onboard message
+      } else {
+        navigate("/shop/edit-profile");
+      }
+      console.log("helloooo");
+      // navigate("/shop/dashboard");
     }
   };
 
