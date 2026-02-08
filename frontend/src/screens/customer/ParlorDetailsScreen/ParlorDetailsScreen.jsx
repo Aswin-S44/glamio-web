@@ -1,242 +1,230 @@
 import React, { useEffect, useState } from "react";
-import "./ParlorDetailsScreen.css";
 import { useParams } from "react-router-dom";
+import "./ParlorDetailsScreen.css";
 import { getReviews } from "../../../services/google.services";
+import Header from "../../../components/Header/Header";
+import Footer from "../../../components/Footer/Footer";
+
+const DUMMY_DATA = {
+  shop: {
+    parlourName: "Glow & Grace Beauty Studio",
+    rating: 4.8,
+    address: "12, MG Road, Indiranagar, Bengaluru",
+    about:
+      "Glow & Grace is a premium beauty studio offering expert hair, skin, and wellness services in a calm and luxurious environment. Our professionals use top-quality products to ensure the best experience.Glow & Grace is a premium beauty studio offering expert hair, skin, and wellness services in a calm and luxurious environment. Our professionals use top-quality products to ensure the best experience. Join us for a relaxing and rejuvenating experience. Welcome to Glow & Grace Beauty Studio! ",
+    images: [
+      "https://images.unsplash.com/photo-1560066984-138dadb4c035",
+      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
+      "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6",
+      "https://images.unsplash.com/photo-1562322140-8baeececf3df",
+      "https://images.unsplash.com/photo-1600948836101-f9ffda59d250"
+    ]
+  },
+  services: [
+    { id: 1, name: "Signature Haircut", duration: "45 mins", rate: "₹799" },
+    { id: 2, name: "Hydrating Facial", duration: "60 mins", rate: "₹1,499" },
+    { id: 3, name: "Hair Spa Therapy", duration: "90 mins", rate: "₹2,299" },
+    { id: 4, name: "Bridal Makeup", duration: "120 mins", rate: "₹9,999" }
+  ]
+};
 
 const ParlorDetailsScreen = () => {
-  const [activeTab, setActiveTab] = useState("services");
-  const [selectedImg, setSelectedImg] = useState(null);
   const { id } = useParams();
 
   const [parlour, setParlour] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [activeTab, setActiveTab] = useState("services");
+  const [selectedImg, setSelectedImg] = useState(null);
 
   useEffect(() => {
     const fetchParlour = async () => {
-      setLoading(true);
-      const res = await fetch(
-        `http://localhost:5000/api/v1/customer/shop/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setLoading(false);
-      if (!res.ok) {
-        throw new Error("Failed to fetch parlour details");
-      }
-
-      const data = await res.json();
-      if (data) {
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/v1/customer/shop/${id}`
+        );
+        const data = await res.json();
         setParlour(data);
+      } catch (err) {
+        console.log("API failed, using dummy data");
       }
     };
     fetchParlour();
   }, [id]);
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        let res = await getReviews(parlour?.shop?.placeId);
-        console.log("reviewa------------", res);
-      } catch (error) {
-        console.log("Error fetching reviews : ", error);
-      }
-    };
-    fetchReviews();
+    if (!parlour?.shop?.placeId) return;
+    getReviews(parlour.shop.placeId)
+      .then(res => setReviews(res || []))
+      .catch(() => {});
   }, [parlour]);
 
-  const parlorData = {
-    name: "Glow & Grace Studio",
-    description:
-      "Experience premium beauty treatments in a serene environment. Our expert stylists and therapists use high-end organic products to ensure you look and feel your best. From contemporary haircuts to rejuvenating facials, we offer a comprehensive range of services tailored to your needs.",
-    rating: 4.8,
-    reviewsCount: 124,
-    images: [
-      "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
-    ],
-    services: [
-      { id: 1, name: "Signature Haircut", price: "$45", duration: "45 mins" },
-      { id: 2, name: "Hydrating Facial", price: "$80", duration: "60 mins" },
-      { id: 3, name: "Gel Manicure", price: "$35", duration: "40 mins" },
-      { id: 4, name: "Balayage Coloring", price: "$120", duration: "120 mins" },
-    ],
-    reviews: [
-      {
-        id: 1,
-        user: "Sarah J.",
-        rating: 5,
-        comment:
-          "Best service I've had in years! The staff is so professional.",
-      },
-      {
-        id: 2,
-        user: "Mike R.",
-        rating: 4,
-        comment: "Great atmosphere and very clean. My haircut was perfect.",
-      },
-    ],
-    offers: [
-      {
-        id: 1,
-        title: "First-time Client",
-        discount: "20% OFF",
-        code: "WELCOME20",
-      },
-      {
-        id: 2,
-        title: "Mid-week Special",
-        discount: "Free Head Massage with any Facial",
-        code: "WEDVIBE",
-      },
-    ],
-  };
+  const data = parlour || DUMMY_DATA;
 
-  return (
-    <div className="screens">
-      <div className="details-container">
-        <>
-          {loading ? (
-            <>Loading....</>
-          ) : (
-            <>
-              <nav className="breadcrumbs">
-                <a href="/">Home</a> <span>/</span>
-                <a href="/parlors">Parlors</a> <span>/</span>
-                <span className="current">{parlorData.name}</span>
-              </nav>
+  return (<>
+  <Header />
+    <div className="parlor-page">
+      {/* TOP */}
+      <section className="top-section">
+        {/* LEFT - GALLERY */}
+        <div className="gallery">
+          <div
+            className="gallery-main"
+            onClick={() => setSelectedImg(data.shop.images[0])}
+          >
+            <img src={data.shop.images[0]} alt="" />
+          </div>
 
-              <section className="hero-section">
-                <div className="gallery-grid">
-                  <div
-                    className="main-image"
-                    onClick={() => setSelectedImg(parlorData.images[0])}
-                  >
-                    <img src={parlorData.images[0]} alt="Parlor Main" />
-                  </div>
-                  <div className="side-images">
-                    {parlorData.images.slice(1).map((img, idx) => (
-                      <div
-                        key={idx}
-                        className="thumb"
-                        onClick={() => setSelectedImg(img)}
-                      >
-                        <img src={img} alt={`Thumb ${idx}`} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+          <div className="gallery-thumbs">
+            {data.shop.images.slice(1).map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt=""
+                onClick={() => setSelectedImg(img)}
+              />
+            ))}
+          </div>
+        </div>
 
-                <div className="info-card">
-                  <h1>{parlour?.shop?.parlourName}</h1>
-                  <div className="rating">
-                    <span className="stars">★★★★★</span>
-                    <span className="count">
-                      ({parlorData.reviewsCount} Reviews)
-                    </span>
-                  </div>
-                  <p className="description">{parlour?.shop?.about}</p>
-                  <button className="btn-primary main-book">
-                    Book Appointment Now
-                  </button>
-                </div>
-              </section>
+        {/* RIGHT - DETAILS */}
+        <div className="details">
+          <h1>{data.shop.parlourName}</h1>
 
-              <div className="tabs-container">
-                <div className="tab-header">
-                  <button
-                    className={activeTab === "services" ? "active" : ""}
-                    onClick={() => setActiveTab("services")}
-                  >
-                    Services
-                  </button>
-                  <button
-                    className={activeTab === "reviews" ? "active" : ""}
-                    onClick={() => setActiveTab("reviews")}
-                  >
-                    Reviews
-                  </button>
-                  <button
-                    className={activeTab === "offers" ? "active" : ""}
-                    onClick={() => setActiveTab("offers")}
-                  >
-                    Offers
-                  </button>
-                </div>
+          <div className="rating-row">
+            ⭐ {data.shop.rating}
+            <span>({reviews.length || 124} reviews)</span>
+          </div>
 
-                <div className="tab-content">
-                  {activeTab === "services" && (
-                    <div className="services-list">
-                      {parlour?.services?.length == 0 ? (
-                        <>No services available</>
-                      ) : (
-                        parlour?.services?.map((service) => (
-                          <div key={service.id} className="service-item">
-                            <div className="service-info">
-                              <h3>{service.name}</h3>
-                              <span>
-                                {service.duration} • {service.rate}
-                              </span>
-                            </div>
-                            <button
-                              className="btn-outline"
-                              onClick={() => {
-                                window.location.href = `/parlour/service?category=${service.categoryId}&service=${service.id}&shop=${service?.shopId}`;
-                              }}
-                            >
-                              Book
-                            </button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  )}
+          <p className="address">{data.shop.address}</p>
 
-                  {activeTab === "reviews" && (
-                    <div className="reviews-list">
-                      {parlorData.reviews.map((review) => (
-                        <div key={review.id} className="review-item">
-                          <strong>{review.user}</strong>
-                          <div className="review-stars">
-                            {"★".repeat(review.rating)}
-                          </div>
-                          <p>{review.comment}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+          <div className="highlights">
+            <span>🕒 Open: 10 AM – 9 PM</span>
+            <span>💰 Price: ₹₹</span>
+            <span>📍 City Center</span>
+          </div>
 
-                  {activeTab === "offers" && (
-                    <div className="offers-list">
-                      {parlorData.offers.map((offer) => (
-                        <div key={offer.id} className="offer-card">
-                          <h4>{offer.title}</h4>
-                          <div className="discount">{offer.discount}</div>
-                          <code>Code: {offer.code}</code>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+          <p className="about">{data.shop.about}</p>
 
-              {selectedImg && (
-                <div className="lightbox" onClick={() => setSelectedImg(null)}>
-                  <img src={selectedImg} alt="Enlarged view" />
-                  <span className="close">&times;</span>
-                </div>
-              )}
-            </>
-          )}
-        </>
+          <button className="book-btn">Book Appointment</button>
+        </div>
+      </section>
+
+      {/* TABS */}
+  <section className="tabs premium-tabs">
+  <div className="tab-header pill-tabs">
+    {["services", "reviews", "about"].map(tab => (
+      <button
+        key={tab}
+        className={activeTab === tab ? "active" : ""}
+        onClick={() => setActiveTab(tab)}
+      >
+        {tab === "services" && "💇 Services"}
+        {tab === "reviews" && "⭐ Reviews"}
+        {tab === "about" && "ℹ About"}
+      </button>
+    ))}
+  </div>
+
+  <div className="tab-content premium-content">
+    {/* SERVICES */}
+    {activeTab === "services" && (
+      <div className="service-cards">
+        {data.services.map(service => (
+          <div key={service.id} className="service-card premium">
+            <div className="service-icon">✨</div>
+
+            <div className="service-info">
+              <h3>{service.name}</h3>
+              <p>{service.duration}</p>
+            </div>
+
+            <div className="service-action">
+              <span style={{marginRight:"20px"}}>{service.rate}</span>
+              <button>Book Now</button>
+            </div>
+          </div>
+        ))}
       </div>
+    )}
+
+    {/* REVIEWS */}
+    {activeTab === "reviews" && (
+      <div className="review-cards">
+        {(reviews.length ? reviews : [
+          { author_name: "Ananya", rating: 5, text: "Amazing service and super hygienic!" },
+          { author_name: "Rahul", rating: 4, text: "Stylists are very professional." },
+          { author_name: "Meera", rating: 5, text: "Loved the ambience and quality." }
+        ]).map((r, i) => (
+          <div key={i} className="review-card premium">
+            <div className="review-avatar">
+              {r.author_name[0]}
+            </div>
+
+            <div className="review-body">
+              <strong>{r.author_name}</strong>
+              <div className="stars">{"⭐".repeat(r.rating)}</div>
+              <p>{r.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {/* ABOUT */}
+    {activeTab === "about" && (
+      <div className="about-premium">
+        <div className="about-left">
+          <h3>Why Choose Us</h3>
+          <p>{data.shop.about}</p>
+
+          <ul>
+            <li>✔ Certified & experienced professionals</li>
+            <li>✔ Premium international products</li>
+            <li>✔ Hygienic & relaxing ambience</li>
+            <li>✔ Personalized consultation</li>
+          </ul>
+        </div>
+
+        <div className="about-right">
+          <div className="stat">
+            <strong>10+</strong>
+            <span>Years Experience</span>
+          </div>
+          <div className="stat">
+            <strong>5K+</strong>
+            <span>Happy Clients</span>
+          </div>
+          <div className="stat">
+            <strong>50+</strong>
+            <span>Expert Stylists</span>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+
+      {/* MAP */}
+      <section className="map">
+        <h2>Location</h2>
+        <iframe
+          title="map"
+          src={`https://www.google.com/maps?q=${encodeURIComponent(
+            data.shop.address
+          )}&output=embed`}
+          loading="lazy"
+        />
+      </section>
+
+      {/* LIGHTBOX */}
+      {selectedImg && (
+        <div className="lightbox" onClick={() => setSelectedImg(null)}>
+          <img src={selectedImg} alt="" />
+        </div>
+      )}
     </div>
+    <Footer /></>
   );
 };
 

@@ -11,6 +11,7 @@ import Dashboard from "./screens/experts/Dashboard/Dashboard";
 import SignIn from "./screens/login/signIn/SignIn";
 import SignUp from "./screens/login/signUp/SignUp";
 import CustomerSignUp from "./screens/login/signUp/CustomerSignUp";
+import MyProfileScreen from "./screens/MyProfileScreen/MyProfileScreen";
 import { Provider } from "react-redux";
 import store from './store/Store';
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/summary" element={<BookingSummaryScreen />} />
           <Route path="/shop/dashboard" element={<Dashboard />} />
           <Route path="/signup/type=customer" element={<CustomerSignUp />} />
+           <Route path="/shop/profile" element={<MyProfileScreen />} />
         </Routes>
 
       </BrowserRouter>

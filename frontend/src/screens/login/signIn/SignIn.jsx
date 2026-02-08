@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SignIn.css";
 import GoogleImg from "../../../components/Media/Images/google.png";
 import AppleImg from "../../../components/Media/Images/apple.png";
@@ -13,6 +13,30 @@ import Footer from "../../../components/Footer/Footer";
 
 function SignIn() {
   const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+
+
+  const handleAdminSignIn = () => {
+
+    if (email === "admin@gmail.com" && password === "admin") {
+      const adminData = {
+        email: "admin@gmail.com",
+        role: "ADMIN",
+        isAdminLoggedIn: true,
+      };
+
+      localStorage.setItem("admin", JSON.stringify(adminData));
+      localStorage.setItem("isAdminLoggedIn", "true");
+
+      navigate("/shop/dashboard");
+      return;
+    }
+
+    alert("Invalid credentials");
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -84,6 +108,8 @@ function SignIn() {
                     placeholder="Enter your Email"
                     class="input"
                     type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
@@ -104,6 +130,8 @@ function SignIn() {
                     placeholder="Enter your Password"
                     class="input"
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
 
@@ -114,10 +142,10 @@ function SignIn() {
                   </div>
                   <span class="span">Forgot password?</span>
                 </div>
-                <div class="button-submit">Sign In</div>
+                <div class="button-submit" onClick={handleAdminSignIn}>Sign In</div>
                 <p class="p">
                   Don't have an account?{" "}
-                  <span class="span" onClick={() => navigate("/signup")}>
+                  <span class="span" >
                     Sign Up
                   </span>
                 </p>

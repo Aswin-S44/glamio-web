@@ -77,7 +77,16 @@ function Dashboard() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const menuItems = [
+
+  const isAdmin = localStorage.getItem("isAdminLoggedIn") === "true";
+
+
+
+
+
+  const menuItems = isAdmin ? [
+    { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
+  ] : [
     { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
     { id: "requests", label: "User Requests", icon: <UserPlus size={20} /> },
     {
@@ -90,6 +99,8 @@ function Dashboard() {
     { id: "offers", label: "Offers", icon: <Tag size={20} /> },
     { id: "experts", label: "Experts", icon: <UserPlus2 size={20} /> },
   ];
+
+
 
   const handleTabChange = (id) => {
     setActiveTab(id);
@@ -108,6 +119,15 @@ function Dashboard() {
       isActive: true,
     },
   ];
+
+  const handleLogout = () => {
+  localStorage.removeItem("admin");
+  localStorage.removeItem("isAdminLoggedIn");
+  localStorage.removeItem("token");
+
+  navigate("/");
+};
+
 
   const renderContent = () => {
     switch (activeTab) {
@@ -264,14 +284,14 @@ function Dashboard() {
       )}
 
       <aside className={`side-menu ${isMobileOpen ? "mobile-open" : ""}`}>
-        <div className="menu-header">
-          <div className="brand">
+        <div className="menu-header" onClick={() => setIsCollapsed(!isCollapsed)}>
+          <div className="brand" >
             <div className="logo-container">
               <Scissors size={20} />
             </div>
-            <span className="brand-name">GLAMIO</span>
+            <span className="brand-name"  >GLAMIO</span>
           </div>
-          <button
+          {/* <button
             className="collapse-toggle"
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
@@ -280,7 +300,7 @@ function Dashboard() {
             ) : (
               <ChevronLeft size={16} />
             )}
-          </button>
+          </button> */}
         </div>
 
         <nav className="menu-items">
@@ -296,7 +316,7 @@ function Dashboard() {
             </button>
           ))}
           <div className="menu-divider" />
-          <button className="menu-item logout" onClick={() => navigate("/")}>
+          <button className="menu-item logout" onClick={handleLogout}>
             <div className="icon-box">
               <LogOut size={20} />
             </div>
@@ -348,9 +368,10 @@ function Dashboard() {
                   <div className="dropdown-header">
                     <p className="email">admin@glamio.com</p>
                   </div>
-                  <button className="dropdown-item">
-                    <User size={16} /> Profile Settings
-                  </button>
+                  <a href='/shop/profile' style={{ textDecoration: "none" }}>
+                    <button className="dropdown-item">
+                      <User size={16} /> Profile Settings
+                    </button></a>
                   <button className="dropdown-item">
                     <Settings size={16} /> Shop Settings
                   </button>
