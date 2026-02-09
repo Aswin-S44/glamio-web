@@ -12,8 +12,11 @@ import {
 } from "lucide-react";
 import "./EditProfileScreen.css";
 import { convertToBase642 } from "../../utils/utils";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function EditProfileScreen() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     parlourName: "",
     about: "",
@@ -24,6 +27,7 @@ function EditProfileScreen() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem("token");
 
   const validate = () => {
     const newErrors = {};
@@ -89,7 +93,29 @@ function EditProfileScreen() {
     if (validate()) {
       setLoading(true);
       try {
-        console.log("Submitting Profile:", formData);
+        const profileData = {
+          shop: { ...formData, isProfileCompleted: true },
+        };
+        const res = await fetch("http://localhost:5000/api/v1/shops", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify(profileData),
+        });
+
+        console.log("res-----------", res);
+
+        if (res.status == 200) {
+          Swal.fire({
+            title: "Profile updated!",
+            text: "Your profile has been updated.",
+            icon: "success",
+          });
+          navigate("/shop/onboard");
+        }
+
         // Add your API call here
       } catch (error) {
         console.error(error);

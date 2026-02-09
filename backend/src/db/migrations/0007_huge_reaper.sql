@@ -1,0 +1,1 @@
+ALTER TABLE `shop_owners` MODIFY COLUMN `about` longtext NOT NULL;

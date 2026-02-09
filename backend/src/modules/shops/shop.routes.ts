@@ -5,7 +5,7 @@ import { getProfileById, updateProfile } from "./shop.controller";
 const router = Router();
 
 router.get("/", authMiddleware, getProfileById);
-
+ 
 router.patch("/", authMiddleware, updateProfile);
 
 export default router;

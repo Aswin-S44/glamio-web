@@ -18,7 +18,7 @@ export const findShopByUserId = async (userId: number) => {
 };
 
 export const updateShopDB = async (
-  shopOwnerId: number,
+  userId: number,
   payload: {
     user: Partial<typeof users.$inferInsert>;
     shop: Partial<typeof shopOwners.$inferInsert>;
@@ -26,11 +26,17 @@ export const updateShopDB = async (
 ) => {
   const { user, shop } = payload;
 
-  if (!shop?.userId) {
-    throw new Error("userId is required");
+  const shopDetails = await findShopByUserId(userId);
+
+  if (!shopDetails) {
+    return { message: "Shop Not found" };
   }
 
-  const userId = shop.userId;
+  const shopId = shopDetails.shop?.id;
+
+  if (!shopId) {
+    return { message: "Shop Not found" };
+  }
 
   return db.transaction(async (tx) => {
     if (user && Object.keys(user).length > 0) {
@@ -47,6 +53,7 @@ export const updateShopDB = async (
     }
 
     if (shop && Object.keys(shop).length > 0) {
+      console.log("************************8");
       await tx
         .update(shopOwners)
         .set({
@@ -62,7 +69,7 @@ export const updateShopDB = async (
           isProfileCompleted: shop.isProfileCompleted,
           isOnboarded: shop.isOnboarded,
         })
-        .where(eq(shopOwners.id, shopOwnerId));
+        .where(eq(shopOwners.id, shopId));
     }
   });
 };

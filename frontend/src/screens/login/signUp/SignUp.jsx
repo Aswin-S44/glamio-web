@@ -26,7 +26,10 @@ function SignUp() {
         res.payload?.user?.shopProfile?.isProfileCompleted
       );
 
-      if (res.payload?.user?.shopProfile?.isProfileCompleted) {
+      if (
+        res.payload?.user?.shopProfile?.isProfileCompleted &&
+        res.payload?.user?.shopProfile?.isOnboarded
+      ) {
         navigate("/shop/dashboard");
       } else if (
         res.payload?.user?.shopProfile?.isProfileCompleted &&

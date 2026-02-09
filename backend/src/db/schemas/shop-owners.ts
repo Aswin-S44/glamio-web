@@ -7,6 +7,7 @@ import {
   varchar,
   decimal,
   json,
+  longtext,
 } from "drizzle-orm/mysql-core";
 import { users } from "./users";
 
@@ -17,7 +18,7 @@ export const shopOwners = mysqlTable("shop_owners", {
   userId: bigint("user_id", { mode: "number", unsigned: true })
     .notNull()
     .references(() => users.id),
-  about: varchar("about", { length: 256 }).notNull(),
+  about: longtext("about").notNull(),
   address: varchar("address", { length: 500 }).notNull(),
   latitude: decimal("latitude", { precision: 10, scale: 7 }).notNull(),
   longitude: decimal("longitude", { precision: 10, scale: 7 }).notNull(),
