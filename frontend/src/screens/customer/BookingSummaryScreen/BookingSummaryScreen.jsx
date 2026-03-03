@@ -81,7 +81,7 @@ function BookingSummaryScreen() {
 
   // Calculate Taxes based on API totalRate
   const subtotal = summaryData?.totalRate || 0;
-  console.log("subtotal------", subtotal);
+
   const tax = subtotal;
   const totalAmount = subtotal + tax;
 

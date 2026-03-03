@@ -99,7 +99,7 @@ function SelectSlotScreen() {
       setError("Please select a convenient time slot.");
       return;
     }
-    console.log("selectedExpert----------", selectedSlot);
+
     const params = new URLSearchParams();
     params.append("slotId", selectedSlot.id);
     params.append("expertId", selectedExpert);

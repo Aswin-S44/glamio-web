@@ -18,9 +18,7 @@ function Services() {
         if (data && data.length > 0) {
           setServices(data);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
     fetchServics();
   }, []);

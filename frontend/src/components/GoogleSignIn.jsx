@@ -15,8 +15,6 @@ function GoogleSignIn() {
       const data = await googleSignInApi(idToken);
 
       localStorage.setItem("token", data.data.token);
-
-      console.log("User:", data.user);
     } catch (error) {
       console.error("Google sign-in failed", error);
     }

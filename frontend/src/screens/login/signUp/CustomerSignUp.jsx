@@ -17,13 +17,11 @@ function CustomerSignUp() {
 
   const handleGoogleSignIn = async () => {
     try {
-      console.log("CUSTOMER");
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
       const data = await googleSignInApi(idToken);
       localStorage.setItem("token", data.data.token);
-      console.log("data-----------", data.data.user);
 
       if (data.data.token) {
         let dataToSignup = {
@@ -40,7 +38,6 @@ function CustomerSignUp() {
         //
         // window.location.reload();
       }
-      console.log("User:", data.user);
     } catch (error) {
       console.error("Google sign-in failed", error);
     }

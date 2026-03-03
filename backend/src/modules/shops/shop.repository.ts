@@ -53,7 +53,6 @@ export const updateShopDB = async (
     }
 
     if (shop && Object.keys(shop).length > 0) {
-      console.log("************************8");
       await tx
         .update(shopOwners)
         .set({

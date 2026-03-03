@@ -19,13 +19,8 @@ function SignUp() {
 
   const handleGoogleSignIn = async () => {
     const res = await dispatch(googleLogin());
-    // console.log(res);
-    if (googleLogin.fulfilled.match(res)) {
-      console.log(
-        "RES0----------------",
-        res.payload?.user?.shopProfile?.isProfileCompleted
-      );
 
+    if (googleLogin.fulfilled.match(res)) {
       if (
         res.payload?.user?.shopProfile?.isProfileCompleted &&
         res.payload?.user?.shopProfile?.isOnboarded
@@ -39,7 +34,7 @@ function SignUp() {
       } else {
         navigate("/shop/edit-profile");
       }
-      console.log("helloooo");
+
       // navigate("/shop/dashboard");
     }
   };

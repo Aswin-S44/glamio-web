@@ -17,10 +17,7 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
-
   const handleAdminSignIn = () => {
-
     if (email === "admin@gmail.com" && password === "admin") {
       const adminData = {
         email: "admin@gmail.com",
@@ -44,7 +41,7 @@ function SignIn() {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
       const data = await googleSignInApi(idToken);
-      console.log("DDATA=============", data.data);
+
       localStorage.setItem("token", data.data.token);
       // navigate("/shop/dashboard");
       let user = data.data.user;
@@ -68,7 +65,6 @@ function SignIn() {
       });
 
       // const createdUser = await res.json();
-      // console.log("CRETED USER--------", createdUser);
     } catch (error) {
       console.error("Google sign-in failed", error);
     }
@@ -142,12 +138,11 @@ function SignIn() {
                   </div>
                   <span class="span">Forgot password?</span>
                 </div>
-                <div class="button-submit" onClick={handleAdminSignIn}>Sign In</div>
+                <div class="button-submit" onClick={handleAdminSignIn}>
+                  Sign In
+                </div>
                 <p class="p">
-                  Don't have an account?{" "}
-                  <span class="span" >
-                    Sign Up
-                  </span>
+                  Don't have an account? <span class="span">Sign Up</span>
                 </p>
                 <p class="p line">Or With</p>
                 <div class="flex-row">

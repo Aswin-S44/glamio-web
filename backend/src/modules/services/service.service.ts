@@ -35,16 +35,6 @@ export const createServiceService = async (
     throw new Error("Image upload failed");
   }
 
-  console.log("--------------", {
-    name,
-    imageUrl: uploadedImage,
-    rate,
-    shopId,
-    categoryId,
-    description,
-    duration,
-  });
-
   await createServiceDB({
     name,
     imageUrl: uploadedImage,

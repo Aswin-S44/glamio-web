@@ -82,10 +82,6 @@ function Header() {
                 </div>
                 {dropdownOpen && (
                   <div className="user-dropdown">
-                    {console.log(
-                      "user.userTypeId------------",
-                      user.userTypeId
-                    )}
                     {user && user.userTypeId === DEFAULT_SHOP_ID && (
                       <div
                         className="dropdown-item"

@@ -11,7 +11,6 @@ import { getShopIdByUserId } from "../slots/slot.service";
 
 export const createService = async (req: Request, res: Response) => {
   try {
-    console.log("------------");
     const userId = req.user?.id;
 
     if (!userId) {
@@ -19,7 +18,7 @@ export const createService = async (req: Request, res: Response) => {
     }
 
     const shopId = await getShopIdByUserId(userId!);
-    console.log("shopId-----------", shopId);
+
     if (!shopId) {
       res.status(401).json({ message: "Shop not found" });
     }

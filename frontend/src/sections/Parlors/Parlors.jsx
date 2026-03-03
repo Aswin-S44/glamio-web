@@ -69,7 +69,6 @@ function Parlors() {
 
   return (
     <section className="parlors-section">
-      {console.log("shops-----------", shops)}
       <div className="parlors-container">
         <div className="parlors-header">
           <span className="subtitle">Our Branches</span>

@@ -14,7 +14,7 @@ export const googleLogin = createAsyncThunk(
 
       const response = await api.post("/auth/signin/google", {
         idToken,
-      }); 
+      });
 
       if (response && response.data.data) {
         let dataToSignup = {
@@ -25,7 +25,7 @@ export const googleLogin = createAsyncThunk(
         };
 
         const userResponse = await api.post("/auth/signup", dataToSignup);
-        console.log("userResponse--------------", userResponse);
+
         if (userResponse && userResponse.data.success) {
           return userResponse.data;
         }
@@ -88,7 +88,7 @@ const authSlice = createSlice({
         state.user = true;
         state.userData = action.payload.user;
         state.token = action.payload.token;
-        console.log("ACTION PAYLOAD-----------", action.payload);
+
         localStorage.setItem("token", action.payload.token);
       })
       .addCase(googleLogin.rejected, (state, action) => {

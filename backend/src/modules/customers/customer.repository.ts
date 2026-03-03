@@ -60,7 +60,6 @@ export const createBookingDB = (data: any) => {
 };
 
 export const findBookingDB = (data: any) => {
-  console.log("data-------------", data);
   return db
     .select()
     .from(appointments)

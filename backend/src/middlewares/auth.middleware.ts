@@ -15,7 +15,7 @@ export const authMiddleware = async (
 ) => {
   try {
     const authHeader = req.headers.authorization;
-    console.log("authHeader-------------", authHeader);
+
     if (!authHeader) {
       return res.status(401).json({ message: "Authorization token missing" });
     }
@@ -24,13 +24,13 @@ export const authMiddleware = async (
       authHeader,
       (process.env.JWT_SECRET as string) || "add"
     ) as JwtPayload;
-    console.log("decoded-----------", decoded);
+
     const [user] = await db
       .select()
       .from(users)
       .where(eq(users.email, decoded.email))
       .limit(1);
-    
+
     if (!user) {
       return res.status(401).json({ message: "Invalid token user" });
     }

@@ -78,7 +78,7 @@ function UserRequests() {
                 <th />
               </tr>
             </thead>
-            {console.log("appointments2-------------", appointments)}
+
             {loading ? (
               <>Loading....</>
             ) : appointments.length == 0 ? (

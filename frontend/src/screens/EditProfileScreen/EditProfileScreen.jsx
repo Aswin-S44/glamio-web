@@ -105,8 +105,6 @@ function EditProfileScreen() {
           body: JSON.stringify(profileData),
         });
 
-        console.log("res-----------", res);
-
         if (res.status == 200) {
           Swal.fire({
             title: "Profile updated!",
