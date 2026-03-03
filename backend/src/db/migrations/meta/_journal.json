@@ -57,6 +57,13 @@
       "when": 1770567355711,
       "tag": "0007_huge_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1770823560857,
+      "tag": "0008_slippery_spacker_dave",
+      "breakpoints": true
     }
   ]
 }

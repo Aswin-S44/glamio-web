@@ -66,7 +66,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-soft); color: var(
 .menu-item.active { background: var(--primary); color: var(--light); }
 .menu-item.logout { margin-top: 20px; color: #ff6b6b; }
 
-.icon-box { min-width: 24px; display: flex; justify-content: center; }
+.dashboard-icon-box { min-width: 24px; display: flex; justify-content: center; }
 .item-label { margin-left: 15px; font-weight: 500; font-size: 0.95rem; white-space: nowrap; }
 .collapsed .item-label { display: none; }
 
@@ -122,8 +122,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-soft); color: var(
 .user-avatar {
   width: 42px;
   height: 42px;
-  background: var(--dark);
-  color: var(--primary);
+  background: var(--primary);
+  color: var(--dark);
   border-radius: 12px;
   display: flex;
   align-items: center;

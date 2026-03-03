@@ -2,12 +2,21 @@ import { Request, Response } from "express";
 import {
   BookingService,
   createBookingService,
+  findExistingBookingService,
   getAllExpertsByShopIdService,
+  getAllServices,
   getAllShopsService,
   getShopByIdService,
+  getSHopReviewsAndImageServices,
 } from "./customer.service";
 import { SlotService } from "../slots/slot.service";
 import { appointmentStatuses } from "../../constants/constants";
+import { db } from "../../db/setup";
+import { shopOwners } from "../../db/schemas/shop-owners";
+import { and, eq, inArray, sum } from "drizzle-orm";
+import { slots } from "../../db/schemas/slots";
+import { experts } from "../../db/schemas/experts";
+import { services } from "../../db/schemas/services";
 
 export const getAllShops = async (req: Request, res: Response) => {
   const shops = await getAllShopsService();
@@ -62,13 +71,12 @@ export const createBooking = async (
   res: Response
 ): Promise<void> => {
   try {
-    const shopId = Number(req.query.shop_id);
-    const slotId = Number(req.query.slot_id);
-    const expertId = Number(req.query.expert_id);
+    const shopId = Number(req.body.shopId);
+    const slotId = Number(req.body.slotId);
+    const expertId = Number(req.body.expertId);
     const customerId = Number(req.user?.id);
     const appointmentStatus = appointmentStatuses.PENDING;
     const selectedServices = req.body.serviceIds;
-
     const bookingRate = await BookingService.calculateTotalRate(
       selectedServices
     );
@@ -83,10 +91,134 @@ export const createBooking = async (
       rate: bookingRate,
     };
 
-    console.log("dataToUpdate-------------", dataToUpdate);
+    const existingBooking = await findExistingBookingService(dataToUpdate);
+
+    if (existingBooking) {
+      res.status(400).json({
+        message: "booking already exists with this shop , and statusId 1",
+      });
+      return;
+    }
 
     const result = await createBookingService(dataToUpdate);
     res.status(201).send({ appointment: result });
+  } catch (error) {
+    res.status(400).json({
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const getShopReviewsAndImages = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { placeId } = req.params;
+
+    if (!placeId || Array.isArray(placeId)) {
+      res.status(400).json({ message: "Invalid placeId" });
+      return;
+    }
+
+    const result = await getSHopReviewsAndImageServices(placeId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const getAllShopsServices = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    let limit = 1;
+    let offset = 10;
+    const result = await getAllServices(limit, offset);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const getOrderSummary = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { shopId, slotId, expertId } = req.params;
+    const rawServiceId = req.query.serviceId;
+
+    if (
+      rawServiceId === undefined ||
+      (typeof rawServiceId === "object" && !Array.isArray(rawServiceId))
+    ) {
+      res.status(400).json({ message: "serviceId is required" });
+      return;
+    }
+
+    const serviceIds = (
+      Array.isArray(rawServiceId) ? rawServiceId : rawServiceId.split(",")
+    )
+      .map(Number)
+      .filter((id) => !isNaN(id));
+
+    if (!serviceIds.length) {
+      res.status(400).json({ message: "Invalid serviceId" });
+      return;
+    }
+
+    const [shop] = await db
+      .select()
+      .from(shopOwners)
+      .where(eq(shopOwners.id, Number(shopId)));
+
+    const [slot] = await db
+      .select()
+      .from(slots)
+      .where(
+        and(eq(slots.id, Number(slotId)), eq(slots.shopId, Number(shopId)))
+      );
+
+    const [expert] = await db
+      .select()
+      .from(experts)
+      .where(
+        and(
+          eq(experts.id, Number(expertId)),
+          eq(experts.shopId, Number(shopId))
+        )
+      );
+
+    const selectedServices = await db
+      .select()
+      .from(services)
+      .where(
+        and(
+          eq(services.shopId, Number(shopId)),
+          inArray(services.id, serviceIds)
+        )
+      );
+
+    const [total] = await db
+      .select({ totalRate: sum(services.rate) })
+      .from(services)
+      .where(inArray(services.id, serviceIds));
+
+    res.status(200).json({
+      shop,
+      slot,
+      expert,
+      services: selectedServices,
+      totalRate: Number(total?.totalRate ?? 0),
+    });
   } catch (error) {
     res.status(400).json({
       message: error instanceof Error ? error.message : "Unknown error",

@@ -27,7 +27,10 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/parlour/:id" element={<ParlorDetailsScreen />} />
-            <Route path="/parlour/service" element={<SelectSlotScreen />} />
+            <Route
+              path="/parlor/:id/service/:serviceId"
+              element={<SelectSlotScreen />}
+            />
             <Route path="/summary" element={<BookingSummaryScreen />} />
             <Route path="/shop/dashboard" element={<Dashboard />} />
             <Route path="/signup/type=customer" element={<CustomerSignUp />} />

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./UserRequests.css";
+import NotFound from "../../components/NotFound/NotFound";
 
 const STATUS = {
   1: "Pending",
@@ -8,17 +9,38 @@ const STATUS = {
 };
 
 function UserRequests() {
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      serviceIds: [6, 9],
-      rate: 200,
-      statusId: 1,
-      createdAt: "2026-01-26T11:27:33.000Z",
-    },
-  ]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem("token");
 
   const [selected, setSelected] = useState(null);
+
+  useEffect(() => {
+    const fetchUserRequests = async (page = 1) => {
+      setLoading(true);
+      try {
+        const res = await fetch(`http://localhost:5000/api/v1/appointments`, {
+          headers: { Authorization: `${token}` },
+        });
+        const data = await res.json();
+        console.log(
+          "appointments--------------",
+          data ? data : "no appoitments"
+        );
+        if (data.appointments && data.appointments.length > 0) {
+          setAppointments(data.appointments);
+          // setPagination(
+          //   data.pagination || { currentPage: 1, totalPages: 1, limit: 8 }
+          // );
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserRequests();
+  }, [token]);
 
   const formatDate = (date) =>
     new Date(date).toLocaleString("en-IN", {
@@ -31,9 +53,7 @@ function UserRequests() {
 
   const updateStatus = (id, statusId) => {
     setAppointments((prev) =>
-      prev.map((a) =>
-        a.id === id ? { ...a, statusId } : a
-      )
+      prev.map((a) => (a.id === id ? { ...a, statusId } : a))
     );
     setSelected(null);
   };
@@ -58,40 +78,49 @@ function UserRequests() {
                 <th />
               </tr>
             </thead>
+            {console.log("appointments2-------------", appointments)}
+            {loading ? (
+              <>Loading....</>
+            ) : appointments.length == 0 ? (
+              <NotFound />
+            ) : (
+              appointments?.length > 0 && (
+                <tbody>
+                  {appointments?.map((item) => (
+                    <tr key={item.id}>
+                      <td className="order-id">#ORD-{item.id}</td>
+                      <td>{formatDate(item.createdAt)}</td>
 
-            <tbody>
-              {appointments.map((item) => (
-                <tr key={item.id}>
-                  <td className="order-id">#ORD-{item.id}</td>
-                  <td>{formatDate(item.createdAt)}</td>
+                      <td>
+                        <div className="service-tags">
+                          {/* {item.serviceIds.map((s) => (
+                            <span key={s}>S-{s}</span>
+                          ))} */}
+                          1
+                        </div>
+                      </td>
 
-                  <td>
-                    <div className="service-tags">
-                      {item.serviceIds.map((s) => (
-                        <span key={s}>S-{s}</span>
-                      ))}
-                    </div>
-                  </td>
+                      <td className="price">₹{item.rate}</td>
 
-                  <td className="price">₹{item.rate}</td>
+                      <td>
+                        <span className={`status-pill s-${item.statusId}`}>
+                          {STATUS[item.statusId]}
+                        </span>
+                      </td>
 
-                  <td>
-                    <span className={`status-pill s-${item.statusId}`}>
-                      {STATUS[item.statusId]}
-                    </span>
-                  </td>
-
-                  <td>
-                    <button
-                      className="view-btn"
-                      onClick={() => setSelected(item)}
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                      <td>
+                        <button
+                          className="view-btn"
+                          onClick={() => setSelected(item)}
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )
+            )}
           </table>
         </div>
       </div>
@@ -113,9 +142,7 @@ function UserRequests() {
 
               <div className="info-row">
                 <span>Services</span>
-                <strong>
-                  {selected.serviceIds.join(", ")}
-                </strong>
+                <strong>{selected.serviceIds.join(", ")}</strong>
               </div>
 
               <div className="info-row">

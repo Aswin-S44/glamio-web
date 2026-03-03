@@ -14,7 +14,7 @@ export const googleLogin = createAsyncThunk(
 
       const response = await api.post("/auth/signin/google", {
         idToken,
-      });
+      }); 
 
       if (response && response.data.data) {
         let dataToSignup = {

@@ -15,3 +15,4 @@ export const getReviews = async (placeId, page = 0) => {
     return { rating: 0, reviews: [] };
   }
 };
+ 

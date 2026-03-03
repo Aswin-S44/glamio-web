@@ -3,10 +3,11 @@ import {
   getAppointmentsBySHopId,
 } from "./appointment.repository";
 
-export const getAppointmentService = (shopId: number) => {
-  return getAppointmentsBySHopId(shopId);
+export const getAppointmentService = async (shopId: number) => {
+  return await getAppointmentsBySHopId(shopId);
 };
 
-export const getAppointmentById = (id: number) => {
-  return getAppointmentByAppointmentId(id);
+export const getAppointmentById = async (id: number) => {
+  const result = await getAppointmentByAppointmentId(id);
+  return result[0] || null;
 };

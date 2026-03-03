@@ -1,72 +1,67 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Services.css";
-import imgNew from "../../components/Media/Images/NailArtistry.jpg";
+import { DEFAULT_NO_IMAGE } from "../../constants/urls";
 
-const servicesData = [
-  {
-    id: 1,
-    title: "Hair Design",
-    description:
-      "Expert cuts, coloring, and styling tailored to your unique face shape and personality.",
-    price: "Starts from $45",
-    image:
-      "https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    title: "Skin Rejuvenation",
-    description:
-      "Indulge in deep-cleansing facials and premium skin treatments for a natural, healthy glow.",
-    price: "Starts from $60",
-    image:
-      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    title: "Bridal Couture",
-    description:
-      "Complete bridal makeup and hairstyling to make your special day absolutely unforgettable.",
-    price: "Starts from $150",
-    image:
-      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=2071&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    title: "Nail Artistry",
-    description:
-      "Luxury manicures, gel extensions, and creative nail art using high-end organic polishes.",
-    price: "Starts from $30",
-    image:
-      imgNew,
-  },
-];
- 
 function Services() {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchServics = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `http://localhost:5000/api/v1/customer/services`
+        );
+        setLoading(false);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          setServices(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchServics();
+  }, []);
+
   return (
     <section className="services" id="services">
-      <div className="services-container">
-        <div className="services-header">
-          <span className="subtitle">Our Expertise</span>
-          <h2 className="title">Luxury Services</h2>
-          {/* <div className="divider"></div> */}
-        </div>
+      {loading ? (
+        <div className="status-message">Loading....</div>
+      ) : services.length === 0 ? (
+        <div className="status-message">No services available</div>
+      ) : (
+        <div className="services-container">
+          <div className="services-header">
+            <span className="subtitle">Our Expertise</span>
+            <h2 className="title">Luxury Services</h2>
+          </div>
 
-        <div className="services-grid">
-          {servicesData.map((service) => (
-            <div key={service.id} className="service-card">
-              <div className="service-img-wrapper">
-                <img src={service.image} alt={service.title} />
-                <div className="price-tag">{service.price}</div>
+          <div className="services-grid">
+            {services.map((service) => (
+              <div
+                key={service.id}
+                className="service-card"
+                onClick={() => (window.location.href = `/parlour/`)}
+              >
+                <div className="service-img-wrapper">
+                  <img
+                    src={service?.imageUrl ?? DEFAULT_NO_IMAGE}
+                    alt={service?.categoryName ?? ""}
+                  />
+                  <div className="price-tag">{service?.rate ?? ""}</div>
+                </div>
+                <div className="service-info">
+                  <h3>{service?.name ?? ""}</h3>
+                  <p>{service.description}</p>
+                  <button className="service-btn">Book Now</button>
+                </div>
               </div>
-              <div className="service-info">
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-                <button className="service-btn">Book Now</button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

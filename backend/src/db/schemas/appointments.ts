@@ -15,11 +15,10 @@ import { shopOwners } from "./shop-owners";
 export const appointments = mysqlTable("appointments", {
   id: bigint("id", { mode: "number", unsigned: true })
     .autoincrement()
-    .primaryKey(), 
+    .primaryKey(),
 
-  statusId: bigint("status_id", { mode: "number", unsigned: true })
-    .notNull()
-    .references(() => appointmentStatus.id),
+  statusId: bigint("status_id", { mode: "number", unsigned: true }).notNull(),
+  // .references(() => appointmentStatus.id),
 
   customerId: bigint("customer_id", { mode: "number", unsigned: true })
     .notNull()

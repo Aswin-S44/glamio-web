@@ -9,6 +9,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 import { auth } from "../../../config/firebase";
 import { googleSignInApi } from "../../../services/auth.service";
+import api from "../../../utils/api.util";
 
 function CustomerSignUp() {
   const [mode, setMode] = useState(null); // null | 'salon' | 'customer'
@@ -17,15 +18,29 @@ function CustomerSignUp() {
   const handleGoogleSignIn = async () => {
     try {
       console.log("CUSTOMER");
-      // const provider = new GoogleAuthProvider();
-      // const result = await signInWithPopup(auth, provider);
-      // const idToken = await result.user.getIdToken();
-      // const data = await googleSignInApi(idToken);
-      // localStorage.setItem("token", data.data.token);
-      // if (data.token) {
-      //   navigate("/shop/dashboard");
-      // }
-      // console.log("User:", data.user);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+      const data = await googleSignInApi(idToken);
+      localStorage.setItem("token", data.data.token);
+      console.log("data-----------", data.data.user);
+
+      if (data.data.token) {
+        let dataToSignup = {
+          email: data.data.user.email,
+          username: data.data.user.name,
+          profileImage: data.data.user.picture,
+          userType: "customer",
+        };
+        const userResponse = await api.post("/auth/signup", dataToSignup);
+
+        if (userResponse && userResponse.data.success) {
+          navigate("/");
+        }
+        //
+        // window.location.reload();
+      }
+      console.log("User:", data.user);
     } catch (error) {
       console.error("Google sign-in failed", error);
     }

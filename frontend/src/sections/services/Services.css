@@ -12,6 +12,14 @@
   padding: 100px 0;
   background-color: var(--bg-light);
   font-family: 'Poppins', sans-serif;
+  min-height: 400px;
+}
+
+.status-message {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: var(--dark);
 }
 
 .services-container {
@@ -40,17 +48,11 @@
   margin-top: 10px;
 }
 
-.divider {
-  width: 60px;
-  height: 3px;
-  background: var(--gold);
-  margin: 20px auto 0;
-}
-
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 400px));
   gap: 30px;
+  justify-content: flex-start;
 }
 
 .service-card {
@@ -59,6 +61,9 @@
   overflow: hidden;
   box-shadow: var(--shadow);
   transition: transform 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .service-card:hover {
@@ -96,7 +101,10 @@
 }
 
 .service-info {
-  padding: 10px;
+  padding: 25px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .service-info h3 {
@@ -111,6 +119,7 @@
   color: #666;
   line-height: 1.6;
   margin-bottom: 25px;
+  flex-grow: 1;
 }
 
 .service-btn {
@@ -122,6 +131,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  align-self: flex-start;
 }
 
 .service-btn:hover {
@@ -129,7 +139,6 @@
   color: var(--white);
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .services {
     padding: 60px 0;
@@ -139,12 +148,19 @@
     margin-bottom: 40px;
   }
 
+  .services-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
   .service-info {
-    padding: 10px;
+    padding: 20px;
     text-align: center;
   }
 
   .service-btn {
+    align-self: center;
     width: 100%;
   }
 }

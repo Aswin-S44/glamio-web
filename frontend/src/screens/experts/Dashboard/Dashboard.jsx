@@ -77,30 +77,27 @@ function Dashboard() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
   const isAdmin = localStorage.getItem("isAdminLoggedIn") === "true";
 
-
-
-
-
-  const menuItems = isAdmin ? [
-    { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
-  ] : [
-    { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
-    { id: "requests", label: "User Requests", icon: <UserPlus size={20} /> },
-    {
-      id: "appointments",
-      label: "Appointments",
-      icon: <CalendarCheck size={20} />,
-    },
-    { id: "slots", label: "Time Slots", icon: <Clock size={20} /> },
-    { id: "services", label: "Services", icon: <Sparkles size={20} /> },
-    { id: "offers", label: "Offers", icon: <Tag size={20} /> },
-    { id: "experts", label: "Experts", icon: <UserPlus2 size={20} /> },
-  ];
-
-
+  const menuItems = isAdmin
+    ? [{ id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> }]
+    : [
+        { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
+        {
+          id: "requests",
+          label: "User Requests",
+          icon: <UserPlus size={20} />,
+        },
+        {
+          id: "appointments",
+          label: "Appointments",
+          icon: <CalendarCheck size={20} />,
+        },
+        { id: "slots", label: "Time Slots", icon: <Clock size={20} /> },
+        { id: "services", label: "Services", icon: <Sparkles size={20} /> },
+        { id: "offers", label: "Offers", icon: <Tag size={20} /> },
+        { id: "experts", label: "Experts", icon: <UserPlus2 size={20} /> },
+      ];
 
   const handleTabChange = (id) => {
     setActiveTab(id);
@@ -121,13 +118,12 @@ function Dashboard() {
   ];
 
   const handleLogout = () => {
-  localStorage.removeItem("admin");
-  localStorage.removeItem("isAdminLoggedIn");
-  localStorage.removeItem("token");
+    localStorage.removeItem("admin");
+    localStorage.removeItem("isAdminLoggedIn");
+    localStorage.removeItem("token");
 
-  navigate("/");
-};
-
+    navigate("/");
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -284,12 +280,15 @@ function Dashboard() {
       )}
 
       <aside className={`side-menu ${isMobileOpen ? "mobile-open" : ""}`}>
-        <div className="menu-header" onClick={() => setIsCollapsed(!isCollapsed)}>
-          <div className="brand" >
+        <div
+          className="menu-header"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          <div className="brand">
             <div className="logo-container">
               <Scissors size={20} />
             </div>
-            <span className="brand-name"  >GLAMIO</span>
+            <span className="brand-name">GLAMIO</span>
           </div>
           {/* <button
             className="collapse-toggle"
@@ -310,14 +309,14 @@ function Dashboard() {
               className={`menu-item ${activeTab === item.id ? "active" : ""}`}
               onClick={() => handleTabChange(item.id)}
             >
-              <div className="icon-box">{item.icon}</div>
+              <div className="dashboard-icon-box ">{item.icon}</div>
               <span className="item-label">{item.label}</span>
               {activeTab === item.id && <div className="active-glow" />}
             </button>
           ))}
           <div className="menu-divider" />
           <button className="menu-item logout" onClick={handleLogout}>
-            <div className="icon-box">
+            <div className="dashboard-icon-box ">
               <LogOut size={20} />
             </div>
             <span className="item-label">Logout</span>
@@ -368,10 +367,11 @@ function Dashboard() {
                   <div className="dropdown-header">
                     <p className="email">admin@glamio.com</p>
                   </div>
-                  <a href='/shop/profile' style={{ textDecoration: "none" }}>
+                  <a href="/shop/profile" style={{ textDecoration: "none" }}>
                     <button className="dropdown-item">
                       <User size={16} /> Profile Settings
-                    </button></a>
+                    </button>
+                  </a>
                   <button className="dropdown-item">
                     <Settings size={16} /> Shop Settings
                   </button>
