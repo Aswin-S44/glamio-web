@@ -5,7 +5,7 @@ import authMiddleware from "../../middlewares/auth.middleware";
 
 const router = Router();
 
-router.post("/", authMiddleware, OfferController.addOffer);
+router.post("/", authMiddleware, OfferController.addOffer); 
 router.get("/", authMiddleware, OfferController.getOffers);
 router.get("/:id", authMiddleware, OfferController.getOfferById);
 router.patch("/:id", authMiddleware, OfferController.updateOfferById);

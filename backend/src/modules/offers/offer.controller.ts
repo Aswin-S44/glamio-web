@@ -1,27 +1,46 @@
 import { Request, Response } from "express";
 import { OfferService } from "./offer.service";
+import { getShopIdByUserId } from "../slots/slot.service";
 
 export class OfferController {
   static async addOffer(req: Request, res: Response) {
     try {
-      const shopId = req.user?.id;
-      if (!shopId) return res.status(401).json({ message: "Unauthorized" });
+      const userId = req.user?.id;
 
-      await OfferService.createOffer(shopId, req.body);
+      if (!userId) {
+        res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const shopId = await getShopIdByUserId(userId!);
+
+      if (!shopId) {
+        res.status(401).json({ message: "Shop not found" });
+      }
+
+      await OfferService.createOffer(shopId!, req.body);
       res.status(201).json({ message: "Offer created successfully" });
     } catch (error) {
       res.status(400).json({
         message: error instanceof Error ? error.message : "Unknown error",
       });
-    }
+    } 
   }
 
   static async getOffers(req: Request, res: Response) {
     try {
-      const shopId = req.user?.id;
-      if (!shopId) return res.status(401).json({ message: "Unauthorized" });
+      const userId = req.user?.id;
 
-      const offers = await OfferService.getOffers(shopId);
+      if (!userId) {
+        res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const shopId = await getShopIdByUserId(userId!);
+
+      if (!shopId) {
+        res.status(401).json({ message: "Shop not found" });
+      }
+
+      const offers = await OfferService.getOffers(shopId!);
       res.status(200).json({ offers });
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch offers" });

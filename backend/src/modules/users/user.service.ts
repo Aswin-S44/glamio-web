@@ -33,6 +33,7 @@ export const createUser = async (data: {
 };
 
 export const createUserService = async (payload: any) => {
+  console.log(payload);
   const { email, username, profileImage, userType } = payload;
   const DEFAULT_CUSTOMER_ID = 1;
   const DEFAULT_SHOP_ID = 2;

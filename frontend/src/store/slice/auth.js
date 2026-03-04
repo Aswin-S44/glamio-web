@@ -24,6 +24,8 @@ export const googleLogin = createAsyncThunk(
           userType: "shop",
         };
 
+        console.log("dataToSignup-----------", dataToSignup);
+
         const userResponse = await api.post("/auth/signup", dataToSignup);
 
         if (userResponse && userResponse.data.success) {

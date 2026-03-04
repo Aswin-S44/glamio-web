@@ -3,6 +3,7 @@ import { bigint, mysqlTable, timestamp, int } from "drizzle-orm/mysql-core";
 import { shopOwners } from "./shop-owners";
 import { category } from "./category";
 import { services } from "./services";
+import { relations } from "drizzle-orm";
 
 export const offers = mysqlTable("offers", {
   id: bigint("id", { mode: "number", unsigned: true })
@@ -37,3 +38,9 @@ export const offers = mysqlTable("offers", {
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
+export const offersRelations = relations(offers, ({ one }) => ({
+  service: one(services, {
+    fields: [offers.serviceId],
+    references: [services.id],
+  }),
+}));

@@ -256,7 +256,7 @@ function EditProfileScreen() {
             </div>
           </div>
 
-          <button type="submit" className="submit-btn" disabled={loading}>
+          <button type="submit" className="submit-btn">
             {loading ? "Updating..." : "Complete Profile"}
           </button>
         </form>

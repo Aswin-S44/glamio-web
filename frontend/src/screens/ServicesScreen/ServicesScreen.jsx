@@ -423,7 +423,7 @@ function ServicesScreen() {
                         required
                       />
                     </div>
-                    <div className="sv-input-group-modern">
+                    {/* <div className="sv-input-group-modern">
                       <label className="sv-label-modern">
                         <Clock size={14} /> Duration (min)
                       </label>
@@ -433,7 +433,7 @@ function ServicesScreen() {
                         value={duration}
                         onChange={(e) => setDuration(e.target.value)}
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

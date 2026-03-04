@@ -2,6 +2,7 @@ import { db } from "../../db/setup";
 import { offers } from "../../db/schemas/offers";
 import { and, eq } from "drizzle-orm";
 import { CreateOfferDTO, UpdateOfferDTO } from "./offer.types";
+import { services } from "../../db/schemas/services";
 
 export class OfferRepository {
   static findByCategory(shopId: number, categoryId: number) {
@@ -12,7 +13,25 @@ export class OfferRepository {
   }
 
   static findAllByShop(shopId: number) {
-    return db.select().from(offers).where(eq(offers.shopId, shopId));
+    return db
+      .select({
+        id: offers.id,
+        offerPrice: offers.offerPrice,
+        regularPrice: offers.regularPrice,
+        createdAt: offers.createdAt,
+        updatedAt: offers.updatedAt,
+        // Include service details here
+        service: {
+          id: services.id,
+          name: services.name,
+          imageUrl: services.imageUrl,
+          description: services.description,
+          duration: services.duration,
+        },
+      })
+      .from(offers)
+      .innerJoin(services, eq(offers.serviceId, services.id)) // Join condition
+      .where(eq(offers.shopId, shopId));
   }
 
   static findById(shopId: number, offerId: number) {

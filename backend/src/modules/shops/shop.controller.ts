@@ -25,11 +25,14 @@ export const getProfileById = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
   try {
+    console.log("************************8");
     if (!req.user?.id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const userId = req.user?.id;
+    console.log("userId : ", userId);
+
     await updateShopProfile(Number(userId), req.body);
     res.json({ message: "Expert updated successfully" });
   } catch (e: any) {

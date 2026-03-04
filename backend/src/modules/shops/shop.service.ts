@@ -9,6 +9,6 @@ export const updateShopProfile = async (id: number, data: any) => {
   if (!shop || !user) {
     throw new Error("Shop not onboarded yet");
   }
-
+  console.log("data : ", data);
   await updateShopDB(id, data);
 };

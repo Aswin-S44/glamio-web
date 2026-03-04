@@ -91,14 +91,14 @@ export const createBooking = async (
       rate: bookingRate,
     };
 
-    const existingBooking = await findExistingBookingService(dataToUpdate);
+    // const existingBooking = await findExistingBookingService(dataToUpdate);
 
-    if (existingBooking) {
-      res.status(400).json({
-        message: "booking already exists with this shop , and statusId 1",
-      });
-      return;
-    }
+    // if (existingBooking) {
+    //   res.status(400).json({
+    //     message: "booking already exists with this shop , and statusId 1",
+    //   });
+    //   return;
+    // }
 
     const result = await createBookingService(dataToUpdate);
     res.status(201).send({ appointment: result });
