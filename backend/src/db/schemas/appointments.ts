@@ -17,8 +17,9 @@ export const appointments = mysqlTable("appointments", {
     .autoincrement()
     .primaryKey(),
 
-  statusId: bigint("status_id", { mode: "number", unsigned: true }).notNull(),
-  // .references(() => appointmentStatus.id),
+  statusId: bigint("status_id", { mode: "number", unsigned: true })
+    .notNull()
+    .references(() => appointmentStatus.id),
 
   customerId: bigint("customer_id", { mode: "number", unsigned: true })
     .notNull()

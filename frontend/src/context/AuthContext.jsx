@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 
 const AuthContext = createContext(null);
 
@@ -7,42 +13,40 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const token = localStorage.getItem("token");
+  const fetchProfile = useCallback(async () => {
+    const token = localStorage.getItem("token");
 
-  const fetchUser = async () => {
     if (!token) {
       setLoading(false);
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/v1/auth/me", {
+      const res = await fetch("http://localhost:5000/api/v1/auth/profile", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${token}`,
+          Authorization: token,
         },
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch user");
-      }
+      if (!res.ok) throw new Error("Session expired or invalid");
 
       const data = await res.json();
-      setUser(data.user); // or data.user depending on your API response
+      setUser(data);
+      setError(null);
     } catch (err) {
-      console.error(err);
       setError(err.message);
       setUser(null);
-      // localStorage.removeItem("token"); // optional safety
+      localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+    fetchProfile();
+  }, [fetchProfile]);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -56,7 +60,9 @@ export const AuthProvider = ({ children }) => {
         loading,
         error,
         isAuthenticated: !!user,
-        refetchUser: fetchUser,
+        isShopOwner: user?.role === "SHOP_OWNER",
+        shop: user?.shop || null,
+        refreshProfile: fetchProfile,
         logout,
       }}
     >
@@ -65,11 +71,8 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook (clean usage)
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used inside AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used inside AuthProvider");
   return context;
 };

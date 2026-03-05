@@ -55,6 +55,7 @@ function Header() {
 
   return (
     <>
+      {console.log("USER------------", user)}
       <header className={`header ${showHeader ? "show" : "hide"}`}>
         <div className="container header-container">
           <div className="logo" onClick={() => navigate("/")}>
@@ -82,7 +83,7 @@ function Header() {
                 </div>
                 {dropdownOpen && (
                   <div className="user-dropdown">
-                    {user && user.userTypeId === DEFAULT_SHOP_ID && (
+                    {user && user.shop && (
                       <div
                         className="dropdown-item"
                         onClick={() => navigate("/shop/dashboard")}

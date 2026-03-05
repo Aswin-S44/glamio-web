@@ -1,7 +1,8 @@
-import { eq } from "drizzle-orm";
+import { and, count, countDistinct, eq, gte, sql, sum } from "drizzle-orm";
 import { db } from "../../db/setup";
 import { users } from "../../db/schemas/users";
 import { shopOwners } from "../../db/schemas/shop-owners";
+import { appointments } from "../../db/schemas/appointments";
 
 export const findShopByUserId = async (userId: number) => {
   const result = await db
@@ -71,4 +72,45 @@ export const updateShopDB = async (
         .where(eq(shopOwners.id, shopId));
     }
   });
+};
+
+export const getShopStatsRepo = async (shopId: number) => {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const [totals] = await db
+    .select({
+      totalRevenue: sum(appointments.rate),
+      totalAppointments: count(appointments.id),
+      activeClients: countDistinct(appointments.customerId),
+    })
+    .from(appointments)
+    .where(eq(appointments.shopId, shopId));
+
+  const chartData = await db
+    .select({
+      date: sql<string>`DATE(${appointments.createdAt})`,
+      revenue: sum(appointments.rate),
+    })
+    .from(appointments)
+    .where(
+      and(
+        eq(appointments.shopId, shopId),
+        gte(appointments.createdAt, sevenDaysAgo)
+      )
+    )
+    .groupBy(sql`DATE(${appointments.createdAt})`)
+    .orderBy(sql`DATE(${appointments.createdAt})`);
+
+  return {
+    totalRevenue: Number(totals?.totalRevenue || 0),
+    appointments: totals?.totalAppointments || 0,
+    activeClients: totals?.activeClients || 0,
+    chartData: chartData.map((d) => ({
+      day: new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(
+        new Date(d.date)
+      ),
+      revenue: Number(d.revenue || 0),
+    })),
+  };
 };

@@ -8,7 +8,8 @@ import {
   Link,
   AlertCircle,
   Trash2,
-  UploadCloud,
+  Image as ImageIcon,
+  ChevronRight,
 } from "lucide-react";
 import "./EditProfileScreen.css";
 import { convertToBase642 } from "../../utils/utils";
@@ -32,26 +33,19 @@ function EditProfileScreen() {
   const validate = () => {
     const newErrors = {};
     if (!formData.parlourName.trim()) {
-      newErrors.parlourName = "Parlour name is required";
-    } else if (formData.parlourName.length > 100) {
-      newErrors.parlourName = "Name must be less than 100 characters";
+      newErrors.parlourName = "Business name is required";
     }
-
     if (!formData.about.trim()) {
-      newErrors.about = "About section is required";
+      newErrors.about = "Description is required";
     }
-
     if (!formData.address.trim()) {
       newErrors.address = "Address is required";
-    } else if (formData.address.length > 100) {
-      newErrors.address = "Address must be less than 100 characters";
     }
-
     if (
       formData.googleReviewUrl &&
       !formData.googleReviewUrl.startsWith("http")
     ) {
-      newErrors.googleReviewUrl = "Please enter a valid URL";
+      newErrors.googleReviewUrl = "Enter a valid URL (starting with http)";
     }
 
     setErrors(newErrors);
@@ -61,30 +55,22 @@ function EditProfileScreen() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: null }));
-    }
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: null }));
   };
 
   const handleImageUpload = async (info) => {
     const { fileList } = info;
-
     if (fileList.length > 0) {
-      // Get the last file added
       const lastFile = fileList[fileList.length - 1];
-      // Ant Design wraps the native file in originFileObj
       const actualFile = lastFile.originFileObj || lastFile;
-
       if (actualFile instanceof Blob) {
         try {
           const base64 = await convertToBase642(actualFile);
           setFormData((prev) => ({ ...prev, shopImage: base64 }));
         } catch (error) {
-          console.error("Conversion error:", error);
+          console.error(error);
         }
       }
-    } else {
-      setFormData((prev) => ({ ...prev, shopImage: null }));
     }
   };
 
@@ -93,9 +79,7 @@ function EditProfileScreen() {
     if (validate()) {
       setLoading(true);
       try {
-        const profileData = {
-          shop: { ...formData, isProfileCompleted: true },
-        };
+        const profileData = { shop: { ...formData, isProfileCompleted: true } };
         const res = await fetch("http://localhost:5000/api/v1/shops", {
           method: "PATCH",
           headers: {
@@ -105,16 +89,15 @@ function EditProfileScreen() {
           body: JSON.stringify(profileData),
         });
 
-        if (res.status == 200) {
+        if (res.status === 200) {
           Swal.fire({
-            title: "Profile updated!",
-            text: "Your profile has been updated.",
+            title: "Profile Updated",
+            text: "Your business details are now live.",
             icon: "success",
+            confirmButtonColor: "var(--primary)",
           });
           navigate("/shop/onboard");
         }
-
-        // Add your API call here
       } catch (error) {
         console.error(error);
       } finally {
@@ -124,142 +107,152 @@ function EditProfileScreen() {
   };
 
   return (
-    <div className="profile-page-wrapper">
-      <div className="profile-container">
-        <div className="profile-header">
-          <h1>Complete Your Parlour profile</h1>
-          <p>Complete these details to get started with your business</p>
+    <div className="edit-profile-wrapper">
+      <div className="setup-container">
+        <div className="setup-sidebar">
+          <div className="brand-badge">Admin Panel</div>
+          <div className="sidebar-content">
+            <h2>Business Profile</h2>
+            <p>
+              Help customers find and trust your parlour by providing accurate
+              information.
+            </p>
+            <div className="setup-steps">
+              <div className="step active">
+                <span>1</span> Basic Info
+              </div>
+              <div className="step">
+                <span>2</span> Services
+              </div>
+              <div className="step">
+                <span>3</span> Timing
+              </div>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="profile-form">
-          <div className="image-upload-section">
-            <Upload
-              listType="picture-card"
-              className="profile-uploader"
-              beforeUpload={() => false}
-              onChange={handleImageUpload}
-              maxCount={1}
-              showUploadList={false}
-              accept="image/*"
-            >
-              {formData.shopImage ? (
-                <div className="profile-preview-wrapper">
-                  <img
-                    src={formData.shopImage}
-                    alt="Shop"
-                    className="profile-preview-img"
-                  />
-                  <div className="preview-overlay">
-                    <Trash2
-                      size={20}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setFormData((prev) => ({ ...prev, shopImage: null }));
-                      }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="upload-trigger-circle">
-                  <UploadCloud size={28} color="var(--primary)" />
-                  <span>Shop Image</span>
-                </div>
-              )}
-            </Upload>
-          </div>
+        <div className="setup-form-area">
+          <form onSubmit={handleSubmit} className="premium-form">
+            <header className="form-header">
+              <h3>Complete Shop Setup</h3>
+              <p>Fill in the details below to publish your profile.</p>
+            </header>
 
-          <div className="form-grid">
-            <div className="form-group">
-              <label>
-                <Store size={18} /> Parlour Name
-              </label>
-              <div className="input-wrapper">
+            <div className="upload-brand-section">
+              <Upload
+                className="brand-uploader"
+                showUploadList={false}
+                beforeUpload={() => false}
+                onChange={handleImageUpload}
+              >
+                {formData.shopImage ? (
+                  <div className="brand-preview">
+                    <img src={formData.shopImage} alt="Shop" />
+                    <div className="change-overlay">
+                      <Camera size={18} /> Change Image
+                    </div>
+                  </div>
+                ) : (
+                  <div className="upload-placeholder">
+                    <ImageIcon size={32} strokeWidth={1.5} />
+                    <span>Upload Shop Cover</span>
+                  </div>
+                )}
+              </Upload>
+              {formData.shopImage && (
+                <button
+                  type="button"
+                  className="remove-asset"
+                  onClick={() =>
+                    setFormData((p) => ({ ...p, shopImage: null }))
+                  }
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
+
+            <div className="input-grid">
+              <div
+                className={`field-box ${
+                  errors.parlourName ? "error-state" : ""
+                }`}
+              >
+                <label>
+                  <Store size={16} /> Parlour Name
+                </label>
                 <input
                   type="text"
                   name="parlourName"
-                  className={errors.parlourName ? "input-error" : ""}
-                  placeholder="Enter your parlour name"
+                  placeholder="e.g. Royal Glow Beauty Lounge"
                   value={formData.parlourName}
                   onChange={handleInputChange}
                 />
-                <span className="char-count">
-                  {formData.parlourName.length}/100
-                </span>
+                {errors.parlourName && (
+                  <div className="hint-error">{errors.parlourName}</div>
+                )}
               </div>
-              {errors.parlourName && (
-                <span className="error-msg">
-                  <AlertCircle size={14} /> {errors.parlourName}
-                </span>
-              )}
-            </div>
 
-            <div className="form-group">
-              <label>
-                <Info size={18} /> About
-              </label>
-              <textarea
-                name="about"
-                className={errors.about ? "input-error" : ""}
-                placeholder="Brief description of your services..."
-                value={formData.about}
-                onChange={handleInputChange}
-                rows="3"
-              />
-              {errors.about && (
-                <span className="error-msg">
-                  <AlertCircle size={14} /> {errors.about}
-                </span>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label>
-                <MapPin size={18} /> Address
-              </label>
-              <div className="input-wrapper">
+              <div
+                className={`field-box ${errors.address ? "error-state" : ""}`}
+              >
+                <label>
+                  <MapPin size={16} /> Address
+                </label>
                 <input
                   type="text"
                   name="address"
-                  className={errors.address ? "input-error" : ""}
-                  placeholder="Street, City, Zip"
+                  placeholder="Street name, City, State"
                   value={formData.address}
                   onChange={handleInputChange}
                 />
-                <span className="char-count">
-                  {formData.address.length}/100
-                </span>
+                {errors.address && (
+                  <div className="hint-error">{errors.address}</div>
+                )}
               </div>
-              {errors.address && (
-                <span className="error-msg">
-                  <AlertCircle size={14} /> {errors.address}
-                </span>
-              )}
+
+              <div
+                className={`field-box full-width ${
+                  errors.about ? "error-state" : ""
+                }`}
+              >
+                <label>
+                  <Info size={16} /> About the Parlour
+                </label>
+                <textarea
+                  name="about"
+                  rows="4"
+                  placeholder="Describe your expertise and atmosphere..."
+                  value={formData.about}
+                  onChange={handleInputChange}
+                />
+                {errors.about && (
+                  <div className="hint-error">{errors.about}</div>
+                )}
+              </div>
+
+              <div className="field-box full-width">
+                <label>
+                  <Link size={16} /> Google Review Link (Optional)
+                </label>
+                <input
+                  type="url"
+                  name="googleReviewUrl"
+                  placeholder="https://g.page/r/your-id/review"
+                  value={formData.googleReviewUrl}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
 
-            <div className="form-group">
-              <label>
-                <Link size={18} /> Google Review URL (Optional)
-              </label>
-              <input
-                type="url"
-                name="googleReviewUrl"
-                className={errors.googleReviewUrl ? "input-error" : ""}
-                placeholder="https://g.page/your-shop/review"
-                value={formData.googleReviewUrl}
-                onChange={handleInputChange}
-              />
-              {errors.googleReviewUrl && (
-                <span className="error-msg">
-                  <AlertCircle size={14} /> {errors.googleReviewUrl}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <button type="submit" className="submit-btn">
-            {loading ? "Updating..." : "Complete Profile"}
-          </button>
-        </form>
+            <footer className="form-footer">
+              <button type="submit" className="prime-submit" disabled={loading}>
+                {loading ? "Processing..." : "Save Profile"}
+                {!loading && <ChevronRight size={18} />}
+              </button>
+            </footer>
+          </form>
+        </div>
       </div>
     </div>
   );

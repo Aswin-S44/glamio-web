@@ -47,16 +47,6 @@ import AppointmentScreen from "../../AppointmentScreen/AppointmentScreen";
 import OfferScreen from "../../OfferScreen/OfferScreen";
 import NotificationScreen from "../../Notifications/NotificationScreen";
 
-const chartData = [
-  { name: "Mon", revenue: 400, appointments: 24 },
-  { name: "Tue", revenue: 300, appointments: 18 },
-  { name: "Wed", revenue: 900, appointments: 45 },
-  { name: "Thu", revenue: 700, appointments: 32 },
-  { name: "Fri", revenue: 1200, appointments: 55 },
-  { name: "Sat", revenue: 1500, appointments: 70 },
-  { name: "Sun", revenue: 1100, appointments: 40 },
-];
-
 function Dashboard() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -64,8 +54,41 @@ function Dashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [serviceView, setServiceView] = useState("list");
   const [expertView, setExpertView] = useState("list");
+
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "http://localhost:5000/api/v1/shops/stats",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setStats(data);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (activeTab === "home") {
+      fetchStats();
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -105,37 +128,27 @@ function Dashboard() {
     setIsMobileOpen(false);
   };
 
-  const sampleExperts = [
-    {
-      id: 1,
-      name: "Sophia Reynolds",
-      about: "Senior hair stylist with over 10 years of experience.",
-      image:
-        "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?q=80&w=800&auto=format&fit=crop",
-      specialist: ["Hair Styling", "Global Coloring"],
-      isActive: true,
-    },
-  ];
-
   const handleLogout = () => {
     localStorage.removeItem("admin");
     localStorage.removeItem("isAdminLoggedIn");
     localStorage.removeItem("token");
-
     navigate("/");
   };
 
   const renderContent = () => {
     switch (activeTab) {
       case "home":
+        if (loading)
+          return <div className="loading-spinner">Loading Stats...</div>;
+
         return (
           <div className="view-container animate-fade-in">
             <div className="stats-grid">
               <div className="stat-card gold-gradient">
                 <div className="stat-info">
                   <span>Total Revenue</span>
-                  <h2>$4,840.00</h2>
-                  <p className="trend">+12.5% from last month</p>
+                  <h2>₹{stats?.totalRevenue?.toLocaleString() || "0"}</h2>
+                  <p className="trend">{stats?.revenueGrowth}</p>
                 </div>
                 <div className="stat-icon-circle">
                   <CreditCard size={24} />
@@ -144,8 +157,8 @@ function Dashboard() {
               <div className="stat-card dark-gradient">
                 <div className="stat-info">
                   <span>Appointments</span>
-                  <h2>284</h2>
-                  <p className="trend">+5.2% from last week</p>
+                  <h2>{stats?.appointments || "0"}</h2>
+                  <p className="trend">{stats?.appointmentGrowth}</p>
                 </div>
                 <div className="stat-icon-circle">
                   <CalendarCheck size={24} />
@@ -154,8 +167,8 @@ function Dashboard() {
               <div className="stat-card beige-gradient">
                 <div className="stat-info">
                   <span>Active Clients</span>
-                  <h2>1,204</h2>
-                  <p className="trend">+18 new today</p>
+                  <h2>{stats?.activeClients || "0"}</h2>
+                  <p className="trend">{stats?.clientGrowth}</p>
                 </div>
                 <div className="stat-icon-circle">
                   <User size={24} />
@@ -169,12 +182,11 @@ function Dashboard() {
                   <h3>Revenue Analytics</h3>
                   <select className="chart-select">
                     <option>Last 7 Days</option>
-                    <option>Last 30 Days</option>
                   </select>
                 </div>
                 <div className="chart-wrapper">
                   <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={chartData}>
+                    <AreaChart data={stats?.chartData || []}>
                       <defs>
                         <linearGradient
                           id="colorRev"
@@ -200,7 +212,7 @@ function Dashboard() {
                         vertical={false}
                         stroke="#f0f0f0"
                       />
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                      <XAxis dataKey="day" axisLine={false} tickLine={false} />
                       <YAxis axisLine={false} tickLine={false} />
                       <Tooltip />
                       <Area
@@ -264,7 +276,7 @@ function Dashboard() {
         return serviceView === "list" ? <ServicesScreen /> : <AddService />;
       case "experts":
         return expertView === "list" ? (
-          <ExpertsScreen expertsData={sampleExperts} />
+          <ExpertsScreen expertsData={[]} />
         ) : (
           <AddExpert />
         );
@@ -280,26 +292,17 @@ function Dashboard() {
       )}
 
       <aside className={`side-menu ${isMobileOpen ? "mobile-open" : ""}`}>
-        <div
-          className="menu-header"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-        >
-          <div className="brand">
+        <div className="menu-header">
+          <div
+            className="brand"
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
+          >
             <div className="logo-container">
               <Scissors size={20} />
             </div>
             <span className="brand-name">GLAMIO</span>
           </div>
-          {/* <button
-            className="collapse-toggle"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-          >
-            {isCollapsed ? (
-              <ChevronRight size={16} />
-            ) : (
-              <ChevronLeft size={16} />
-            )}
-          </button> */}
         </div>
 
         <nav className="menu-items">
@@ -367,18 +370,19 @@ function Dashboard() {
                   <div className="dropdown-header">
                     <p className="email">admin@glamio.com</p>
                   </div>
-                  <a href="/shop/profile" style={{ textDecoration: "none" }}>
-                    <button className="dropdown-item">
-                      <User size={16} /> Profile Settings
-                    </button>
-                  </a>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => navigate("/shop/profile")}
+                  >
+                    <User size={16} /> Profile Settings
+                  </button>
                   <button className="dropdown-item">
                     <Settings size={16} /> Shop Settings
                   </button>
                   <div className="dropdown-divider" />
                   <button
                     className="dropdown-item text-danger"
-                    onClick={() => navigate("/")}
+                    onClick={handleLogout}
                   >
                     <LogOut size={16} /> Sign Out
                   </button>

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {
+  approveAppointmentLogic,
   getAppointmentById,
   getAppointmentService,
 } from "./appointment.service";
@@ -27,4 +28,29 @@ export const getAppointmentDetailsById = async (
     return res.status(404).json({ message: "Appointment not found" });
 
   res.json({ appointment });
+};
+
+export const approveAppointment = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const result = await approveAppointmentLogic(Number(id), userId);
+
+    return res.status(200).json(result);
+  } catch (error: any) {
+    if (error.message === "NOT_FOUND") {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    if (error.message === "UNAUTHORIZED") {
+      return res.status(403).json({
+        message: "You do not have permission to approve this appointment",
+      });
+    }
+    return res.status(500).json({ message: "Error approving appointment" });
+  }
 };

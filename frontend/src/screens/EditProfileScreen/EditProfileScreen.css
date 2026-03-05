@@ -1,213 +1,266 @@
-.profile-page-wrapper {
+.edit-profile-wrapper {
   min-height: 100vh;
-  background-color: var(--secondary);
+  background-color: #fcfaf8;
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 20px;
+  justify-content: center;
+  padding: 40px 20px;
 }
 
-.profile-container {
+.setup-container {
+  display: flex;
+  width: 100%;
+  max-width: 1000px;
   background: var(--light);
-  width: 100%;
-  max-width: 600px;
-  border-radius: 28px;
-  padding: 40px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
-  position: relative; /* Contain children */
-}
-
-.profile-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.profile-header h1 {
-  color: var(--dark);
-  font-size: 1.8rem;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-
-.profile-header p {
-  color: #666;
-  font-size: 0.95rem;
-}
-
-.image-upload-section {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 35px;
-  /* Ensure the section itself doesn't capture clicks outside the circle */
-  pointer-events: none; 
-}
-
-/* Ant Design Upload Customization */
-.profile-uploader {
-  pointer-events: auto; /* Re-enable clicks only for the upload area */
-  width: 140px !important;
-  height: 140px !important;
-}
-
-.profile-uploader .ant-upload.ant-upload-select-picture-card {
-  width: 140px !important;
-  height: 140px !important;
-  border-radius: 50% !important;
-  border: 2px dashed var(--primary) !important;
-  background: #fafafa !important;
+  border-radius: 24px;
   overflow: hidden;
-  margin: 0 !important;
-  display: flex !important;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.05);
+}
+
+.setup-sidebar {
+  width: 350px;
+  background: var(--dark);
+  padding: 40px;
+  color: var(--light);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-badge {
+  color: var(--primary);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  margin-bottom: 60px;
+}
+
+.sidebar-content h2 {
+  font-size: 32px;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.sidebar-content p {
+  color: #999;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.setup-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #555;
+  font-weight: 500;
+}
+
+.step.active { color: var(--primary); }
+
+.step span {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #333;
+  display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  font-size: 12px;
 }
 
-/* Fix for the invisible input stretching */
-.profile-uploader .ant-upload input[type="file"] {
-  width: 100%;
-  height: 100%;
+.step.active span {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--dark);
 }
 
-.profile-preview-wrapper {
+.setup-form-area {
+  flex: 1;
+  padding: 50px;
+  background: #fff;
+}
+
+.form-header {
+  margin-bottom: 35px;
+}
+
+.form-header h3 {
+  font-size: 22px;
+  color: var(--dark);
+  margin-bottom: 5px;
+}
+
+.form-header p {
+  color: #888;
+  font-size: 14px;
+}
+
+.upload-brand-section {
   position: relative;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
+  margin-bottom: 40px;
+  width: fit-content;
+}
+
+.brand-uploader {
+  cursor: pointer;
+}
+
+.brand-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
   overflow: hidden;
+  position: relative;
+  border: 4px solid var(--secondary);
 }
 
-.profile-preview-img {
+.brand-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.preview-overlay {
+.change-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: var(--transition);
-  color: white;
-  cursor: pointer;
-}
-
-.profile-preview-wrapper:hover .preview-overlay {
-  opacity: 1;
-}
-
-.upload-trigger-circle {
+  background: rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.brand-preview:hover .change-overlay { opacity: 1; }
+
+.upload-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  border: 2px dashed #e0e0e0;
+  background: #fdfdfd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+  gap: 10px;
+  transition: var(--transition);
+}
+
+.upload-placeholder:hover {
+  border-color: var(--primary);
+  background: var(--secondary);
   color: var(--primary);
 }
 
-.form-grid {
+.upload-placeholder span { font-size: 10px; font-weight: 700; text-transform: uppercase; }
+
+.remove-asset {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #fff;
+  border: 1px solid #eee;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
-  gap: 22px;
-  position: relative;
-  z-index: 2; /* Ensure form is above any potential upload bleed */
+  align-items: center;
+  justify-content: center;
+  color: #ff4d4f;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.form-group {
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.full-width { grid-column: span 2; }
+
+.field-box {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  position: relative;
 }
 
-.form-group label {
+.field-box label {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--dark);
+  font-size: 13px;
   font-weight: 600;
-  font-size: 0.9rem;
-  width: fit-content; /* Prevent label from stretching full width if not needed */
+  color: var(--dark);
 }
 
-.input-wrapper {
-  position: relative;
-}
-
-.form-group input, 
-.form-group textarea {
-  width: 100%;
-  padding: 14px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  font-size: 0.95rem;
+.field-box input, 
+.field-box textarea {
+  padding: 14px 18px;
+  background: #f8f9fa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  font-size: 14px;
   transition: var(--transition);
-  background: #fff;
-  position: relative;
-  z-index: 3;
+  color: var(--dark);
+  outline: none;
 }
 
-.form-group input:focus, 
-.form-group textarea:focus {
-  outline: none;
+.field-box input:focus, 
+.field-box textarea:focus {
+  background: #fff;
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
 }
 
-.input-error {
-  border-color: #ef4444 !important;
+.error-state input, .error-state textarea { border-color: #ff4d4f; background: #fffcfc; }
+.hint-error { color: #ff4d4f; font-size: 11px; font-weight: 500; }
+
+.form-footer {
+  margin-top: 40px;
 }
 
-.error-msg {
-  color: #ef4444;
-  font-size: 0.8rem;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.char-count {
-  position: absolute;
-  right: 12px;
-  top: -24px;
-  font-size: 0.7rem;
-  color: #999;
-  font-weight: 500;
-}
-
-.submit-btn {
+.prime-submit {
   width: 100%;
-  margin-top: 35px;
-  padding: 16px;
+  padding: 18px;
   background: var(--primary);
-  color: var(--light);
+  color: var(--dark);
   border: none;
   border-radius: 14px;
-  font-size: 1rem;
   font-weight: 700;
+  font-size: 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   transition: var(--transition);
-  position: relative;
-  z-index: 3;
 }
 
-.submit-btn:hover:not(:disabled) {
-  background: var(--primary);
+.prime-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(212, 163, 115, 0.2);
+  box-shadow: 0 15px 30px rgba(212, 163, 115, 0.3);
 }
 
-.submit-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
+.prime-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
-@media (max-width: 480px) {
-  .profile-container {
-    padding: 30px 20px;
-    border-radius: 20px;
-  }
+@media (max-width: 900px) {
+  .setup-container { flex-direction: column; }
+  .setup-sidebar { width: 100%; }
+  .setup-form-area { padding: 30px; }
+  .input-grid { grid-template-columns: 1fr; }
+  .full-width { grid-column: span 1; }
 }

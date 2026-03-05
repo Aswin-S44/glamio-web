@@ -1,0 +1,1 @@
+ALTER TABLE `appointments` ADD CONSTRAINT `appointments_status_id_appointment_status_id_fk` FOREIGN KEY (`status_id`) REFERENCES `appointment_status`(`id`) ON DELETE no action ON UPDATE no action;

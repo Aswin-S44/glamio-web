@@ -82,7 +82,7 @@ export const createBooking = async (
     );
 
     const dataToUpdate = {
-      statusId: appointmentStatus.id,
+      statusId: 1,
       customerId,
       expertId,
       slotId,

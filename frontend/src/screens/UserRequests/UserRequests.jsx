@@ -98,13 +98,52 @@ function UserRequests() {
       text: "Do you want to approve this appointment request?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonColor: "var(--primary)",
+      confirmButtonColor: "#d4a373", // Matching your Glamio gold
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, Approve it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        updateStatusOnServer(id, 2);
-        Swal.fire("Approved!", "Appointment has been confirmed.", "success");
+        try {
+          // 1. Show loading state in Swal
+          Swal.showLoading();
+
+          // 2. Make the API Call
+          const res = await fetch(
+            `http://localhost:5000/api/v1/appointments/${id}/approve`,
+            {
+              method: "PATCH",
+              headers: {
+                Authorization: `${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const data = await res.json();
+
+          if (res.ok) {
+            // 3. Update local state
+            updateStatusOnServer(id, 2); // 2 is Approved based on your STATUS object
+
+            Swal.fire({
+              title: "Approved!",
+              text: "Appointment has been confirmed successfully.",
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          } else {
+            // Handle error from backend (e.g., Unauthorized or Not Found)
+            Swal.fire(
+              "Error",
+              data.message || "Failed to approve appointment",
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Approval Error:", error);
+          Swal.fire("Error", "Server connection failed", "error");
+        }
       }
     });
   };
