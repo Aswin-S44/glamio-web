@@ -20,8 +20,7 @@ import EditProfileScreen from "./screens/EditProfileScreen/EditProfileScreen";
 import { useAuth } from "./context/AuthContext";
 function App() {
   const { user, shop } = useAuth();
-  console.log("USER-------------", user);
-  console.log("isShopOwner------------------", shop);
+
   return (
     <>
       <Provider store={store}>

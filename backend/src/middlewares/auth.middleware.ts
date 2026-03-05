@@ -24,7 +24,7 @@ export const authMiddleware = async (
       authHeader,
       (process.env.JWT_SECRET as string) || "add"
     ) as JwtPayload;
-    console.log("decoded-------------", decoded);
+
     const [user] = await db
       .select()
       .from(users)
@@ -40,7 +40,7 @@ export const authMiddleware = async (
     }
 
     req.user = user;
-    console.log("user----------------", user);
+
     next();
   } catch {
     return res.status(401).json({ message: "Invalid or expired token" });

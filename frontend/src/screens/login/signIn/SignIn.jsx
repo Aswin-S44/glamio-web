@@ -46,7 +46,6 @@ function SignIn() {
       // navigate("/shop/dashboard");
       let user = data.data.user;
 
-      console.log("User:", data.user);
       let userType = "CUSTOMER";
 
       let userData = {

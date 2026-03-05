@@ -13,10 +13,8 @@ export class OfferService {
       throw new Error("Offer already exists for this category");
     }
 
-    console.log("data--------------", data);
-
     const imageUrl = data.image ? await uploadImage(data.image) : null;
-    console.log("imageUrl-----------", imageUrl);
+
     return OfferRepository.create(shopId, {
       ...data,
       image: imageUrl ?? undefined,

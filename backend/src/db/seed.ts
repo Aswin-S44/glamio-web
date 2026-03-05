@@ -14,7 +14,7 @@ async function seedUserTypes() {
   const appointmentStatueses = Object.values(appointmentStatuses);
   await db.insert(appointmentStatus).values(appointmentStatueses);
 
-  console.log("user_types seeded successfully");
+  console.log("Seeding completed ....");
   process.exit(0);
 }
 

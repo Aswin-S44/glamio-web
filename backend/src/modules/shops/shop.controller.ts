@@ -31,7 +31,6 @@ export const updateProfile = async (req: Request, res: Response) => {
     }
 
     const userId = req.user?.id;
-    console.log("userId : ", userId);
 
     await updateShopProfile(Number(userId), req.body);
     res.json({ message: "Expert updated successfully" });
@@ -42,9 +41,8 @@ export const updateProfile = async (req: Request, res: Response) => {
 
 export const getStats = async (req: Request, res: Response) => {
   try {
-    console.log("============");
     const userId = req.user?.id;
-    console.log("user id---------", userId);
+
     if (!userId) {
       res.status(401).json({ message: "Unauthorized" });
     }

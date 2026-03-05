@@ -55,7 +55,6 @@ function Header() {
 
   return (
     <>
-      {console.log("USER------------", user)}
       <header className={`header ${showHeader ? "show" : "hide"}`}>
         <div className="container header-container">
           <div className="logo" onClick={() => navigate("/")}>
