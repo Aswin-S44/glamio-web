@@ -294,8 +294,11 @@ h4.mb-0.new-head-dash {
   top: 20px;
   right: 28px;
   font-size: 36px;
-  color: #fff;
+  color: #111;
   cursor: pointer;
+  border: none;
+  outline: none;
+  background-color: transparent;
 }
 
 @keyframes zoomIn {

@@ -32,8 +32,10 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     const userId = req.user?.id;
 
-    await updateShopProfile(Number(userId), req.body);
-    res.json({ message: "Expert updated successfully" });
+    console.log("BODY-------------", req.body);
+
+    // await updateShopProfile(Number(userId), req.body);
+    // res.json({ message: "Expert updated successfully" });
   } catch (e: any) {
     res.status(400).json({ message: e.message });
   }

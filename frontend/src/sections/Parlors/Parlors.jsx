@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Parlors.css";
+import { DEFAULT_NO_IMAGE } from "../../constants/urls";
 
 const parlorsData = [
   {
@@ -97,7 +98,7 @@ function Parlors() {
             >
               <div className="parlor-img">
                 <img
-                  src={parlor?.user?.profileImage}
+                  src={parlor?.shop?.shopImage ?? DEFAULT_NO_IMAGE}
                   alt={parlor?.shop?.parlourName}
                 />
                 <div className="rating">★ {parlor?.shop?.totalRating}</div>
@@ -106,7 +107,7 @@ function Parlors() {
                 {/* <span className="location-tag">{parlor.location}</span> */}
                 <h3>{parlor?.shop?.parlourName}</h3>
                 <p>{parlor?.shop?.address}</p>
-                <button className="visit-btn">Book At This Branch</button>
+                <button className="visit-btn">Book Now</button>
               </div>
             </div>
           ))}

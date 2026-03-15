@@ -359,7 +359,7 @@ function SlotScreen() {
             onClick={() => setRepeatModalOpen(true)}
           >
             <RefreshCw size={18} />
-            <span>Sync Daily Schedule</span>
+            <span>Repeat Slots</span>
           </button>
         </aside>
 

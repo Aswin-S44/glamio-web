@@ -6,25 +6,18 @@ import {
   CalendarCheck,
   Clock,
   Menu,
-  X,
   Bell,
   Search,
   Scissors,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Check,
-  Trash2,
   Sparkles,
   Tag,
-  ArrowLeft,
   UserPlus2,
-  Upload,
   LogOut,
   User,
   Settings,
   CreditCard,
   ChevronDown,
+  TrendingUp,
 } from "lucide-react";
 import {
   AreaChart,
@@ -48,13 +41,9 @@ import OfferScreen from "../../OfferScreen/OfferScreen";
 import NotificationScreen from "../../Notifications/NotificationScreen";
 
 function Dashboard() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [serviceView, setServiceView] = useState("list");
-  const [expertView, setExpertView] = useState("list");
-
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -79,312 +68,305 @@ function Dashboard() {
         const data = await response.json();
         setStats(data);
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
     };
-
-    if (activeTab === "home") {
-      fetchStats();
-    }
+    if (activeTab === "home") fetchStats();
   }, [activeTab]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsProfileOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const isAdmin = localStorage.getItem("isAdminLoggedIn") === "true";
-
-  const menuItems = isAdmin
-    ? [{ id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> }]
-    : [
-        { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
-        {
-          id: "requests",
-          label: "User Requests",
-          icon: <UserPlus size={20} />,
-        },
-        {
-          id: "appointments",
-          label: "Appointments",
-          icon: <CalendarCheck size={20} />,
-        },
-        { id: "slots", label: "Time Slots", icon: <Clock size={20} /> },
-        { id: "services", label: "Services", icon: <Sparkles size={20} /> },
-        { id: "offers", label: "Offers", icon: <Tag size={20} /> },
-        { id: "experts", label: "Experts", icon: <UserPlus2 size={20} /> },
-      ];
-
-  const handleTabChange = (id) => {
-    setActiveTab(id);
-    setServiceView("list");
-    setIsMobileOpen(false);
-  };
-
   const handleLogout = () => {
-    localStorage.removeItem("admin");
-    localStorage.removeItem("isAdminLoggedIn");
-    localStorage.removeItem("token");
+    localStorage.clear();
     navigate("/");
   };
 
+  const menuItems = [
+    { id: "home", label: "Overview", icon: <LayoutDashboard size={20} /> },
+    { id: "requests", label: "Requests", icon: <UserPlus size={20} /> },
+    {
+      id: "appointments",
+      label: "Appointments",
+      icon: <CalendarCheck size={20} />,
+    },
+    { id: "slots", label: "Slots", icon: <Clock size={20} /> },
+    { id: "services", label: "Services", icon: <Sparkles size={20} /> },
+    { id: "offers", label: "Offers", icon: <Tag size={20} /> },
+    { id: "experts", label: "Experts", icon: <UserPlus2 size={20} /> },
+  ];
+
   const renderContent = () => {
-    switch (activeTab) {
-      case "home":
-        if (loading)
-          return <div className="loading-spinner">Loading Stats...</div>;
+    if (activeTab !== "home") {
+      switch (activeTab) {
+        case "requests":
+          return <UserRequests />;
+        case "slots":
+          return <SlotScreen />;
+        case "appointments":
+          return <AppointmentScreen />;
+        case "offers":
+          return <OfferScreen />;
+        case "notifications":
+          return <NotificationScreen />;
+        case "services":
+          return <ServicesScreen />;
+        case "experts":
+          return <ExpertsScreen expertsData={[]} />;
+        default:
+          return null;
+      }
+    }
 
-        return (
-          <div className="view-container animate-fade-in">
-            <div className="stats-grid">
-              <div className="stat-card gold-gradient">
-                <div className="stat-info">
-                  <span>Total Revenue</span>
-                  <h2>₹{stats?.totalRevenue?.toLocaleString() || "0"}</h2>
-                  <p className="trend">{stats?.revenueGrowth}</p>
-                </div>
-                <div className="stat-icon-circle">
-                  <CreditCard size={24} />
-                </div>
-              </div>
-              <div className="stat-card dark-gradient">
-                <div className="stat-info">
-                  <span>Appointments</span>
-                  <h2>{stats?.appointments || "0"}</h2>
-                  <p className="trend">{stats?.appointmentGrowth}</p>
-                </div>
-                <div className="stat-icon-circle">
-                  <CalendarCheck size={24} />
-                </div>
-              </div>
-              <div className="stat-card beige-gradient">
-                <div className="stat-info">
-                  <span>Active Clients</span>
-                  <h2>{stats?.activeClients || "0"}</h2>
-                  <p className="trend">{stats?.clientGrowth}</p>
-                </div>
-                <div className="stat-icon-circle">
-                  <User size={24} />
-                </div>
+    if (loading)
+      return (
+        <div className="glam-loader-wrap">
+          <div className="glam-spinner"></div>
+        </div>
+      );
+
+    return (
+      <div className="glam-view-animate">
+        <div className="glam-stats-row">
+          <div className="glam-stat-card primary-accent">
+            <div className="glam-stat-content">
+              <span className="glam-label">Gross Revenue</span>
+              <h2 className="glam-value">
+                ₹{stats?.totalRevenue?.toLocaleString() || "24,850"}
+              </h2>
+              <div className="glam-trend-pill positive">
+                <TrendingUp size={14} /> <span>12% growth</span>
               </div>
             </div>
-
-            <div className="charts-section">
-              <div className="chart-card">
-                <div className="chart-header">
-                  <h3>Revenue Analytics</h3>
-                  <select className="chart-select">
-                    <option>Last 7 Days</option>
-                  </select>
-                </div>
-                <div className="chart-wrapper">
-                  <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={stats?.chartData || []}>
-                      <defs>
-                        <linearGradient
-                          id="colorRev"
-                          x1="0"
-                          y1="0"
-                          x2="0"
-                          y2="1"
-                        >
-                          <stop
-                            offset="5%"
-                            stopColor="#d4a373"
-                            stopOpacity={0.3}
-                          />
-                          <stop
-                            offset="95%"
-                            stopColor="#d4a373"
-                            stopOpacity={0}
-                          />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        vertical={false}
-                        stroke="#f0f0f0"
-                      />
-                      <XAxis dataKey="day" axisLine={false} tickLine={false} />
-                      <YAxis axisLine={false} tickLine={false} />
-                      <Tooltip />
-                      <Area
-                        type="monotone"
-                        dataKey="revenue"
-                        stroke="#d4a373"
-                        strokeWidth={3}
-                        fillOpacity={1}
-                        fill="url(#colorRev)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-
-            <div className="data-table-wrapper">
-              <div className="table-header">
-                <h3>Upcoming Appointments</h3>
-                <button className="btn-outline">View All</button>
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Customer</th>
-                    <th>Service</th>
-                    <th>Date & Time</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div className="user-cell">
-                        <div className="avatar-xs">AS</div>
-                        <span>Anna Smith</span>
-                      </div>
-                    </td>
-                    <td>Premium Hair Styling</td>
-                    <td>Today, 02:30 PM</td>
-                    <td>
-                      <span className="badge-status success">Confirmed</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="glam-stat-icon-blob">
+              <CreditCard size={32} />
             </div>
           </div>
-        );
-      case "requests":
-        return <UserRequests />;
-      case "slots":
-        return <SlotScreen />;
-      case "appointments":
-        return <AppointmentScreen />;
-      case "offers":
-        return <OfferScreen />;
-      case "notifications":
-        return <NotificationScreen />;
-      case "services":
-        return serviceView === "list" ? <ServicesScreen /> : <AddService />;
-      case "experts":
-        return expertView === "list" ? (
-          <ExpertsScreen expertsData={[]} />
-        ) : (
-          <AddExpert />
-        );
-      default:
-        return <div className="view-container">Select a tab</div>;
-    }
-  };
 
-  return (
-    <div className={`dashboard-root ${isCollapsed ? "collapsed" : ""}`}>
-      {isMobileOpen && (
-        <div className="overlay" onClick={() => setIsMobileOpen(false)} />
-      )}
-
-      <aside className={`side-menu ${isMobileOpen ? "mobile-open" : ""}`}>
-        <div className="menu-header">
-          <div
-            className="brand"
-            onClick={() => navigate("/")}
-            style={{ cursor: "pointer" }}
-          >
-            <div className="logo-container">
-              <Scissors size={20} />
+          <div className="glam-stat-card dark-accent">
+            <div className="glam-stat-content">
+              <span className="glam-label">Total Bookings</span>
+              <h2 className="glam-value">{stats?.appointments || "156"}</h2>
+              <div className="glam-trend-pill">
+                <span>+8 new today</span>
+              </div>
             </div>
-            <span className="brand-name">GLAMIO</span>
+            <div className="glam-stat-icon-blob">
+              <CalendarCheck size={32} />
+            </div>
+          </div>
+
+          <div className="glam-stat-card beige-accent">
+            <div className="glam-stat-content">
+              <span className="glam-label">Client Retention</span>
+              <h2 className="glam-value">{stats?.activeClients || "89%"}</h2>
+              <div className="glam-trend-pill positive">
+                <span>Excellent</span>
+              </div>
+            </div>
+            <div className="glam-stat-icon-blob">
+              <User size={32} />
+            </div>
           </div>
         </div>
 
-        <nav className="menu-items">
+        <div className="glam-grid-main">
+          <div className="glam-card-flat chart-box-wrap">
+            <div className="glam-card-header">
+              <div>
+                <h3>Revenue Analytics</h3>
+                <p>Performance tracking for current period</p>
+              </div>
+              <div className="glam-header-actions">
+                <button className="glam-btn-mini active">Weekly</button>
+                <button className="glam-btn-mini">Monthly</button>
+              </div>
+            </div>
+            <div className="glam-chart-area">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={
+                    stats?.chartData || [
+                      { day: "Mon", r: 400 },
+                      { day: "Tue", r: 900 },
+                      { day: "Wed", r: 600 },
+                      { day: "Thu", r: 1200 },
+                      { day: "Fri", r: 800 },
+                      { day: "Sat", r: 1600 },
+                      { day: "Sun", r: 1400 },
+                    ]
+                  }
+                >
+                  <defs>
+                    <linearGradient
+                      id="glamGradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#D41172" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#D41172" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#f0f0f0"
+                  />
+                  <XAxis
+                    dataKey="day"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#b0b0b0", fontSize: 12 }}
+                    dy={15}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#b0b0b0", fontSize: 12 }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: "20px",
+                      border: "none",
+                      boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="r"
+                    stroke="#D41172"
+                    strokeWidth={4}
+                    fill="url(#glamGradient)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="glam-card-flat list-box-wrap">
+            <div className="glam-card-header">
+              <h3>Upcoming Bookings</h3>
+              <button className="glam-link-btn">View All</button>
+            </div>
+            <div className="glam-list-container">
+              {[1, 2, 3].map((_, i) => (
+                <div className="glam-list-item" key={i}>
+                  <div className="glam-user-info">
+                    <div className="glam-avatar-ring">
+                      <img src={`https://i.pravatar.cc/150?u=${i}`} alt="" />
+                    </div>
+                    <div>
+                      <h4 className="glam-name">Sarah Jenkins</h4>
+                      <p className="glam-subtext">Hair Coloring • 2:00 PM</p>
+                    </div>
+                  </div>
+                  <div className="glam-status-dot confirmed">Confirmed</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="glam-root">
+      {isMobileOpen && (
+        <div
+          className="glam-mobile-overlay"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
+      <aside className={`glam-sidebar ${isMobileOpen ? "is-open" : ""}`}>
+        <div className="glam-logo-section">
+          <div className="glam-logo-box">
+            <Scissors size={22} />
+          </div>
+          <span className="glam-logo-text">GLAMIO</span>
+        </div>
+
+        <nav className="glam-nav">
           {menuItems.map((item) => (
             <button
               key={item.id}
-              className={`menu-item ${activeTab === item.id ? "active" : ""}`}
-              onClick={() => handleTabChange(item.id)}
+              className={`glam-nav-btn ${
+                activeTab === item.id ? "is-active" : ""
+              }`}
+              onClick={() => {
+                setActiveTab(item.id);
+                setIsMobileOpen(false);
+              }}
             >
-              <div className="dashboard-icon-box ">{item.icon}</div>
-              <span className="item-label">{item.label}</span>
-              {activeTab === item.id && <div className="active-glow" />}
+              <div className="glam-nav-icon-box">{item.icon}</div>
+              <span className="glam-nav-label">{item.label}</span>
+              {activeTab === item.id && <div className="glam-nav-glow" />}
             </button>
           ))}
-          <div className="menu-divider" />
-          <button className="menu-item logout" onClick={handleLogout}>
-            <div className="dashboard-icon-box ">
-              <LogOut size={20} />
-            </div>
-            <span className="item-label">Logout</span>
-          </button>
         </nav>
+
+        <div className="glam-sidebar-footer">
+          <button className="glam-logout-trigger" onClick={handleLogout}>
+            <LogOut size={20} />
+            <span>Sign Out</span>
+          </button>
+        </div>
       </aside>
 
-      <main className="content-body">
-        <header className="navbar">
-          <div className="nav-left">
+      <main className="glam-main">
+        <header className="glam-header">
+          <div className="glam-header-left">
             <button
-              className="mobile-toggle"
+              className="glam-menu-toggle"
               onClick={() => setIsMobileOpen(true)}
             >
-              <Menu size={24} />
+              <Menu />
             </button>
-            <div className="search-bar">
+            <div className="glam-search">
               <Search size={18} />
-              <input type="text" placeholder="Search clients, services..." />
+              <input
+                type="text"
+                placeholder="Search appointments or services..."
+              />
             </div>
           </div>
-          <div className="nav-right">
-            <div className="nav-actions">
-              <div
-                onClick={() => setActiveTab("notifications")}
-                className="icon-btn"
-              >
-                <Bell size={20} />
-                <span className="badge-dot" />
+
+          <div className="glam-header-right">
+            <button className="glam-icon-btn">
+              <Bell size={20} />
+              <span className="glam-dot-notify" />
+            </button>
+            <div
+              className="glam-profile-pill"
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              ref={dropdownRef}
+            >
+              <div className="glam-avatar-admin">AD</div>
+              <div className="glam-admin-meta">
+                <span className="glam-admin-name">Shop Admin</span>
+                <ChevronDown
+                  size={14}
+                  className={isProfileOpen ? "rotate" : ""}
+                />
               </div>
-            </div>
-            <div className="profile-dropdown-container" ref={dropdownRef}>
-              <div
-                className="user-profile-trigger"
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-              >
-                <div className="user-avatar">AD</div>
-                <div className="user-meta">
-                  <span className="user-name">Admin Dash</span>
-                  <ChevronDown
-                    size={14}
-                    className={isProfileOpen ? "rotate" : ""}
-                  />
-                </div>
-              </div>
+
               {isProfileOpen && (
-                <div className="profile-dropdown animate-pop">
-                  <div className="dropdown-header">
-                    <p className="email">admin@glamio.com</p>
-                  </div>
-                  <button
-                    className="dropdown-item"
-                    onClick={() => navigate("/shop/profile")}
-                  >
-                    <User size={16} /> Profile Settings
+                <div className="glam-dropdown">
+                  <div className="glam-drop-header">Account Settings</div>
+                  <button className="glam-drop-item">
+                    <User size={16} /> My Profile
                   </button>
-                  <button className="dropdown-item">
-                    <Settings size={16} /> Shop Settings
+                  <button className="glam-drop-item">
+                    <Settings size={16} /> Preferences
                   </button>
-                  <div className="dropdown-divider" />
+                  <hr />
                   <button
-                    className="dropdown-item text-danger"
+                    className="glam-drop-item danger"
                     onClick={handleLogout}
                   >
-                    <LogOut size={16} /> Sign Out
+                    <LogOut size={16} /> Logout
                   </button>
                 </div>
               )}
@@ -392,15 +374,15 @@ function Dashboard() {
           </div>
         </header>
 
-        <section className="page-content">
-          <div className="page-header-main">
-            {activeTab === "home" && (
-              <div className="title-area">
-                <h1>Dashboard Overview</h1>
-                <p>Welcome back! Here is what's happening today.</p>
-              </div>
-            )}
-          </div>
+        <section className="glam-content">
+          {activeTab === "home" && (
+            <div className="glam-welcome">
+              <h1 className="glam-title">Glamio Dashboard</h1>
+              <p className="glam-subtitle">
+                Curating your shop's performance and growth today.
+              </p>
+            </div>
+          )}
           {renderContent()}
         </section>
       </main>

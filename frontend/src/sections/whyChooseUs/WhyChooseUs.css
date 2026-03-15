@@ -1,210 +1,174 @@
 .why-section {
     position: relative;
-    padding: 60px 20px;
-    background:
-        radial-gradient(circle at top, rgba(212, 175, 55, 0.15), transparent 40%),
-        linear-gradient(180deg, #ffffff 0%, #f5f6f8 100%);
+    padding: 100px 20px;
+    background-color: var(--light);
     overflow: hidden;
 }
 
-.why-section::before {
-    content: "";
+.why-bg-accent {
     position: absolute;
-    inset: 0;
-    background: url("../../components/Media//Images/modern-beauty-salon-interior.webp") center / cover no-repeat;
-    /* background-attachment: fixed; */
-    opacity: 0.19;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: #db90be;
+    opacity: 0.4;
+    clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
+    z-index: 0;
 }
 
 .why-container {
     position: relative;
     max-width: 1200px;
     margin: auto;
+    z-index: 1;
+}
+
+.header-stack {
     text-align: center;
-    animation: fadeUp 1.2s ease forwards;
+    margin-bottom: 80px;
+    animation: fadeUp 0.8s ease forwards;
+}
+
+.sub-title {
+    display: block;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
 }
 
 .title {
-    font-size: clamp(32px, 4vw, 46px);
-    font-weight: 600;
-    letter-spacing: 1px;
-    margin-bottom: 60px;
-    position: relative;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    color: var(--dark);
+    margin: 0;
 }
 
 .title::after {
     content: "";
-    width: 90px;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    width: 60px;
+    height: 4px;
+    background: var(--primary);
     display: block;
     margin: 20px auto 0;
+    border-radius: 2px;
 }
 
 .why-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
 }
 
 .why-card {
-    position: relative;
-    padding: 40px 30px;
-    border-radius: 22px;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(14px);
-    box-shadow:
-        0 30px 60px rgba(0, 0, 0, 0.08),
-        inset 0 0 0 1px rgba(212, 175, 55, 0.15);
-    transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    overflow: hidden;
+    perspective: 1000px;
+    height: 100%;
 }
 
-.why-card::before {
+.card-inner {
+    position: relative;
+    height: 100%;
+    padding: 50px 35px;
+    background: var(--light);
+    border-radius: 30px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.why-card:hover .card-inner {
+    transform: translateY(-15px);
+    box-shadow: 0 30px 60px rgba(212, 17, 114, 0.15);
+    border-color: var(--primary);
+}
+
+.why-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    transition: var(--transition);
+}
+
+.why-icon::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg,
-            transparent,
-            rgba(212, 175, 55, 0.15),
-            transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
+    inset: -8px;
+    border: 2px solid var(--primary);
+    border-radius: 24px;
+    opacity: 0;
+    transition: var(--transition);
 }
 
-.why-card:hover::before {
-    transform: translateX(100%);
+.why-card:hover .why-icon {
+    transform: rotate(10deg);
 }
 
-.why-card:hover {
-    transform: translateY(-14px) scale(1.03);
-    box-shadow:
-        0 40px 80px rgba(0, 0, 0, 0.15),
-        inset 0 0 0 1px rgba(212, 175, 55, 0.35);
+.why-card:hover .why-icon::before {
+    opacity: 0.3;
+    inset: -12px;
 }
+
+.why-icon.premium { background-image: url("https://images.unsplash.com/photo-1616394584738-fc6e612e71b9"); }
+.why-icon.expert { background-image: url("https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9"); }
+.why-icon.ambience { background-image: url("https://images.unsplash.com/photo-1560066984-138dadb4c035"); }
+.why-icon.care { background-image: url("https://images.unsplash.com/photo-1570172619644-dfd03ed5d881"); }
 
 .why-card h3 {
-    font-size: 22px;
-    margin-bottom: 14px;
-    color: #111827;
-    letter-spacing: 0.5px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 15px;
+    transition: var(--transition);
 }
 
 .why-card p {
-    font-size: 15.5px;
-    line-height: 1.7;
-    color: #4b5563;
-}
-
-/* ✨ Floating animation stagger */
-.why-card:nth-child(1) {
-    animation: floatUp 6s ease-in-out infinite;
-}
-
-.why-card:nth-child(2) {
-    animation: floatUp 6s ease-in-out infinite 1s;
-}
-
-.why-card:nth-child(3) {
-    animation: floatUp 6s ease-in-out infinite 2s;
-}
-
-.why-card:nth-child(4) {
-    animation: floatUp 6s ease-in-out infinite 3s;
-}
-
-
-.why-icon {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto 26px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  box-shadow:
-    0 15px 30px rgba(0,0,0,0.15),
-    0 0 0 6px rgba(212,175,55,0.15);
-  transition: all 0.5s ease;
-}
-.why-icon::after {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(212,175,55,0.35),
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-.why-icon.premium {
-  background-image: url("https://images.unsplash.com/photo-1616394584738-fc6e612e71b9");
-}
-
-.why-icon.expert {
-  background-image: url("https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9");
-}
-
-.why-icon.ambience {
-  background-image: url("https://images.unsplash.com/photo-1560066984-138dadb4c035");
-}
-
-.why-icon.care {
-  background-image: url("https://images.unsplash.com/photo-1570172619644-dfd03ed5d881");
-}
-.why-card:hover .why-icon {
-  transform: translateY(-6px) scale(1.08);
-  box-shadow:
-    0 25px 45px rgba(0,0,0,0.25),
-    0 0 0 8px rgba(212,175,55,0.35);
-}
-
-.why-card:hover .why-icon::after {
-  opacity: 1;
-}
-.why-card h3 {
-  transition: color 0.4s ease;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #666;
+    margin: 0;
 }
 
 .why-card:hover h3 {
-  color: #b8962e;
+    color: var(--primary);
 }
 
+.card-number {
+    position: absolute;
+    top: 30px;
+    right: 35px;
+    font-size: 40px;
+    font-weight: 900;
+    color: #db90be;
+    opacity: 0.5;
+    transition: var(--transition);
+}
 
+.why-card:hover .card-number {
+    color: var(--primary);
+    opacity: 0.1;
+    transform: scale(1.5);
+}
 
-
-
-/* ✨ Animations */
 @keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(60px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes floatUp {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-/* 📱 Mobile polish */
 @media (max-width: 768px) {
-    .why-section {
-        padding: 90px 16px;
-    }
+    .why-section { padding: 70px 15px; }
+    .why-bg-accent { display: none; }
+    .card-inner { align-items: center; text-align: center; }
+    .why-icon { margin-left: auto; margin-right: auto; }
+    .title::after { margin: 15px auto 0; }
 }

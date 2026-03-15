@@ -1,186 +1,245 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./Header.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
-  DEFAULT_CUSTOMER_ID,
-  DEFAULT_SHOP_ID,
-} from "../../constants/constants";
+  Search,
+  Menu,
+  X,
+  Bell,
+  ChevronDown,
+  LayoutDashboard,
+  UserCircle,
+  LogOut,
+  Settings,
+  Calendar,
+  Home,
+  Store,
+  MapPin,
+  Phone,
+} from "lucide-react";
+import "./Header.css";
 
 function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  console.log("profile-------------", user);
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const dropdownRef = useRef(null);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  const notifications = [
+    {
+      id: 1,
+      title: "Booking Confirmed",
+      desc: "Your appointment at Glow is set.",
+      time: "2m ago",
+    },
+    {
+      id: 2,
+      title: "Flash Sale",
+      desc: "50% off on all hair services today!",
+      time: "1h ago",
+    },
+    {
+      id: 3,
+      title: "New Shop",
+      desc: "Style Studio just joined near you.",
+      time: "5h ago",
+    },
+    {
+      id: 4,
+      title: "Reminder",
+      desc: "Your spa day is tomorrow.",
+      time: "10h ago",
+    },
+    {
+      id: 5,
+      title: "System",
+      desc: "Welcome to the new GLAMIO experience.",
+      time: "1d ago",
+    },
+  ];
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        setShowHeader(false);
-      } else {
-        setShowHeader(true);
-      }
-      setLastScrollY(currentScrollY);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
+        setActiveDropdown(null);
     };
-
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    };
-
     window.addEventListener("scroll", handleScroll);
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [lastScrollY]);
+  }, []);
 
-  const handleLogout = () => {
-    logout();
-    setDropdownOpen(false);
-    navigate("/");
+  const toggleDropdown = (type) => {
+    setActiveDropdown((prev) => (prev === type ? null : type));
   };
 
   return (
     <>
-      <header className={`header ${showHeader ? "show" : "hide"}`}>
-        <div className="container header-container">
-          <div className="logo" onClick={() => navigate("/")}>
-            GLAM<span>IO</span>
+      <header className={`glam-header ${isScrolled ? "scrolled" : ""}`}>
+        <div className="header-container">
+          <div className="header-left" onClick={() => navigate("/")}>
+            <div className="logo-icon">G</div>
+            <span className="logo-text">
+              GLAM<span>IO</span>
+            </span>
           </div>
 
-          <nav className="desktop-nav">
-            <a href="/">Home</a>
-            <a href="#services">Services</a>
-            <a href="#gallery">Gallery</a>
-            <a href="#about">About</a>
-            <button className="book-btn">Book Now</button>
+          <div className="header-center">
+            <div className="search-pill">
+              <Search size={18} className="search-icon" />
+              <input type="text" placeholder="Search services or parlors..." />
+            </div>
+          </div>
 
-            {!isAuthenticated ? (
-              <button
-                className="book-btn sign-in"
-                onClick={() => navigate("/signup")}
-              >
-                Sign In
-              </button>
-            ) : (
-              <div className="user-menu-container" ref={dropdownRef}>
-                <div className="user-avatar" onClick={toggleDropdown}>
-                  {user?.name?.charAt(0).toUpperCase() || "U"}
-                </div>
-                {dropdownOpen && (
-                  <div className="user-dropdown">
-                    {user && user.shop && (
-                      <div
-                        className="dropdown-item"
-                        onClick={() => navigate("/shop/dashboard")}
-                      >
-                        Dashboard
-                      </div>
-                    )}
-                    <>
-                      <div
-                        className="dropdown-item"
-                        onClick={() => navigate("/profile")}
-                      >
-                        My Profile
-                      </div>
-                      <div
-                        className="dropdown-item logout"
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </div>
-                    </>
+          <div className="header-right">
+            <nav className="desktop-nav">
+              <a href="/" className={location.pathname === "/" ? "active" : ""}>
+                Home
+              </a>
+              <a href="/shops">All Shops</a>
+              <a href="/nearby">Nearby</a>
+              <a href="/contact">Support</a>
+            </nav>
+
+            <div className="v-divider"></div>
+
+            <div className="action-area" ref={dropdownRef}>
+              <div className="dd-wrapper">
+                <button
+                  className={`icon-btn ${
+                    activeDropdown === "notif" ? "active" : ""
+                  }`}
+                  onClick={() => toggleDropdown("notif")}
+                >
+                  <Bell size={20} />
+                  <span className="notif-dot"></span>
+                </button>
+
+                {activeDropdown === "notif" && (
+                  <div className="dd-menu notif-menu">
+                    <div className="dd-header">Notifications</div>
+                    <div className="dd-scroll">
+                      {notifications.map((n) => (
+                        <div key={n.id} className="dd-notif-item">
+                          <div className="dot"></div>
+                          <div className="content">
+                            <h6>{n.title}</h6>
+                            <p>{n.desc}</p>
+                            <span>{n.time}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
-            )}
-          </nav>
 
-          <div
-            className={`hamburger ${isOpen ? "active" : ""}`}
-            onClick={toggleMenu}
-          >
-            <span className="bar"></span>
-            <span className="bar"></span>
-            <span className="bar"></span>
+              {isAuthenticated ? (
+                <div className="dd-wrapper">
+                  <div
+                    className={`profile-pill ${
+                      activeDropdown === "profile" ? "active" : ""
+                    }`}
+                    onClick={() => toggleDropdown("profile")}
+                  >
+                    <div className="avatar">{user?.name?.charAt(0)}</div>
+                    <ChevronDown
+                      size={14}
+                      className={`chevron ${
+                        activeDropdown === "profile" ? "rotate" : ""
+                      }`}
+                    />
+                  </div>
+
+                  {activeDropdown === "profile" && (
+                    <div className="dd-menu profile-menu">
+                      <div className="dd-links">
+                        {user?.shop && (
+                          <button onClick={() => navigate("/shop/dashboard")}>
+                            <LayoutDashboard size={16} /> Dashboard
+                          </button>
+                        )}
+
+                        <button className="logout" onClick={logout}>
+                          <LogOut size={16} /> Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  className="btn-login"
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign In
+                </button>
+              )}
+            </div>
+
+            <button
+              className="mobile-toggle"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <Menu size={24} />
+            </button>
           </div>
         </div>
       </header>
 
       <div
-        className={`sidebar-overlay ${isOpen ? "show" : ""}`}
-        onClick={toggleMenu}
+        className={`side-mask ${isSidebarOpen ? "active" : ""}`}
+        onClick={() => setIsSidebarOpen(false)}
       ></div>
-
-      <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-        <div className="sidebar-header">
-          <div className="logo">
-            GLAM<span>OUR</span>
+      <aside className={`side-panel ${isSidebarOpen ? "open" : ""}`}>
+        <div className="side-header">
+          <span className="logo-text">
+            GLAM<span>IO</span>
+          </span>
+          <button onClick={() => setIsSidebarOpen(false)}>
+            <X size={26} />
+          </button>
+        </div>
+        <div className="side-body">
+          <div className="side-nav">
+            <a href="/">
+              <Home size={20} /> Home
+            </a>
+            <a href="/shops">
+              <Store size={20} /> All Shops
+            </a>
+            <a href="/nearby">
+              <MapPin size={20} /> Nearby Shops
+            </a>
+            <a href="/contact">
+              <Phone size={20} /> Contact Us
+            </a>
           </div>
         </div>
-        <nav className="sidebar-nav">
-          <a href="#home" onClick={toggleMenu}>
-            Home
-          </a>
-          <a href="#services" onClick={toggleMenu}>
-            Services
-          </a>
-          <a href="#gallery" onClick={toggleMenu}>
-            Gallery
-          </a>
-          <a href="#about" onClick={toggleMenu}>
-            About
-          </a>
-          <a href="#contact" onClick={toggleMenu}>
-            Contact
-          </a>
-          {isAuthenticated && (
-            <a
-              href="#profile"
-              onClick={() => {
-                navigate("/profile");
-                toggleMenu();
-              }}
-            >
-              My Profile
-            </a>
-          )}
-          <button className="sidebar-book-btn">Book Appointment</button>
-          {!isAuthenticated ? (
-            <button
-              className="sidebar-book-btn"
-              style={{ marginTop: "10px" }}
-              onClick={() => {
-                navigate("/signup");
-                toggleMenu();
-              }}
-            >
-              Sign In
+        <div className="side-footer">
+          {isAuthenticated ? (
+            <button className="side-btn logout" onClick={logout}>
+              Sign Out
             </button>
           ) : (
             <button
-              className="sidebar-book-btn"
-              style={{ marginTop: "10px", background: "#e63946" }}
-              onClick={handleLogout}
+              className="side-btn login"
+              onClick={() => navigate("/signup")}
             >
-              Logout
+              Get Started
             </button>
           )}
-        </nav>
+        </div>
       </aside>
     </>
   );

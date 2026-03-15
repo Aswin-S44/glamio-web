@@ -7,11 +7,10 @@ import Swal from "sweetalert2";
 
 function BookingSummaryScreen() {
   const [searchParams] = useSearchParams();
-  const [summaryData, setSummaryData] = useState(null); // Changed from 'shop' to 'summaryData' for clarity
+  const [summaryData, setSummaryData] = useState(null);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  // Extract URL parameters
   const shopId = Number(searchParams.get("shopId"));
   const slotId = Number(searchParams.get("slotId"));
   const expertId = Number(searchParams.get("expertId"));
@@ -19,7 +18,6 @@ function BookingSummaryScreen() {
 
   const token = localStorage.getItem("token");
 
-  // Format service IDs for the API call
   const serviceIds = rawServiceId
     ? rawServiceId.split(",").map(Number).filter(Boolean)
     : [];
@@ -28,18 +26,11 @@ function BookingSummaryScreen() {
     const fetchOrderSummary = async () => {
       try {
         setLoading(true);
-        // Using the rawServiceId string directly in query params is usually safer for APIs
         const res = await fetch(
           `http://localhost:5000/api/v1/customer/order/summary/${shopId}/${slotId}/${expertId}?serviceId=${rawServiceId}`,
-          {
-            method: "GET",
-          }
+          { method: "GET" }
         );
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch booking summary");
-        }
-
+        if (!res.ok) throw new Error("Failed to fetch booking summary");
         const data = await res.json();
         setSummaryData(data);
       } catch (error) {
@@ -49,24 +40,19 @@ function BookingSummaryScreen() {
       }
     };
 
-    if (shopId && slotId && expertId) {
-      fetchOrderSummary();
-    }
+    if (shopId && slotId && expertId) fetchOrderSummary();
   }, [shopId, slotId, expertId, rawServiceId]);
 
-  // Helper function to format Date (e.g., "Tuesday, Feb 10, 2026")
   const formatDate = (dateString) => {
     if (!dateString) return "";
-    const options = {
-      weekday: "long",
-      year: "numeric",
+    return new Date(dateString).toLocaleDateString(undefined, {
+      weekday: "short",
       month: "short",
       day: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+      year: "numeric",
+    });
   };
 
-  // Helper function to format Time (e.g., "04:04 AM")
   const formatTime = (timeString) => {
     if (!timeString) return "";
     const [hours, minutes] = timeString.split(":");
@@ -79,146 +65,146 @@ function BookingSummaryScreen() {
     });
   };
 
-  // Calculate Taxes based on API totalRate
-  const subtotal = summaryData?.totalRate || 0;
-
-  const tax = subtotal;
-  const totalAmount = subtotal + tax;
-
   const submitAppointment = async (e) => {
     e.preventDefault();
-    let submitData = {
-      shopId,
-      slotId,
-      expertId,
-      serviceIds,
-    }; 
-
     const res = await fetch("http://localhost:5000/api/v1/customer/booking", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: token,
       },
-      body: JSON.stringify(submitData),
+      body: JSON.stringify({ shopId, slotId, expertId, serviceIds }),
     });
 
-    if (res && res.status == 201) {
+    if (res && res.status === 201) {
       Swal.fire({
-        title: "Successfully booked!",
-        text: "Your booking has been created.",
+        title: "Appointment Confirmed!",
+        text: "We've sent the details to your email.",
         icon: "success",
+        confirmButtonColor: "#D41172",
       });
     } else {
       Swal.fire({
         icon: "error",
-        title: "Booking failed",
-        text: "You already have an appointment pending with this shop",
+        title: "Slot Unavailable",
+        text: "This time slot is no longer available or you have a pending booking.",
+        confirmButtonColor: "#1a1a1a",
       });
     }
   };
 
-  return (
-    <div className="screens">
-      <Header />
-      <div className="summary-container">
-        {loading ? (
-          <div className="loading-state">Loading booking details...</div>
-        ) : !summaryData ? (
-          <div className="error-state">No booking details found!</div>
-        ) : (
-          <div className="summary-card">
-            <div className="summary-header">
-              <h1>Booking Summary</h1>
-              <p>Please review your appointment details</p>
-            </div>
-
-            {/* Main Service Info */}
-            <div className="summary-section main-service">
-              <div className="service-icon">✨</div>
-              <div className="service-info">
-                {/* Map through all services if there are multiple */}
-                <h3>{summaryData.services.map((s) => s.name).join(", ")}</h3>
-                <span className="shop-name">
-                  {summaryData.shop.parlourName}
-                </span>
-                <p className="shop-address">{summaryData.shop.address}</p>
-              </div>
-              <div className="service-price">{subtotal.toFixed(2)}</div>
-            </div>
-
-            <div className="details-grid">
-              {/* Expert Details */}
-              <div className="detail-item">
-                <label>Expert</label>
-                <div className="expert-mini-profile">
-                  <img
-                    src={
-                      summaryData.expert.image ||
-                      "https://via.placeholder.com/150"
-                    }
-                    alt={summaryData.expert.name}
-                  />
-                  <div>
-                    <strong>{summaryData.expert.name}</strong>
-                    <p>{summaryData.expert.specialist} Specialist</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Date & Time Details */}
-              <div className="detail-item">
-                <label>Date & Time</label>
-                <div className="time-info">
-                  <div className="info-row">
-                    <span className="icon">📅</span>
-                    <strong>{formatDate(summaryData.slot.slotDate)}</strong>
-                  </div>
-                  <div className="info-row">
-                    <span className="icon">⏰</span>
-                    <strong>{formatTime(summaryData.slot.startTime)}</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Payment Breakdown */}
-            <div className="payment-breakdown">
-              <div className="breakdown-row">
-                <span>Subtotal</span>
-                <span>{subtotal.toFixed(2)}</span>
-              </div>
-              {/* <div className="breakdown-row">
-                <span>Service Fee (10%)</span>
-                <span>{tax.toFixed(2)}</span>
-              </div> */}
-              <div className="breakdown-row total">
-                <span>Total Amount</span>
-                <span>{subtotal}</span>
-              </div>
-            </div>
-
-            <div className="policy-note">
-              <p>
-                By confirming, you agree to our <span>Cancellation Policy</span>
-                . Please arrive 10 minutes before your scheduled time.
-              </p>
-            </div>
-
-            <div className="summary-actions">
-              <button className="btn-confirm" onClick={submitAppointment}>
-                Confirm Appointment
-              </button>
-              <button
-                className="btn-back"
-                onClick={() => window.history.back()}
-              >
-                Modify Booking
-              </button>
-            </div>
-          </div>
-        )}
+  if (loading)
+    return (
+      <div className="loader-container">
+        <div className="salon-loader"></div>
       </div>
+    );
+
+  return (
+    <div className="booking-page">
+      <Header />
+      <main className="booking-content">
+        <div className="booking-grid">
+          <div className="booking-main-col">
+            <section className="booking-card hero-card">
+              <div className="hero-overlay">
+                <span className="status-pill">Final Step</span>
+                <h1>{summaryData?.shop?.parlourName}</h1>
+                <p className="location-link">
+                  <i className="fa-solid fa-location-dot"></i>{" "}
+                  {summaryData?.shop?.address}
+                </p>
+              </div>
+            </section>
+
+            <section className="booking-card services-card">
+              <h2 className="section-title">Selected Treatments</h2>
+              <div className="services-stack">
+                {summaryData?.services.map((service, i) => (
+                  <div key={i} className="service-item-row">
+                    <div className="service-dot"></div>
+                    <span className="service-name">{service.name}</span>
+                    <span className="service-price">
+                      ${service.rate || service.price}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="booking-card expert-card">
+              <h2 className="section-title">Your Specialist</h2>
+              <div className="expert-profile-wide">
+                <img
+                  src={
+                    summaryData?.expert?.image ||
+                    "https://via.placeholder.com/80"
+                  }
+                  alt=""
+                />
+                <div className="expert-text">
+                  <h3>{summaryData?.expert?.name}</h3>
+                  <span className="specialist-tag">
+                    {summaryData?.expert?.specialist} Specialist
+                  </span>
+                </div>
+                <div className="verified-badge">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
+                  </svg>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <aside className="booking-sidebar">
+            <div className="sticky-sidebar">
+              <div className="summary-widget">
+                <div className="time-block">
+                  <div className="time-item">
+                    <small>Date</small>
+                    <p>{formatDate(summaryData?.slot?.slotDate)}</p>
+                  </div>
+                  <div className="time-divider"></div>
+                  <div className="time-item">
+                    <small>Time</small>
+                    <p>{formatTime(summaryData?.slot?.startTime)}</p>
+                  </div>
+                </div>
+
+                <div className="price-breakdown">
+                  <div className="price-row">
+                    <span>Subtotal</span>
+                    <span>${summaryData?.totalRate.toFixed(2)}</span>
+                  </div>
+                  <div className="price-row total-highlight">
+                    <span>Total</span>
+                    <span>${summaryData?.totalRate.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                <button
+                  className="confirm-btn-main"
+                  onClick={submitAppointment}
+                >
+                  Confirm Appointment
+                </button>
+                <button
+                  className="modify-btn-link"
+                  onClick={() => window.history.back()}
+                >
+                  Change Selection
+                </button>
+              </div>
+
+              <div className="policy-card">
+                <h4>Cancellation Policy</h4>
+                <p>Free cancellation up to 24 hours before your appointment.</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
     </div>
   );
 }

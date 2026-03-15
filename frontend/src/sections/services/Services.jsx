@@ -7,59 +7,83 @@ function Services() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchServics = async () => {
+    const fetchServices = async () => {
       try {
         setLoading(true);
         const res = await fetch(
           `http://localhost:5000/api/v1/customer/services`
         );
-        setLoading(false);
         const data = await res.json();
         if (data && data.length > 0) {
           setServices(data);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchServics();
+    fetchServices();
   }, []);
 
   return (
-    <section className="services" id="services">
-      {loading ? (
-        <div className="status-message">Loading....</div>
-      ) : services.length === 0 ? (
-        <div className="status-message">No services available</div>
-      ) : (
-        <div className="services-container">
-          <div className="services-header">
-            <span className="subtitle">Our Expertise</span>
-            <h2 className="title">Luxury Services</h2>
-          </div>
+    <section className="services-section">
+      <div className="container">
+        <header className="section-header">
+          <span className="badge">Premium Care</span>
+          <h2 className="main-title">Our Professional Services</h2>
+          <div className="divider"></div>
+        </header>
 
+        {loading ? (
+          <div className="loader-container">
+            <div className="spinner"></div>
+            <p>Discovering beauty...</p>
+          </div>
+        ) : services.length === 0 ? (
+          <div className="empty-state">
+            <p>No services found at the moment.</p>
+          </div>
+        ) : (
           <div className="services-grid">
             {services.map((service) => (
-              <div
-                key={service.id}
-                className="service-card"
-                onClick={() => (window.location.href = `/parlour/`)}
-              >
-                <div className="service-img-wrapper">
+              <div key={service.id} className="service-card">
+                <div className="service-media">
                   <img
                     src={service?.imageUrl ?? DEFAULT_NO_IMAGE}
-                    alt={service?.categoryName ?? ""}
+                    alt={service?.name}
+                    loading="lazy"
                   />
-                  <div className="price-tag">{service?.rate ?? ""}</div>
+                  <div className="price-overlay">{service?.rate}</div>
                 </div>
-                <div className="service-info">
-                  <h3>{service?.name ?? ""}</h3>
-                  <p>{service.description}</p>
-                  <button className="service-btn">Book Now</button>
+                <div className="service-content">
+                  <h3 className="service-name">{service?.name}</h3>
+                  <p className="service-description">{service?.description}</p>
+                  <button
+                    className="book-button"
+                    onClick={() => (window.location.href = `/parlour/`)}
+                  >
+                    Book Appointment
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }

@@ -36,6 +36,9 @@ export const appointmentStatuses = {
   ON_HOLD: {
     name: "on_hold",
   },
+  COMPLETED: {
+    name: "completed",
+  },
 };
 
 export const DEFAULT_CUSTOMER_ID = 1;

@@ -10,17 +10,20 @@ import {
   Clock,
   User,
   Scissors,
-  MoreVertical,
-  ChevronRight,
   ArrowUpDown,
+  Mail,
+  Phone,
+  Hash,
+  IndianRupee,
 } from "lucide-react";
 import "./UserRequests.css";
 import NotFound from "../../components/NotFound/NotFound";
 
 const STATUS = {
   1: { label: "Pending", class: "status-pending" },
-  2: { label: "Approved", class: "status-approved" },
-  3: { label: "Rejected", class: "status-rejected" },
+  2: { label: "Rejected", class: "status-rejected" },
+  3: { label: "Accepted", class: "status-approved" },
+  4: { label: "On Hold", class: "status-onhold" },
 };
 
 function UserRequests() {
@@ -29,7 +32,6 @@ function UserRequests() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
-
   const [selected, setSelected] = useState(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -98,16 +100,13 @@ function UserRequests() {
       text: "Do you want to approve this appointment request?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonColor: "#d4a373", // Matching your Glamio gold
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#d4a373",
+      cancelButtonColor: "#f44336",
       confirmButtonText: "Yes, Approve it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // 1. Show loading state in Swal
           Swal.showLoading();
-
-          // 2. Make the API Call
           const res = await fetch(
             `http://localhost:5000/api/v1/appointments/${id}/approve`,
             {
@@ -119,12 +118,8 @@ function UserRequests() {
             }
           );
 
-          const data = await res.json();
-
           if (res.ok) {
-            // 3. Update local state
-            updateStatusOnServer(id, 2); // 2 is Approved based on your STATUS object
-
+            updateStatusOnServer(id, 3);
             Swal.fire({
               title: "Approved!",
               text: "Appointment has been confirmed successfully.",
@@ -133,7 +128,7 @@ function UserRequests() {
               showConfirmButton: false,
             });
           } else {
-            // Handle error from backend (e.g., Unauthorized or Not Found)
+            const data = await res.json();
             Swal.fire(
               "Error",
               data.message || "Failed to approve appointment",
@@ -141,7 +136,6 @@ function UserRequests() {
             );
           }
         } catch (error) {
-          console.error("Approval Error:", error);
           Swal.fire("Error", "Server connection failed", "error");
         }
       }
@@ -161,7 +155,7 @@ function UserRequests() {
         "error"
       );
     }
-    updateStatusOnServer(selected.appointment.id, 3, rejectReason);
+    updateStatusOnServer(selected.appointment.id, 2, rejectReason);
     setShowRejectModal(false);
     setRejectReason("");
     Swal.fire("Rejected", "The request has been declined.", "info");
@@ -179,8 +173,7 @@ function UserRequests() {
   };
 
   const formatDateTime = (dateStr) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-IN", {
+    return new Date(dateStr).toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -191,12 +184,16 @@ function UserRequests() {
     <div className="admin-requests-container">
       <header className="content-header">
         <div className="header-text">
-          <h1>Appointment Bookings</h1>
-          <p>Manage and track your customer service requests</p>
+          <h1>Booking Requests</h1>
+          <p>
+            You have{" "}
+            {appointments.filter((a) => a.appointment.statusId === 1).length}{" "}
+            pending appointments to review
+          </p>
         </div>
         <div className="header-stats">
           <div className="stat-pill">
-            <span className="label">Total</span>
+            <span className="label">Total Bookings</span>
             <span className="value">{appointments.length}</span>
           </div>
         </div>
@@ -204,10 +201,10 @@ function UserRequests() {
 
       <div className="control-panel">
         <div className="search-wrapper">
-          <Search className="search-icon" size={18} />
+          <Search className="search-icon" size={20} />
           <input
             type="text"
-            placeholder="Search by customer, expert or ID..."
+            placeholder="Search by customer name, expert or order ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -215,20 +212,20 @@ function UserRequests() {
 
         <div className="filters-wrapper">
           <div className="filter-item">
-            <Filter size={16} />
+            <Filter size={18} />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="all">All Status</option>
               <option value="1">Pending</option>
-              <option value="2">Approved</option>
-              <option value="3">Rejected</option>
+              <option value="3">Approved</option>
+              <option value="2">Rejected</option>
             </select>
           </div>
 
           <div className="filter-item">
-            <ArrowUpDown size={16} />
+            <ArrowUpDown size={18} />
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -240,19 +237,29 @@ function UserRequests() {
 
       <div className="requests-grid">
         {loading ? (
-          <div className="loader-container">Loading requests...</div>
+          <div className="loader-container">
+            <div className="spinner"></div>
+            <p>Fetching requests...</p>
+          </div>
         ) : filteredAndSortedData.length === 0 ? (
           <NotFound />
         ) : (
           filteredAndSortedData.map((item) => (
-            <div className="request-card" key={item.appointment.id}>
+            <div
+              className={`request-card status-border-${item.appointment.statusId}`}
+              key={item.appointment.id}
+            >
+              {console.log("item------------------", item)}
               <div className="card-top">
                 <div className="customer-brief">
-                  <img
-                    src={item.customer.profileImage}
-                    alt=""
-                    className="customer-avatar"
-                  />
+                  <div className="avatar-wrapper">
+                    <img
+                      src={item.customer.profileImage}
+                      alt=""
+                      className="customer-avatar"
+                    />
+                    <div className="status-indicator"></div>
+                  </div>
                   <div>
                     <h4>{item.customer.username}</h4>
                     <span className="order-tag">
@@ -270,115 +277,130 @@ function UserRequests() {
               </div>
 
               <div className="card-middle">
-                <div className="info-box">
-                  <Calendar size={14} />
-                  <span>{formatDateTime(item.slot.slotDate)}</span>
-                </div>
-                <div className="info-box">
-                  <Clock size={14} />
-                  <span>
-                    {item.slot.startTime} - {item.slot.endTime}
-                  </span>
-                </div>
-                <div className="info-box">
-                  <Scissors size={14} />
-                  <span>{item.expert.name}</span>
+                <div className="info-grid">
+                  <div className="info-item">
+                    <Calendar size={16} />
+                    <span>{formatDateTime(item.slot.slotDate)}</span>
+                  </div>
+                  <div className="info-item">
+                    <Clock size={16} />
+                    <span>
+                      {item.slot.startTime} - {item.slot.endTime}
+                    </span>
+                  </div>
+                  <div className="info-item">
+                    <Scissors size={16} />
+                    <span>{item.expert.name}</span>
+                  </div>
+                  <div className="info-item">
+                    <IndianRupee size={16} />
+                    <span className="bold-price">₹{item.appointment.rate}</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="card-bottom">
-                <div className="price-tag">₹{item.appointment.rate}</div>
-                <div className="card-actions">
-                  <button
-                    className="btn-icon view"
-                    onClick={() => setSelected(item)}
-                  >
-                    <Eye size={18} />
-                  </button>
-                  {item.appointment.statusId === 1 && (
-                    <>
-                      <button
-                        className="btn-icon approve"
-                        onClick={() => handleApprove(item.appointment.id)}
-                      >
-                        <CheckCircle size={18} />
-                      </button>
-                      <button
-                        className="btn-icon reject"
-                        onClick={() => openRejectModal(item)}
-                      >
-                        <XCircle size={18} />
-                      </button>
-                    </>
-                  )}
-                </div>
+              <div className="card-actions-row">
+                <button
+                  className="btn-action-view"
+                  onClick={() => setSelected(item)}
+                >
+                  <Eye size={16} /> View Details
+                </button>
+                {item.appointment.statusId === 1 && (
+                  <div className="quick-actions">
+                    <button
+                      className="btn-quick-approve"
+                      onClick={() => handleApprove(item.appointment.id)}
+                    >
+                      <CheckCircle size={18} />
+                    </button>
+                    <button
+                      className="btn-quick-reject"
+                      onClick={() => openRejectModal(item)}
+                    >
+                      <XCircle size={18} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))
         )}
       </div>
 
-      {/* DETAIL DRAWER / MODAL */}
       {selected && !showRejectModal && (
         <div className="side-drawer-overlay" onClick={() => setSelected(null)}>
           <div className="side-drawer" onClick={(e) => e.stopPropagation()}>
             <div className="drawer-header">
-              <h2>Request Details</h2>
+              <div className="header-title">
+                <h2>Booking Details</h2>
+                <span className="id-badge">#{selected.appointment.id}</span>
+              </div>
               <button className="close-btn" onClick={() => setSelected(null)}>
                 ✕
               </button>
             </div>
 
             <div className="drawer-body">
-              <section className="detail-section">
-                <label>Customer Information</label>
-                <div className="user-profile">
-                  <img src={selected.customer.profileImage} alt="" />
-                  <div>
-                    <h3>{selected.customer.username}</h3>
-                    <p>{selected.customer.email}</p>
-                    <p>{selected.customer.phone || "No phone provided"}</p>
+              <div className="drawer-section user-card-main">
+                <img
+                  src={selected.customer.profileImage}
+                  alt=""
+                  className="large-avatar"
+                />
+                <div className="user-info-text">
+                  <h3>{selected.customer.username}</h3>
+                  <div className="info-line">
+                    <Mail size={14} /> {selected.customer.email}
+                  </div>
+                  <div className="info-line">
+                    <Phone size={14} />{" "}
+                    {selected.customer.phone || "No contact info"}
                   </div>
                 </div>
-              </section>
+              </div>
 
-              <section className="detail-section">
-                <label>Service Details</label>
-                <div className="detail-row">
-                  <span>Selected Expert</span>
-                  <strong>{selected.expert.name}</strong>
-                </div>
-                <div className="detail-row">
-                  <span>Service IDs</span>
-                  <div className="tags">
-                    {selected.appointment.serviceIds.map((id) => (
-                      <span key={id} className="tag">
-                        Service {id}
-                      </span>
-                    ))}
+              <div className="drawer-section">
+                <h4 className="section-label">Service Information</h4>
+                <div className="detail-card">
+                  <div className="detail-row">
+                    <span className="label-text">Expert Assigned</span>
+                    <span className="value-text">{selected.expert.name}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="label-text">Services</span>
+                    <div className="tag-container">
+                      {selected.appointment.serviceIds.map((id) => (
+                        <span key={id} className="service-tag">
+                          Service {id}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </section>
+              </div>
 
-              <section className="detail-section">
-                <label>Appointment Slot</label>
-                <div className="detail-row">
-                  <span>Date</span>
-                  <strong>
-                    {new Date(selected.slot.slotDate).toDateString()}
-                  </strong>
+              <div className="drawer-section">
+                <h4 className="section-label">Appointment Schedule</h4>
+                <div className="detail-card">
+                  <div className="detail-row">
+                    <span className="label-text">Date</span>
+                    <span className="value-text">
+                      {new Date(selected.slot.slotDate).toDateString()}
+                    </span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="label-text">Time Slot</span>
+                    <span className="value-text highlight">
+                      {selected.slot.startTime} - {selected.slot.endTime}
+                    </span>
+                  </div>
                 </div>
-                <div className="detail-row">
-                  <span>Time</span>
-                  <strong>
-                    {selected.slot.startTime} to {selected.slot.endTime}
-                  </strong>
-                </div>
-              </section>
+              </div>
 
-              <div className="drawer-price">
-                <span>Total Amount</span>
-                <strong>₹{selected.appointment.rate}</strong>
+              <div className="drawer-total">
+                <div className="total-label">Grand Total</div>
+                <div className="total-value">₹{selected.appointment.rate}</div>
               </div>
             </div>
 
@@ -386,13 +408,13 @@ function UserRequests() {
               {selected.appointment.statusId === 1 ? (
                 <>
                   <button
-                    className="footer-btn reject"
+                    className="f-btn-reject"
                     onClick={() => openRejectModal(selected)}
                   >
-                    Reject Request
+                    Reject
                   </button>
                   <button
-                    className="footer-btn approve"
+                    className="f-btn-approve"
                     onClick={() => handleApprove(selected.appointment.id)}
                   >
                     Approve Booking
@@ -400,10 +422,10 @@ function UserRequests() {
                 </>
               ) : (
                 <button
-                  className="footer-btn close"
+                  className="f-btn-close"
                   onClick={() => setSelected(null)}
                 >
-                  Close View
+                  Done
                 </button>
               )}
             </div>
@@ -411,31 +433,30 @@ function UserRequests() {
         </div>
       )}
 
-      {/* REJECTION MODAL */}
       {showRejectModal && (
         <div className="modal-overlay">
           <div className="reject-modal">
-            <h3>Reject Appointment</h3>
+            <div className="modal-header">
+              <XCircle size={24} color="#dc2626" />
+              <h3>Decline Appointment</h3>
+            </div>
             <p>
-              Please provide a reason for rejecting #ORD-
-              {selected.appointment.id}
+              Reason for rejecting{" "}
+              <strong>#ORD-{selected.appointment.id}</strong>
             </p>
             <textarea
-              placeholder="E.g. Slot no longer available, Stylist on leave..."
+              placeholder="Provide a specific reason (e.g. Stylist unavailable, shop closed for maintenance)..."
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
             />
             <div className="modal-btns">
               <button
-                className="btn-cancel"
+                className="modal-cancel"
                 onClick={() => setShowRejectModal(false)}
               >
                 Cancel
               </button>
-              <button
-                className="btn-confirm-reject"
-                onClick={handleRejectSubmit}
-              >
+              <button className="modal-confirm" onClick={handleRejectSubmit}>
                 Confirm Rejection
               </button>
             </div>
