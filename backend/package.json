@@ -9,7 +9,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "seed": "ts-node src/db/seed.ts",
-    "db:pull": "npx drizzle-kit pull"
+    "db:pull": "npx drizzle-kit pull",
+    "start": "node src/server.ts"
   },
   "author": "",
   "license": "ISC",
