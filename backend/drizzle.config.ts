@@ -1,6 +1,11 @@
 import { defineConfig } from "drizzle-kit";
 
-if (!process.env.DB_URL) {
+const dbUrl =
+  process.env.NODE_ENV === "development"
+    ? process.env.DB_URL_DEV
+    : process.env.DB_URL_PROD;
+
+if (!dbUrl) {
   throw new Error("DB URL is missing");
 }
 
@@ -9,8 +14,6 @@ export default defineConfig({
   out: "./src/db/migrations",
   dialect: "mysql",
   dbCredentials: {
-    url:
-      process.env.DB_URL ||
-      "mysql://glamio_user:Password@123@localhost:3306/glamio",
+    url: dbUrl,
   },
 });
