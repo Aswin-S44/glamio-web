@@ -11,15 +11,15 @@
     "db:migrate": "drizzle-kit migrate",
     "seed": "ts-node src/db/seed.ts",
     "db:pull": "npx drizzle-kit pull"
-
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "@types/cors": "^2.8.19",
+    "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.6",
-    "@types/node": "^25.0.9",
+    "@types/node": "^25.5.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8",
